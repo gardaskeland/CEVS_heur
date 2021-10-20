@@ -78,6 +78,11 @@ bool SolutionRepresentation::simple_feasibility_check() {
 }
 
 
+set<int> SolutionRepresentation::get_node_to_clusters(int vi) {
+    return node_in_clusters[vi];
+}
+
+
 void printEdgeChanges(set<pair<int, int>> deletions, set<pair<int, int>> additions) {
     cout << "Edges deleted:\n";
     for (set<pair<int, int>>::iterator it = deletions.begin(); it != deletions.end(); ++it) {

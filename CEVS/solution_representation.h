@@ -13,10 +13,13 @@ class SolutionRepresentation
 {
     public: 
         int number_nodes;
-        // Enumerated sets mapped to clusters of nodes
+        // Enumerated sets of nodes corresponding to clusters
         map<int, set<int>> clusters;
         // Enumerated nodes mapped to the clusters they are in.
         map<int, set<int>> node_in_clusters;
+        //TODO: Add datastructure counting the cost of e.g each node or cluster so
+        //that we only update the costs of the part of the solution representation
+        //we have changed
     
     SolutionRepresentation() {
         clusters = map<int, set<int>>();
@@ -47,6 +50,11 @@ class SolutionRepresentation
      * Gets a reference to a set si.
      */
     set<int> get_set(int si);
+
+    /**
+     * Gets a reference to the set telling which clusters node vi is in.
+     */ 
+    set<int> get_node_to_clusters(int vi);
 
     /**
      * Returns true if every node is in some set.
