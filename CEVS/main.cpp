@@ -9,7 +9,7 @@
 using namespace std;
 
 int main() {
-    string filename = "../heur/heur001.gr";
+    string filename = "../../../heur/heur001.gr";
     vector<vector<int>> adj = read_gz_file(filename);
     Graph g(adj);
     cout << "hey";
