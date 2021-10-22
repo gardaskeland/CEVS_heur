@@ -82,6 +82,35 @@ set<int> SolutionRepresentation::get_node_to_clusters(int vi) {
     return node_in_clusters[vi];
 }
 
+void SolutionRepresentation::add_set(set<int> s) {
+    if (clusters.size() == 0) {
+        clusters[0] = s;
+        for (int i : s) {
+            node_in_clusters[i].insert(0);
+        }
+        return;
+    }
+    map<int,set<int>>::reverse_iterator it = clusters.rbegin();
+    int biggest = it->first;
+    clusters[biggest + 1] = s;
+    for (int i : s) {
+        node_in_clusters[i].insert(biggest + 1);
+    }
+}
+
+void SolutionRepresentation::remove_set(int si) {
+    if (!(clusters.find(si) != clusters.end())) {
+        return;
+    }
+    set<int> s = clusters[si];
+    for (int i : s) {
+        set<int> nic = node_in_clusters[i];
+        nic.erase(si);
+        node_in_clusters[i] = nic;
+    }
+    clusters.erase(si);
+}
+
 
 void printEdgeChanges(set<pair<int, int>> deletions, set<pair<int, int>> additions) {
     cout << "Edges deleted:\n";
@@ -185,6 +214,18 @@ tuple<int, int, int> SolutionRepresentation::cost_operations(Graph g) {
 
     tuple<int, int, int> result = tuple<int, int, int>(delete_counter, add_counter, vs_counter);
     return result;
+}
+
+void SolutionRepresentation::print_solution() {
+    cout << "[";
+    for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); ++it) {
+        cout << "[";
+        for (int i : it->second) {
+            cout << i << ", ";
+        }
+        cout << "], ";
+    }
+    cout << "]\n";
 }
 
 /**

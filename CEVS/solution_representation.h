@@ -57,6 +57,16 @@ class SolutionRepresentation
     set<int> get_node_to_clusters(int vi);
 
     /**
+     * Add a set to the solution representation.
+     */
+    void add_set(set<int> s);
+
+    /**
+     * Remove set si from the solution representation
+     */
+    void remove_set(int si);
+
+    /**
      * Returns true if every node is in some set.
      */
     bool simple_feasibility_check();
@@ -67,6 +77,8 @@ class SolutionRepresentation
      * by the solution representation.
      */
     tuple<int, int, int> cost_operations(Graph g);
+
+    void print_solution();
 
 };
 

@@ -15,7 +15,7 @@ vector<vector<int>> read_gz_file(string s) {
     int edges;
     iss >> nodes;
     iss >> edges;
-    cout << "nodes: " << nodes << ", edges: " << edges << "\n";
+    //cout << "nodes: " << nodes << ", edges: " << edges << "\n";
 
     int u, v;
     vector<vector<int>> adj(nodes);
@@ -27,12 +27,12 @@ vector<vector<int>> read_gz_file(string s) {
         adj[v - 1].push_back(u - 1);
     }
 
-    cout << "Edges of graph: \n";
+    //cout << "Edges of graph: \n";
     for (int i = 0; i < nodes; i++) {
         for (int j : adj[i]) {
-            cout << j << " ";
+            //cout << j << " ";
         }
-        cout << "\n";
+        //cout << "\n";
     }
     return adj;
 }

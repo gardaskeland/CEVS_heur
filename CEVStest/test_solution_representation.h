@@ -5,6 +5,10 @@ void test_add();
 
 void test_remove();
 
+void test_add_set();
+
+void test_remove_set();
+
 void test_merge();
 
 void test_simple_feasibility_check();
