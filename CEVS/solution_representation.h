@@ -72,6 +72,16 @@ class SolutionRepresentation
     bool simple_feasibility_check();
 
     /**
+     * Returns the numbers of sets in the solution.
+     */
+    int num_sets();
+
+    /**
+     * Obtain the indices of the sets currently in the solution.
+     */
+    vector<int> get_set_indices();
+
+    /**
      * Return a tuple telling us the number of edge deletions, edge additions and
      * vertex splittings we need to get a cluster graph using the clusters given
      * by the solution representation.

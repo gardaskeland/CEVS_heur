@@ -16,7 +16,7 @@ using namespace std;
  */
 int merge_cost(SolutionRepresentation sol, Graph g, int si, int sj);
 
-void merge(SolutionRepresentation sol, Graph g, int si, int sj);
+void merge(SolutionRepresentation sol, int si, int sj);
 
 void greedy_merge(SolutionRepresentation sol, Graph g);
 

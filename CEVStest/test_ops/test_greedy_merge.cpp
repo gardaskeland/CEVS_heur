@@ -39,6 +39,20 @@ void test_merge_cost() {
         cout << "FAIL merge_test_cost: wrong value for g3: " << res << "\n";
     }
 
+
+    
+    filename = "../CEVStest/test_graphs/g4.txt";
+    adj = read_gz_file(filename);
+    g = Graph(adj);
+
+    filename = "test_sol_rep/g4_sol_1.txt";
+    SolutionRepresentation sr4 = read_sol_file(filename);
+
+    res = merge_cost(sr4, g, 0, 1);
+    if (res != -1) {
+        cout << "FAIL merge_test_cost: wrong value for g4: " << res << "\n";
+    }
+
     cout << "test_merge_cost finished\n";
 }
 

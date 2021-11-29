@@ -77,6 +77,10 @@ bool SolutionRepresentation::simple_feasibility_check() {
     }
 }
 
+int SolutionRepresentation::num_sets() {
+    return clusters.size();
+}
+
 
 set<int> SolutionRepresentation::get_node_to_clusters(int vi) {
     return node_in_clusters[vi];
@@ -109,6 +113,14 @@ void SolutionRepresentation::remove_set(int si) {
         node_in_clusters[i] = nic;
     }
     clusters.erase(si);
+}
+
+vector<int> SolutionRepresentation::get_set_indices() {
+    vector<int> vec;
+    for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
+        vec.push_back(it->first);
+    }
+    return vec;
 }
 
 

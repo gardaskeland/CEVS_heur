@@ -9,6 +9,7 @@ int cost_add_edges(set<int> s, Graph g) {
     }
     for (int i = 0; i < vec_1.size() - 1; i++) {
         for (int j = i + 1; j < vec_1.size(); j++) {
+            //cout << vec_1[i] << " " << vec_1[j] << "\n";
             if (!g.has_edge(vec_1[i], vec_1[j]))
                 cost += 1;
         }
@@ -110,7 +111,7 @@ int merge_cost(SolutionRepresentation sol, Graph g, int si, int sj) {
         + cost_neigbour_clusters(set_2, sol, g) - common_vertices
         + cost_add_edges_two_sets(set_1, set_2, g);
 
-    //cout << "Cost before merge: " << cost_before_merge << "\n";
+   //cout << "Cost before merge: " << cost_before_merge << "\n";
 
     //calculate cost after merge
     int cost_after_merge = 0;
@@ -123,11 +124,11 @@ int merge_cost(SolutionRepresentation sol, Graph g, int si, int sj) {
 
     cost_after_merge += cost_add_edges(merged, g) + cost_neigbour_clusters(merged, sol, g);
     //cout << "cost_add_edges: " << cost_add_edges(merged, g) << "\n";
-    //cout << "cost_neighbourhood_clusters" << cost_neigbour_clusters(merged, sol, g) << "\n";
+    //cout << "cost_neighbourhood_clusters: " << cost_neigbour_clusters(merged, sol, g) << "\n";
     //cout << "intermediate cost_after_merge: " << cost_after_merge << "\n";
     //Subtracting common vertices twice as these now have been counted twice in
     //cost_neighbour_clusters without being in different clusters.
-    //cost_after_merge -= 2 * common_vertices;
+    cost_after_merge -= common_vertices;
 
 
     //Counting edges that must be removed for any vertices vi that are in only one cluster after the merge
@@ -146,6 +147,30 @@ int merge_cost(SolutionRepresentation sol, Graph g, int si, int sj) {
     //cout << "Cost after merge: " << cost_after_merge << "\n";
 
     return cost_after_merge - cost_before_merge;
+
+
+}
+
+void merge(SolutionRepresentation sol, int si, int sj) {
+    sol.merge(si, sj);
+}
+
+
+//TODO: Test this. Not too complex, so can probably be done when running a simlated annealing once we have a few more operators.
+void greedy_merge(SolutionRepresentation sol, Graph g) {
+    //Stores the cost of each merge. Negative means total cost improves.
+    map<int, pair<int, int>> cost_of_merges;
+    vector<int> indices = sol.get_set_indices();
+    for (int i = 0; i < indices.size() - 1; i++) {
+        for (int j = i + 1; j < indices.size(); j++) {
+            cost_of_merges[merge_cost(sol, g, indices[i], indices[j])] = pair<int, int>(indices[i], indices[j]);
+        }
+    }
+
+    map<int, pair<int, int>>::iterator it = cost_of_merges.begin();
+    pair<int, int> to_merge = it->second;
+    merge(sol, to_merge.first, to_merge.second);
+
 
 
 }
