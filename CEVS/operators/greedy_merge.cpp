@@ -155,6 +155,24 @@ void merge(SolutionRepresentation sol, int si, int sj) {
     sol.merge(si, sj);
 }
 
+struct revert_greedy_merge {
+    int si;
+    int sj;
+    set<int> si_nodes;
+    set<int> sj_nodes;
+};
+
+set<int> copy_set(set<int> s){
+    set<int> copy;
+    for (int i : s) {
+        copy.insert(i);
+    } return copy;
+}
+
+void do_revert_greedy_merge(SolutionRepresentation sol, revert_greedy_merge rgm) {
+    sol.add_set_ind(rgm.si, rgm.si_nodes);
+    sol.add_set_ind(rgm.sj, rgm.sj_nodes);
+}
 
 //TODO: Test this. Not too complex, so can probably be done when running a simlated annealing once we have a few more operators.
 void greedy_merge(SolutionRepresentation sol, Graph g) {
@@ -169,8 +187,13 @@ void greedy_merge(SolutionRepresentation sol, Graph g) {
 
     map<int, pair<int, int>>::iterator it = cost_of_merges.begin();
     pair<int, int> to_merge = it->second;
+
+    revert_greedy_merge rgm;
+    rgm.si = to_merge.first;
+    rgm.sj = to_merge.second;
+    rgm.si_nodes = copy_set(sol.get_set(rgm.si));
+    rgm.sj_nodes = copy_set(sol.get_set(rgm.sj));
+
     merge(sol, to_merge.first, to_merge.second);
-
-
-
 }
+

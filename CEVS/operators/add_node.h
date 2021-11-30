@@ -1,5 +1,5 @@
-#ifndef GREEDY_MERGE_H   // To make sure you don't declare the function more than once by including the header multiple times.
-#define GREEDY_MERGE_H
+#ifndef ADD_NODE_H   // To make sure you don't declare the function more than once by including the header multiple times.
+#define ADD_NODE_H
 
 #include "../solution_representation.h"
 #include "../graph.h"
@@ -28,6 +28,14 @@ int highest_relative_out_degree(Graph g, SolutionRepresentation sol);
  * are the nodes v. The key-value pair that appears first is the best node to add to S.
  */
 map<int, int> best_nodes_to_add(Graph g, SolutionRepresentation sol, int si);
+
+
+//void do_revert_add_node(SolutionRepresentation sol, revert_add_node ran);
+
+/**
+ * Chooses a set with high relative out-degree and finds neighbour node of the set that is added to the set.
+ */
+void add_node(Graph g, SolutionRepresentation sol);
 
 
 #endif

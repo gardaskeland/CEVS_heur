@@ -62,6 +62,12 @@ class SolutionRepresentation
     void add_set(set<int> s);
 
     /**
+     * Add a set with a specific index to the solution representation. Note that this replaces
+     * the set that occupies the index.
+     */
+    void add_set_ind(int si, set<int> s);
+
+    /**
      * Remove set si from the solution representation
      */
     void remove_set(int si);
@@ -87,6 +93,17 @@ class SolutionRepresentation
      * by the solution representation.
      */
     tuple<int, int, int> cost_operations(Graph g);
+
+    /**
+     * Return the total number of operations needed to change graph G to the cluster graph
+     * in the solution.
+     */
+    int cost_solution(Graph g);
+
+    /**
+     * Creates an exact copy of the solution.
+     */
+    SolutionRepresentation copy_solution();
 
     void print_solution();
 

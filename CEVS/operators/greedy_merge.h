@@ -1,4 +1,4 @@
-#ifndef GREEDY_MERGE_H   // To make sure you don't declare the function more than once by including the header multiple times.
+#ifndef GREEDY_MERGE_H 
 #define GREEDY_MERGE_H
 
 #include "../solution_representation.h"
@@ -17,6 +17,10 @@ using namespace std;
 int merge_cost(SolutionRepresentation sol, Graph g, int si, int sj);
 
 void merge(SolutionRepresentation sol, int si, int sj);
+
+struct revert_greedy_merge;
+
+//void do_revert_greedy_merge(SolutionRepresentation sol, revert_greedy_merge rgm);
 
 void greedy_merge(SolutionRepresentation sol, Graph g);
 
