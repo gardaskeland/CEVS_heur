@@ -21,7 +21,7 @@ SolutionRepresentation read_sol_file(string s) {
         istringstream iss(line);
         while(!(iss.rdbuf() -> in_avail() == 0)) {
             iss >> u;
-            s.insert(u);
+            s.insert(u - 1);
         }
         sr.add_set(s);
     }

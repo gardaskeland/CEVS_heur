@@ -1,0 +1,33 @@
+#ifndef GREEDY_MERGE_H   // To make sure you don't declare the function more than once by including the header multiple times.
+#define GREEDY_MERGE_H
+
+#include "../solution_representation.h"
+#include "../graph.h"
+#include <set>
+#include <vector>
+#include <utility>
+#include <iostream>
+
+using namespace std;
+
+/**
+ * Returns the relative out degree of a set S in the current solution, that is outdeg(S)/|S|. Remains the same as
+ * long as S is not changed.
+ */ 
+double relative_out_degree(Graph g, SolutionRepresentation sol, int si);
+
+
+/**
+ * Returns the number of the set with the highest relative out-degree in the solution.
+ */
+int highest_relative_out_degree(Graph g, SolutionRepresentation sol);
+
+
+/**
+ * Returns a sorted map. The keys are the value of S/N(v) - N(v)US, the estimated cost of adding v to S. The values
+ * are the nodes v. The key-value pair that appears first is the best node to add to S.
+ */
+map<int, int> best_nodes_to_add(Graph g, SolutionRepresentation sol, int si);
+
+
+#endif
