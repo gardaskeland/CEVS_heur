@@ -12,7 +12,7 @@ SolutionRepresentation local_search(Graph g) {
     Bookkeep book;
     //revert_add_node *ran;
     //revert_greedy_merge *rgm;
-    cout << "Starting local_search";
+    cout << "Starting local_search\n";
 
     for (int i = 0; i < num_operations; i++) {
         int r = rand() % 100;

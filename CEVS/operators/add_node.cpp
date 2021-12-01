@@ -1,6 +1,6 @@
 #include "add_node.h"
 
-double relative_out_degree(Graph g, SolutionRepresentation sol, int si) {
+double relative_out_degree(Graph &g, SolutionRepresentation &sol, int si) {
     int count_out_edges = 0;
     set<int> nodes_in_si = sol.get_set(si);
     //cout << "Start new test case\n";
@@ -20,16 +20,21 @@ double relative_out_degree(Graph g, SolutionRepresentation sol, int si) {
 
 }
 
-int highest_relative_out_degree(Graph g, SolutionRepresentation sol) {
-    map<int, int> relative_out_degrees;
+map<double, int> get_relative_out_degrees(Graph &g, SolutionRepresentation &sol) {
+    map<double, int> relative_out_degrees;
     for (int i : sol.get_set_indices()) {
         relative_out_degrees[relative_out_degree(g, sol, i)] = i;
     }
-    map<int, int>::reverse_iterator it = relative_out_degrees.rbegin();
+    return relative_out_degrees;
+}
+
+int highest_relative_out_degree(Graph &g, SolutionRepresentation &sol) {
+    map<double, int> relative_out_degrees = get_relative_out_degrees(g, sol);
+    map<double, int>::reverse_iterator it = relative_out_degrees.rbegin();
     return it->second;
 }
 
-int add_node_to_set_cost(Graph g, SolutionRepresentation sol, set<int> set_nodes, int v) {
+int add_node_to_set_cost(Graph &g, SolutionRepresentation &sol, set<int> &set_nodes, int v) {
     int edges_between = 0;
     for (int i : set_nodes) {
         if (g.has_edge(i, v)) {
@@ -39,7 +44,7 @@ int add_node_to_set_cost(Graph g, SolutionRepresentation sol, set<int> set_nodes
     } return set_nodes.size() - 2*edges_between;
 }
 
-map<int, int> best_nodes_to_add(Graph g, SolutionRepresentation sol, int si) {
+map<int, int> best_nodes_to_add(Graph &g, SolutionRepresentation &sol, int si) {
     map<int, int> results;
     set<int> marked_neighbours;
     set<int> set_nodes = sol.get_set(si);
@@ -65,11 +70,42 @@ void do_revert_add_node(SolutionRepresentation &sol, Bookkeep &book) {
     sol.remove(book.revert_add_node[0], book.revert_add_node[1]);
 }
 
-void add_node(Graph g, SolutionRepresentation &sol, Bookkeep &book) {
+void add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
     int si = highest_relative_out_degree(g, sol);
     map<int, int> best_nodes = best_nodes_to_add(g, sol, si);
     sol.add(best_nodes.begin()->second, si);
     book.revert_add_node[0] = best_nodes.begin()->second;
     book.revert_add_node[1] = si;
     //sol.print_solution();
+}
+
+//Possibly not working yet.
+void weighted_random_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
+    map<double, int> out_deg = get_relative_out_degrees(g, sol);
+    int ind = weighted_random_index(10, out_deg.size(), 2);
+    
+    int counter = 0;
+    map<double, int>::iterator it = out_deg.begin();
+    while (counter != ind) {
+        it++;
+        counter += 1;
+    }
+    int si = it->second;
+
+    map<int, int> best_nodes = best_nodes_to_add(g, sol, si);
+    ind = weighted_random_index(10, out_deg.size(), 2);
+
+    counter = 0;
+    map<int, int>::iterator it2 = best_nodes.begin();
+    while (counter != ind) {
+        it2++;
+        counter += 1;
+    }
+    sol.add(it2->second, si);
+    book.revert_add_node[0] = it2->second;
+    book.revert_add_node[1] = si;
+
+
+
+
 }

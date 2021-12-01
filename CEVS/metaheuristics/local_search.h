@@ -13,6 +13,7 @@
 
 /**
  * Uses a local search metaheuristic to find a solution for CEVS.
+ * Operators: add_node and weighted_average greedy_merge.
  */
 SolutionRepresentation local_search(Graph g);
 

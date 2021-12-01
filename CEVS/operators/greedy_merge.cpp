@@ -1,7 +1,7 @@
 #include "greedy_merge.h"
 
 
-int cost_add_edges(set<int> s, Graph g) {
+int cost_add_edges(set<int> &s, Graph &g) {
     int cost = 0;
     vector<int> vec_1;
     for (int i : s) {
@@ -17,7 +17,7 @@ int cost_add_edges(set<int> s, Graph g) {
     return cost;
 }
 
-int cost_add_edges_two_sets(set<int> s1, set<int> s2, Graph g) {
+int cost_add_edges_two_sets(set<int> &s1, set<int> &s2, Graph &g) {
     set<pair<int, int>> edges;
     int cost = 0;
     vector<int> vec_1;
@@ -51,7 +51,7 @@ int cost_add_edges_two_sets(set<int> s1, set<int> s2, Graph g) {
 /**
  * Finds the number of neighbours not in s of node v.
  */
-int find_neighbours_not_in_s(int v, set<int> s, Graph g) {
+int find_neighbours_not_in_s(int v, set<int> &s, Graph &g) {
     //cout << "for vertex " << v << ":\n";
     int cost = 0;
     for (int j : g.adj[v]) {
@@ -63,7 +63,7 @@ int find_neighbours_not_in_s(int v, set<int> s, Graph g) {
     return cost;
 } 
 
-int cost_neigbour_clusters(set<int> s, SolutionRepresentation sol, Graph g) {
+int cost_neigbour_clusters(set<int> &s, SolutionRepresentation &sol, Graph &g) {
     int cost = 0;
     //Checks the number of clusters node i is in.
     for (int i : s) {
@@ -85,7 +85,7 @@ int cost_neigbour_clusters(set<int> s, SolutionRepresentation sol, Graph g) {
 //TODO: test.
 //TODO: Think about if not counting edges when a vertex is in several clusters creates bias
 //when using the operator.
-int merge_cost(SolutionRepresentation sol, Graph g, int si, int sj) {
+int merge_cost(SolutionRepresentation &sol, Graph &g, int si, int sj) {
     int cost_1 = 0;
     int cost_2 = 0;
     set<int> set_1 = sol.get_set(si);
@@ -151,7 +151,7 @@ int merge_cost(SolutionRepresentation sol, Graph g, int si, int sj) {
 
 }
 
-void merge(SolutionRepresentation sol, int si, int sj) {
+void merge(SolutionRepresentation &sol, int si, int sj) {
     sol.merge(si, sj);
 }
 
@@ -162,7 +162,7 @@ struct revert_greedy_merge {
     set<int> sj_nodes;
 };
 
-set<int> copy_set(set<int> s){
+set<int> copy_set(set<int> &s){
     set<int> copy;
     for (int i : s) {
         copy.insert(i);
@@ -174,7 +174,7 @@ void do_revert_merge(SolutionRepresentation &sol, Bookkeep &book) {
     sol.add_set_ind(book.revert_merge_ind[1], book.revert_merge_sets[1]);
 }
 
-map<int, pair<int, int>> find_cost_of_merges(Graph g, SolutionRepresentation &sol) {
+map<int, pair<int, int>> find_cost_of_merges(Graph &g, SolutionRepresentation &sol) {
     map<int, pair<int, int>> cost_of_merges;
     vector<int> indices = sol.get_set_indices();
     for (int i = 0; i < indices.size() - 1; i++) {
@@ -186,7 +186,7 @@ map<int, pair<int, int>> find_cost_of_merges(Graph g, SolutionRepresentation &so
 }
 
 //TODO: Test this. Not too complex, so can probably be done when running a simlated annealing once we have a few more operators.
-void greedy_merge(Graph g, SolutionRepresentation &sol, Bookkeep &book) {
+void greedy_merge(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
     //Stores the cost of each merge. Negative means total cost improves.
     if (sol.num_sets() <= 1) {
         return;
@@ -214,17 +214,14 @@ void greedy_merge(Graph g, SolutionRepresentation &sol, Bookkeep &book) {
     sol.merge(to_merge.first, to_merge.second);
 }
 
-void weighted_random_merge(Graph g, SolutionRepresentation &sol, Bookkeep &book) {
+void weighted_random_merge(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
     if (sol.num_sets() <= 1) {
         return;
     }
 
     map<int, pair<int, int>> cost_of_merges = find_cost_of_merges(g, sol);
 
-    int k = min(10, (int)cost_of_merges.size());
-    //cout << "k= " << k <<"\n";
-    int r = rand() % ((int)pow(2,(k - 1))) + 1;
-    int ind = k - floor(log2(r)) - 1;
+    int ind = weighted_random_index(10, cost_of_merges.size(), 2);
 
     //cout << "r = " << r << "\n";
     //cout << "ind: " << ind << "\n";
