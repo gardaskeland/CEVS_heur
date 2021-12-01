@@ -56,7 +56,6 @@ void SolutionRepresentation::merge(int si, int sj) {
         nodes_to_sets.erase(sj);
         nodes_to_sets.insert(si);
         node_in_clusters[*it] = nodes_to_sets;
-
     }
     clusters[si] = s1;
     clusters.erase(sj);
@@ -243,6 +242,10 @@ SolutionRepresentation SolutionRepresentation::copy_solution() {
     new_clusters.insert(clusters.begin(), clusters.end());
     map<int, set<int>> new_nodes_in_clusters;
     new_nodes_in_clusters.insert(node_in_clusters.begin(), node_in_clusters.end());
+    SolutionRepresentation new_sol;
+    new_sol.clusters = new_clusters;
+    new_sol.node_in_clusters = new_nodes_in_clusters;
+    return new_sol;
 }
 
 void SolutionRepresentation::print_solution() {

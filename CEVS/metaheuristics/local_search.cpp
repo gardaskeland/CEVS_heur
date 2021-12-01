@@ -15,7 +15,7 @@ SolutionRepresentation local_search(Graph g) {
 
     for (int i = 0; i < num_operations; i++) {
         int r = rand() % 100;
-        if (r < 0) {
+        if (r < 50) {
             cout << "do add_node\n";
             choice = 0;
             add_node(g, current_solution);

@@ -177,6 +177,9 @@ void do_revert_greedy_merge(SolutionRepresentation sol, revert_greedy_merge rgm)
 //TODO: Test this. Not too complex, so can probably be done when running a simlated annealing once we have a few more operators.
 void greedy_merge(Graph g, SolutionRepresentation &sol) {
     //Stores the cost of each merge. Negative means total cost improves.
+    if (sol.num_sets() <= 1) {
+        return;
+    }
     map<int, pair<int, int>> cost_of_merges;
     vector<int> indices = sol.get_set_indices();
     for (int i = 0; i < indices.size() - 1; i++) {
@@ -187,13 +190,16 @@ void greedy_merge(Graph g, SolutionRepresentation &sol) {
 
     map<int, pair<int, int>>::iterator it = cost_of_merges.begin();
     pair<int, int> to_merge = it->second;
+    cout << "Merging sets " << to_merge.first << " and " << to_merge.second << "\n";
 
-    revert_greedy_merge rgm;
+    /**
+     * revert_greedy_merge rgm;
     rgm.si = to_merge.first;
     rgm.sj = to_merge.second;
     rgm.si_nodes = copy_set(sol.get_set(rgm.si));
     rgm.sj_nodes = copy_set(sol.get_set(rgm.sj));
+    */
 
-    merge(sol, to_merge.first, to_merge.second);
+    sol.merge(to_merge.first, to_merge.second);
 }
 
