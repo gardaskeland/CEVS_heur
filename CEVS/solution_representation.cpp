@@ -50,7 +50,7 @@ void SolutionRepresentation::merge(int si, int sj) {
     set<int> s2 = get_set(sj);
     set<int> nodes_to_sets;
     for (set<int>::iterator it = s2.begin(); it != s2.end(); ++it) {
-        cout << *it;
+        //cout << *it;
         s1.insert(*it);
         nodes_to_sets = node_in_clusters[*it];
         nodes_to_sets.erase(sj);

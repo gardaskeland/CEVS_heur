@@ -35,7 +35,7 @@ map<int, int> best_nodes_to_add(Graph g, SolutionRepresentation sol, int si);
 /**
  * Chooses a set with high relative out-degree and finds neighbour node of the set that is added to the set.
  */
-void add_node(Graph g, SolutionRepresentation sol);
+void add_node(Graph g, SolutionRepresentation &sol);
 
 
 #endif

@@ -22,7 +22,7 @@ struct revert_greedy_merge;
 
 //void do_revert_greedy_merge(SolutionRepresentation sol, revert_greedy_merge rgm);
 
-void greedy_merge(SolutionRepresentation sol, Graph g);
+void greedy_merge(Graph g, SolutionRepresentation &sol);
 
 
 #endif

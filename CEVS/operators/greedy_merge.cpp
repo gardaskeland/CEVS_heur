@@ -175,7 +175,7 @@ void do_revert_greedy_merge(SolutionRepresentation sol, revert_greedy_merge rgm)
 }
 
 //TODO: Test this. Not too complex, so can probably be done when running a simlated annealing once we have a few more operators.
-void greedy_merge(SolutionRepresentation sol, Graph g) {
+void greedy_merge(Graph g, SolutionRepresentation &sol) {
     //Stores the cost of each merge. Negative means total cost improves.
     map<int, pair<int, int>> cost_of_merges;
     vector<int> indices = sol.get_set_indices();

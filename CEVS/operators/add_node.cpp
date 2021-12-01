@@ -65,11 +65,12 @@ void do_revert_add_node(SolutionRepresentation sol, revert_add_node ran) {
     sol.remove(ran.v, ran.si);
 }
 
-void add_node(Graph g, SolutionRepresentation sol) {
+void add_node(Graph g, SolutionRepresentation &sol) {
     int si = highest_relative_out_degree(g, sol);
     map<int, int> best_nodes = best_nodes_to_add(g, sol, si);
     revert_add_node rad;
     rad.v = best_nodes.begin()->second;
     rad.si = si;
     sol.add(best_nodes.begin()->second, si);
+    sol.print_solution();
 }
