@@ -56,7 +56,7 @@ SolutionRepresentation local_search(Graph g) {
             best_solution = current_solution.copy_solution();
         }
 
-        //cout << "Current cost: " << current_cost << "\n";
+        cout << "Current cost: " << current_cost << "\n";
         //current_solution.print_solution();
     }
 
