@@ -61,16 +61,15 @@ struct revert_add_node {
     int si;
 };
 
-void do_revert_add_node(SolutionRepresentation sol, revert_add_node ran) {
-    sol.remove(ran.v, ran.si);
+void do_revert_add_node(SolutionRepresentation &sol, Bookkeep &book) {
+    sol.remove(book.revert_add_node[0], book.revert_add_node[1]);
 }
 
-void add_node(Graph g, SolutionRepresentation &sol) {
+void add_node(Graph g, SolutionRepresentation &sol, Bookkeep &book) {
     int si = highest_relative_out_degree(g, sol);
     map<int, int> best_nodes = best_nodes_to_add(g, sol, si);
-    revert_add_node rad;
-    rad.v = best_nodes.begin()->second;
-    rad.si = si;
     sol.add(best_nodes.begin()->second, si);
-    sol.print_solution();
+    book.revert_add_node[0] = best_nodes.begin()->second;
+    book.revert_add_node[1] = si;
+    //sol.print_solution();
 }

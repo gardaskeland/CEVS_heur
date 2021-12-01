@@ -169,17 +169,12 @@ set<int> copy_set(set<int> s){
     } return copy;
 }
 
-void do_revert_greedy_merge(SolutionRepresentation sol, revert_greedy_merge rgm) {
-    sol.add_set_ind(rgm.si, rgm.si_nodes);
-    sol.add_set_ind(rgm.sj, rgm.sj_nodes);
+void do_revert_merge(SolutionRepresentation &sol, Bookkeep &book) {
+    sol.add_set_ind(book.revert_merge_ind[0], book.revert_merge_sets[0]);
+    sol.add_set_ind(book.revert_merge_ind[1], book.revert_merge_sets[1]);
 }
 
-//TODO: Test this. Not too complex, so can probably be done when running a simlated annealing once we have a few more operators.
-void greedy_merge(Graph g, SolutionRepresentation &sol) {
-    //Stores the cost of each merge. Negative means total cost improves.
-    if (sol.num_sets() <= 1) {
-        return;
-    }
+map<int, pair<int, int>> find_cost_of_merges(Graph g, SolutionRepresentation &sol) {
     map<int, pair<int, int>> cost_of_merges;
     vector<int> indices = sol.get_set_indices();
     for (int i = 0; i < indices.size() - 1; i++) {
@@ -187,10 +182,26 @@ void greedy_merge(Graph g, SolutionRepresentation &sol) {
             cost_of_merges[merge_cost(sol, g, indices[i], indices[j])] = pair<int, int>(indices[i], indices[j]);
         }
     }
+    return cost_of_merges;
+}
+
+//TODO: Test this. Not too complex, so can probably be done when running a simlated annealing once we have a few more operators.
+void greedy_merge(Graph g, SolutionRepresentation &sol, Bookkeep &book) {
+    //Stores the cost of each merge. Negative means total cost improves.
+    if (sol.num_sets() <= 1) {
+        return;
+    }
+    map<int, pair<int, int>> cost_of_merges = find_cost_of_merges(g, sol);
 
     map<int, pair<int, int>>::iterator it = cost_of_merges.begin();
     pair<int, int> to_merge = it->second;
     cout << "Merging sets " << to_merge.first << " and " << to_merge.second << "\n";
+
+    book.revert_merge_ind[0] = to_merge.first;
+    book.revert_merge_ind[1] = to_merge.second;
+    book.revert_merge_sets[0] = sol.get_set(to_merge.first);
+    book.revert_merge_sets[1] = sol.get_set(to_merge.second);
+
 
     /**
      * revert_greedy_merge rgm;
@@ -201,5 +212,39 @@ void greedy_merge(Graph g, SolutionRepresentation &sol) {
     */
 
     sol.merge(to_merge.first, to_merge.second);
+}
+
+void weighted_random_merge(Graph g, SolutionRepresentation &sol, Bookkeep &book) {
+    if (sol.num_sets() <= 1) {
+        return;
+    }
+
+    map<int, pair<int, int>> cost_of_merges = find_cost_of_merges(g, sol);
+
+    int k = min(10, (int)cost_of_merges.size());
+    //cout << "k= " << k <<"\n";
+    int r = rand() % ((int)pow(2,(k - 1))) + 1;
+    int ind = k - floor(log2(r)) - 1;
+
+    //cout << "r = " << r << "\n";
+    //cout << "ind: " << ind << "\n";
+    //cout << "size of cost_of_merges: " << cost_of_merges.size() << "\n";
+
+    map<int, pair<int, int>>::iterator it = cost_of_merges.begin();
+    int counter = 0;
+    while (counter != ind) {
+        it++;
+        counter += 1;
+    }
+
+    pair<int, int> to_merge = it->second;
+
+    book.revert_merge_ind[0] = to_merge.first;
+    book.revert_merge_ind[1] = to_merge.second;
+    book.revert_merge_sets[0] = sol.get_set(to_merge.first);
+    book.revert_merge_sets[1] = sol.get_set(to_merge.second);
+
+    sol.merge(to_merge.first, to_merge.second);
+
 }
 

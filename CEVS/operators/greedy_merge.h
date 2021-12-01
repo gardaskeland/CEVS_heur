@@ -3,10 +3,12 @@
 
 #include "../solution_representation.h"
 #include "../graph.h"
+#include "../bookkeep.h"
 #include <set>
 #include <vector>
 #include <utility>
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
@@ -20,9 +22,11 @@ void merge(SolutionRepresentation sol, int si, int sj);
 
 struct revert_greedy_merge;
 
-//void do_revert_greedy_merge(SolutionRepresentation sol, revert_greedy_merge rgm);
+void do_revert_merge(SolutionRepresentation &sol, Bookkeep &book);
 
-void greedy_merge(Graph g, SolutionRepresentation &sol);
+void greedy_merge(Graph g, SolutionRepresentation &sol, Bookkeep &book);
+
+void weighted_random_merge(Graph g, SolutionRepresentation &sol, Bookkeep &book);
 
 
 #endif

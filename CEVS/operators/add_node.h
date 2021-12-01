@@ -3,6 +3,7 @@
 
 #include "../solution_representation.h"
 #include "../graph.h"
+#include "../bookkeep.h"
 #include <set>
 #include <vector>
 #include <utility>
@@ -30,12 +31,12 @@ int highest_relative_out_degree(Graph g, SolutionRepresentation sol);
 map<int, int> best_nodes_to_add(Graph g, SolutionRepresentation sol, int si);
 
 
-//void do_revert_add_node(SolutionRepresentation sol, revert_add_node ran);
+void do_revert_add_node(SolutionRepresentation &sol, Bookkeep &book);
 
 /**
  * Chooses a set with high relative out-degree and finds neighbour node of the set that is added to the set.
  */
-void add_node(Graph g, SolutionRepresentation &sol);
+void add_node(Graph g, SolutionRepresentation &sol, Bookkeep &book);
 
 
 #endif
