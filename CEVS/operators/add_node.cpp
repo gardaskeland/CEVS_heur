@@ -93,7 +93,7 @@ void weighted_random_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &b
     int si = it->second;
 
     map<int, int> best_nodes = best_nodes_to_add(g, sol, si);
-    ind = weighted_random_index(10, out_deg.size(), 2);
+    ind = weighted_random_index(2, out_deg.size(), 2);
 
     counter = 0;
     map<int, int>::iterator it2 = best_nodes.begin();

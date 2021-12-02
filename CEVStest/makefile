@@ -1,7 +1,7 @@
 cevstest: main.o test_solution_representation.o solution_representation.o read_file.o graph.o\
- 		test_greedy_merge.o greedy_merge.o read_sol.o test_add_node.o add_node.o
+ 		test_greedy_merge.o greedy_merge.o read_sol.o test_add_node.o add_node.o weighted_random.o
 	g++ -o cevstest main.o test_solution_representation.o solution_representation.o read_file.o\
-		graph.o test_greedy_merge.o greedy_merge.o read_sol.o test_add_node.o add_node.o
+		graph.o test_greedy_merge.o greedy_merge.o read_sol.o test_add_node.o add_node.o weighted_random.o
 
 main.o: main.cpp test_solution_representation.h
 	g++ -c main.cpp
@@ -33,6 +33,9 @@ graph.o: ../CEVS/graph.cpp ../CEVS/graph.h
 
 read_sol.o: read_sol.cpp read_sol.h
 	g++ -c read_sol.cpp
+
+weighted_random.o: ../CEVS/utility/weighted_random.cpp ../CEVS/utility/weighted_random.h
+	g++ -c ../CEVS/utility/weighted_random.cpp
 
 clean:
 	rm *.o cevstest

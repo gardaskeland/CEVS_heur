@@ -6,7 +6,7 @@ SolutionRepresentation local_search(Graph g) {
     SolutionRepresentation best_solution = current_solution;
     int current_cost = current_solution.cost_solution(g);
     int best_cost = current_cost;
-    int num_operations = 100;
+    int num_operations = 10000;
     int weights[2] = {50, 50}; // should sum to 100.
     int choice;
     Bookkeep book;

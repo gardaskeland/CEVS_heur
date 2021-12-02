@@ -3,7 +3,7 @@
 
 #include "../solution_representation.h"
 #include "../graph.h"
-#include "../bookkeep.h"
+#include "../bookkeep/bookkeep.h"
 #include "../utility/weighted_random.h"
 #include <set>
 #include <vector>

@@ -7,6 +7,7 @@
 #include <iterator>
 #include <tuple>
 #include "graph.h"
+#include "bookkeep/bookkeep.h"
 using namespace std;
 
 class SolutionRepresentation
@@ -17,9 +18,9 @@ class SolutionRepresentation
         map<int, set<int>> clusters;
         // Enumerated nodes mapped to the clusters they are in.
         map<int, set<int>> node_in_clusters;
-        //TODO: Add datastructure counting the cost of e.g each node or cluster so
-        //that we only update the costs of the part of the solution representation
-        //we have changed
+        // Stores calculations from operations so that we don't need to repeat them and
+        // the values defining how to execute an operation we how found the cost of executing.
+        Bookkeep book;
     
     SolutionRepresentation() {
         clusters = map<int, set<int>>();

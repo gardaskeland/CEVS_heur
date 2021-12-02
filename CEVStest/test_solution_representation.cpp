@@ -1,6 +1,7 @@
 #include "test_solution_representation.h"
 #include "../CEVS/solution_representation.h"
 #include "../CEVS/read_file.h"
+#include "read_sol.h"
 #include <iostream>
 #include <set>
 
@@ -109,30 +110,51 @@ void test_simple_feasibility_check() {
 }
 
 void test_cost_operations() {
-    string filename = "../heur/heur001.gr";
-    vector<vector<int>> adj = read_gz_file(filename);
+
+    vector<vector<int>> adj = read_gz_file("../CEVStest/test_graphs/g3.txt");
     Graph g = Graph(adj);
-    SolutionRepresentation sr;
-    sr.initial_solution(g.n);
-    for (int i = 1; i < g.n; i++) {
-        sr.remove(i, i);
+    SolutionRepresentation sr = read_sol_file("test_sol_rep/g3_sol_1.txt");
+
+    tuple<int,int,int> tup = sr.cost_operations(g);
+
+    if (get<0>(tup) != 2) {
+        cout << "FAIL test_cost_operations for g3: Wrong number of edge deletions: " << get<0>(tup) << "\n";
     }
-    sr.add(1, 0);
-    sr.add(3, 0);
-    sr.add(4, 0);
-    sr.add(4, 1);
-    sr.add(2, 1);
-    sr.add(5, 1);
-    sr.add(6, 2);
-    sr.add(7, 2);
-    sr.add(8, 2);
-    sr.add(9, 2);
-    sr.add(6, 3);
-    sr.add(2, 3);
-    tuple<int, int, int> cost = sr.cost_operations(g);
-    cout << "Deletions: " << get<0>(cost) 
-        << "\nAdditions: " << get<1>(cost)
-        << "\nVertex splittings: " << get<2>(cost) << "\n";
+    if (get<1>(tup) != 0) {
+         cout << "FAIL test_cost_operations for g3: Wrong number of edge additions: " << get<1>(tup) << "\n";
+    }
+    if (get<2>(tup) != 1) {
+        cout << "FAIL test_cost_operations for g3: Wrong number of vertex splittings: " << get<2>(tup) << "\n";
+    }
+
+
+    adj = read_gz_file("../CEVStest/test_graphs/g4.txt");
+    g = Graph(adj);
+    sr = read_sol_file("test_sol_rep/g4_sol_1.txt");
+    tup = sr.cost_operations(g);
+    if (get<0>(tup) != 0) {
+        cout << "FAIL test_cost_operations for g4: Wrong number of edge deletions: " << get<0>(tup) << "\n";
+    }
+    if (get<1>(tup) != 1) {
+         cout << "FAIL test_cost_operations for g4: Wrong number of edge additions: " << get<1>(tup) << "\n";
+    }
+    if (get<2>(tup) != 2) {
+        cout << "FAIL test_cost_operations for g4: Wrong number of vertex splittings: " << get<2>(tup) << "\n";
+    }
+
+    adj = read_gz_file("../CEVStest/test_graphs/g6.txt");
+    g = Graph(adj);
+    sr = read_sol_file("test_sol_rep/g6_sol_2.txt");
+    tup = sr.cost_operations(g);
+    if (get<0>(tup) != 5) {
+        cout << "FAIL test_cost_operations for g6: Wrong number of edge deletions: " << get<0>(tup) << "\n";
+    }
+    if (get<1>(tup) != 16) {
+         cout << "FAIL test_cost_operations for g6: Wrong number of edge additions: " << get<1>(tup) << "\n";
+    }
+    if (get<2>(tup) != 5) {
+        cout << "FAIL test_cost_operations for g6: Wrong number of vertex splittings: " << get<2>(tup) << "\n";
+    }
 }
 
 void run_tests_solution_representation() {
@@ -141,6 +163,7 @@ void run_tests_solution_representation() {
     test_add_set();
     test_simple_feasibility_check();
     test_remove_set();
+    test_cost_operations();
     cout << "test_simple_feasibility_check finished\n";
     //test_cost_operations();
 }

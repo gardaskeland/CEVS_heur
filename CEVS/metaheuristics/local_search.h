@@ -5,7 +5,7 @@
 #include "../graph.h"
 #include "../operators/add_node.h"
 #include "../operators/greedy_merge.h"
-#include "../bookkeep.h"
+#include "../bookkeep/bookkeep.h"
 #include <set>
 #include <vector>
 #include <utility>
