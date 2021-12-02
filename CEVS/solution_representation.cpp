@@ -85,6 +85,14 @@ set<int> SolutionRepresentation::get_node_to_clusters(int vi) {
     return node_in_clusters[vi];
 }
 
+map<int, set<int>> SolutionRepresentation::get_clusters() {
+    return clusters;
+}
+
+map<int, set<int>> SolutionRepresentation::get_node_in_clusters() {
+    return node_in_clusters;
+}
+
 void SolutionRepresentation::add_set(set<int> s) {
     if (clusters.size() == 0) {
         clusters[0] = s;
@@ -231,12 +239,13 @@ tuple<int, int, int> SolutionRepresentation::cost_operations(Graph g) {
     return result;
 }
 
+
 int SolutionRepresentation::cost_solution(Graph g) {
     tuple<int, int, int> result = cost_operations(g);
     return get<0>(result) + get<1>(result) + get<2>(result);
 }
 
-//Don't think this will actually work, since we would need to copy the sets that are value here as well.
+
 SolutionRepresentation SolutionRepresentation::copy_solution() {
     map<int, set<int>> new_clusters;
     new_clusters.insert(clusters.begin(), clusters.end());
@@ -247,6 +256,7 @@ SolutionRepresentation SolutionRepresentation::copy_solution() {
     new_sol.node_in_clusters = new_nodes_in_clusters;
     return new_sol;
 }
+
 
 void SolutionRepresentation::print_solution() {
     cout << "[";

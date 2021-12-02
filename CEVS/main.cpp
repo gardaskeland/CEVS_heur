@@ -7,6 +7,8 @@
 #include "read_file.h"
 #include "graph.h"
 #include "metaheuristics/local_search.h"
+#include "utility/shallow_solution.h"
+#include "bookkeep/b_merge.h"
 using namespace std;
 
 string integer_to_three_digits(int i) {
@@ -38,10 +40,15 @@ int main() {
         cout << "Working on file " << filename << "\n";
         vector<vector<int>> adj = read_gz_file(filename);
         Graph g(adj);
-        SolutionRepresentation sol = local_search(g);
+        ShallowSolution sol = local_search(g);
         cout << "Best solution:\n";
-        sol.print_solution();
-        cout << "Cost of solution: " << sol.cost_solution(g) << "\n"; 
+        SolutionRepresentation calculate_sol = SolutionRepresentation();
+        map<int, set<int>> clusters = sol.get_clusters();
+        for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
+            calculate_sol.add_set(it->second);
+        }
+        calculate_sol.print_solution();
+        cout << "Cost of solution: " << calculate_sol.cost_solution(g) << "\n"; 
     }
 
 }

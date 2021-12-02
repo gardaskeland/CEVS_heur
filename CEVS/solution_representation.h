@@ -53,6 +53,17 @@ class SolutionRepresentation
     set<int> get_set(int si);
 
     /**
+     * Gets a reference to the map storing the sets in the solution representation.
+     */
+    map<int, set<int>> get_clusters();
+
+    /**
+     * Gets a reference to the map storing the nodes mapped to their sets in the solution
+     * representation.
+     */
+    map<int, set<int>> get_node_in_clusters();
+
+    /**
      * Gets a reference to the set telling which clusters node vi is in.
      */ 
     set<int> get_node_to_clusters(int vi);

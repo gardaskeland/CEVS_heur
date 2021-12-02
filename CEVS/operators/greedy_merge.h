@@ -27,7 +27,11 @@ void do_revert_merge(SolutionRepresentation &sol, Bookkeep &book);
 
 void greedy_merge(Graph &g, SolutionRepresentation &sol, Bookkeep &book);
 
-void weighted_random_merge(Graph &g, SolutionRepresentation &sol, Bookkeep &book);
+/**
+ * Finds a weighted random choice of best pairs of sets in sol to merge. Returns the
+ * change in cost after executing the merge.
+ */
+int weighted_random_merge(Graph &g, SolutionRepresentation &sol);
 
 
 #endif

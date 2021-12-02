@@ -185,7 +185,69 @@ map<int, pair<int, int>> find_cost_of_merges(Graph &g, SolutionRepresentation &s
     return cost_of_merges;
 }
 
-//TODO: Test this. Not too complex, so can probably be done when running a simlated annealing once we have a few more operators.
+/**
+ * Return the cost difference in the total cost function of the graph after executing the merge of
+ * sets with indices si and sj.
+ * 
+ * Deletions: When merging two sets, some edges may no longer need to be deleted: Those that
+ * have one endpoint in si and one in sj.
+ * 
+ * Additions: When merging two sets, some edges must be added, which are for pairs of nodes
+ * that are in the same set after merging and do not have an edge.
+ * 
+ * Splitting: When merging sets, nodes that are common to both sets must be split one time less.
+ */
+int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj) {
+    set<int> nodes_si = sol.get_set(si);
+    set<int> nodes_sj = sol.get_set(sj);
+    int cost = 0;
+    vector<int> v(nodes_si.size() + nodes_sj.size());
+    set<int> v_clusters;
+    set<int> w_clusters;
+    bool count;
+
+
+    //deletion
+    for (int v : nodes_si) {
+        //deletion
+        for (int w : g.adj[v]) {
+            //if w is not in nodes_sj
+            if (!(nodes_sj.find(w) != nodes_sj.end())) {
+                continue;
+            }
+            v_clusters = sol.get_node_to_clusters(v);
+            w_clusters = sol.get_node_to_clusters(w);
+            count = true;
+            //Since both vertices are in the same cluster, it is not deleted.
+            for (int c_v : v_clusters) {
+                if (w_clusters.find(c_v) != w_clusters.end()) {
+                    count = false;
+                    break;
+                }
+            }
+            if (count) {
+                //Since after merge there is no need to delete the edge
+                cost -= 1;
+            }
+        }
+        for (int w : nodes_sj) {
+            if (nodes_si.find(w) != nodes_si.end()) {
+                continue;
+            }
+            if (!g.has_edge(v, w)) {
+                cost += 1;
+            }
+        }
+
+        if (nodes_sj.find(v) != nodes_sj.end()) {
+            // vertex v must be split one time less after merge.
+            cost -= 1;
+        }
+    }
+    return cost;
+}
+
+
 void greedy_merge(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
     //Stores the cost of each merge. Negative means total cost improves.
     if (sol.num_sets() <= 1) {
@@ -214,9 +276,11 @@ void greedy_merge(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
     sol.merge(to_merge.first, to_merge.second);
 }
 
-void weighted_random_merge(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
+//TODO: Test cost-calculation here, see that the function works somewhat properly.
+// Implement pq update and selection as well. Maybe use simpler cost function instead?
+int weighted_random_merge(Graph &g, SolutionRepresentation &sol) {
     if (sol.num_sets() <= 1) {
-        return;
+        return 0;
     }
 
     map<int, pair<int, int>> cost_of_merges = find_cost_of_merges(g, sol);
@@ -235,13 +299,22 @@ void weighted_random_merge(Graph &g, SolutionRepresentation &sol, Bookkeep &book
     }
 
     pair<int, int> to_merge = it->second;
+    int cost = cost_diff_after_merge(g, sol, to_merge.first, to_merge.second);
+    sol.book.b_merge.si = to_merge.first;
+    sol.book.b_merge.sj = to_merge.second;
+    //sol.book.b_merge.map_merge_cost[to_merge] = cost;
+    //pair<int, pair<int, int>> to_pq(cost, to_merge);
+    //sol.book.b_merge.pq_merge_cost.push(to_pq);
+    return cost;
 
+    /**
     book.revert_merge_ind[0] = to_merge.first;
     book.revert_merge_ind[1] = to_merge.second;
     book.revert_merge_sets[0] = sol.get_set(to_merge.first);
     book.revert_merge_sets[1] = sol.get_set(to_merge.second);
+    */
 
-    sol.merge(to_merge.first, to_merge.second);
+    //sol.merge(to_merge.first, to_merge.second);
 
 }
 

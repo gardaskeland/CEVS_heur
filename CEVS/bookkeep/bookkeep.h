@@ -16,7 +16,7 @@ class Bookkeep {
         int revert_add_node[2];
         int revert_merge_ind[2];
         set<int> revert_merge_sets[2];
-        BMerge b_merge();
+        BMerge b_merge;
 
 };
 
