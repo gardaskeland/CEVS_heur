@@ -32,7 +32,7 @@ int main() {
 
     ostringstream oss;
     string filename;
-    for (int i = 1; i < 4; i = i + 2) {
+    for (int i = 1; i < 10; i = i + 2) {
         oss.clear();
         oss.str(string());
         oss << "../../../heur/heur" << integer_to_three_digits(i) << ".gr";

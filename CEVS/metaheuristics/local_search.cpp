@@ -6,7 +6,7 @@ ShallowSolution local_search(Graph g) {
     ShallowSolution best_solution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
     int current_cost = current_solution.cost_solution(g);
     int best_cost = current_cost;
-    int num_operations = 100;
+    int num_operations = 3000;
     int weights[2] = {50, 50}; // should sum to 100.
     int choice;
     Bookkeep book;
@@ -60,7 +60,7 @@ ShallowSolution local_search(Graph g) {
             best_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
         }
 
-        cout << "Current cost: " << current_cost << "\n";
+        if (i % 500 == 0) cout << "Current cost: " << current_cost << "\n";
         //current_solution.print_solution();
     }
 

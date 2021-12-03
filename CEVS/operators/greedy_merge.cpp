@@ -207,7 +207,7 @@ int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj)
     bool count;
 
 
-    //deletion
+
     for (int v : nodes_si) {
         //deletion
         for (int w : g.adj[v]) {
@@ -230,6 +230,7 @@ int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj)
                 cost -= 1;
             }
         }
+        //addition
         for (int w : nodes_sj) {
             if (nodes_si.find(w) != nodes_si.end()) {
                 continue;
@@ -245,6 +246,25 @@ int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj)
         }
     }
     return cost;
+}
+
+/**
+ * @brief Uses the difference between before and after merge as measure instead of the local cost.
+ * Returns a sorted map of the cost of merging each pair mapped to the pair.
+ * 
+ * @param g 
+ * @param sol 
+ * @return map<int, pair<int, int>> 
+ */
+map<int, pair<int, int>> find_cost_of_merges_diff(Graph &g, SolutionRepresentation &sol) {
+    map<int, pair<int, int>> cost_of_merges;
+    vector<int> indices = sol.get_set_indices();
+    for (int i = 0; i < indices.size() - 1; i++) {
+        for (int j = i + 1; j < indices.size(); j++) {
+            cost_of_merges[cost_diff_after_merge(g, sol, indices[i], indices[j])] = pair<int, int>(indices[i], indices[j]);
+        }
+    }
+    return cost_of_merges;
 }
 
 
@@ -276,14 +296,18 @@ void greedy_merge(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
     sol.merge(to_merge.first, to_merge.second);
 }
 
-//TODO: Test cost-calculation here, see that the function works somewhat properly.
-// Implement pq update and selection as well. Maybe use simpler cost function instead?
+
+
+//TODO: 
+// Implement pq update and selection.
+//May want to have on operator that uses local cost (best results for case 001) and one
+//operator that uses cost_diff_after_merge.
 int weighted_random_merge(Graph &g, SolutionRepresentation &sol) {
     if (sol.num_sets() <= 1) {
         return 0;
     }
 
-    map<int, pair<int, int>> cost_of_merges = find_cost_of_merges(g, sol);
+    map<int, pair<int, int>> cost_of_merges = find_cost_of_merges_diff(g, sol);
 
     int ind = weighted_random_index(10, cost_of_merges.size(), 2);
 
