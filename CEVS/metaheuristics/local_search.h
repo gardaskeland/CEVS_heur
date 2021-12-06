@@ -7,6 +7,7 @@
 #include "../operators/greedy_merge.h"
 #include "../bookkeep/bookkeep.h"
 #include "../utility/shallow_solution.h"
+#include "../utility/segment_tree.h"
 #include <set>
 #include <vector>
 #include <utility>
@@ -16,7 +17,7 @@
  * Uses a local search metaheuristic to find a solution for CEVS.
  * Operators: add_node and weighted_average greedy_merge.
  */
-ShallowSolution local_search(Graph g);
+ShallowSolution local_search(Graph g, int num_operations);
 
 
 

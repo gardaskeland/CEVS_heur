@@ -32,7 +32,8 @@ int main() {
 
     ostringstream oss;
     string filename;
-    for (int i = 1; i < 10; i = i + 2) {
+    int num_operations = 10;
+    for (int i = 1; i < 2; i = i + 2) {
         oss.clear();
         oss.str(string());
         oss << "../../../heur/heur" << integer_to_three_digits(i) << ".gr";
@@ -40,9 +41,9 @@ int main() {
         cout << "Working on file " << filename << "\n";
         vector<vector<int>> adj = read_gz_file(filename);
         Graph g(adj);
-        ShallowSolution sol = local_search(g);
+        ShallowSolution sol = local_search(g, num_operations);
         cout << "Best solution:\n";
-        SolutionRepresentation calculate_sol = SolutionRepresentation();
+        SolutionRepresentation calculate_sol = SolutionRepresentation(num_operations);
         map<int, set<int>> clusters = sol.get_clusters();
         for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
             calculate_sol.add_set(it->second);

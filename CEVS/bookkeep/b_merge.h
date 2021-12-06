@@ -24,8 +24,11 @@ class BMerge {
         int si;
         // the index of one of the sets that may be merged
         int sj;
+        //Stores the number of the most recent merge operation executed by the metaheuristic algorithm
+        int last_merge_operation;
 
-        // Stores the cost of merging the sets with indices given in the pair
+        // Stores the cost of merging the sets with indices given in the pair. Must call minmax on pairs being
+        // inserted or queried.
         map<pair<int, int>, int> map_merge_cost;
         // Sorts the pairs by lowest merge_cost. Need to check that the value is still the same in
         // map_merge_cost while popping.

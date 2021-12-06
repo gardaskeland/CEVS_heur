@@ -10,6 +10,8 @@
 #include <utility>
 #include <iostream>
 #include <cmath>
+#include <algorithm>
+#include "../utility/segment_tree.h"
 
 using namespace std;
 

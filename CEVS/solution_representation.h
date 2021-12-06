@@ -8,6 +8,13 @@
 #include <tuple>
 #include "graph.h"
 #include "bookkeep/bookkeep.h"
+#include "utility/segment_tree.h"
+#include <map>
+#include <set>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+
 using namespace std;
 
 class SolutionRepresentation
@@ -22,9 +29,11 @@ class SolutionRepresentation
         // the values defining how to execute an operation we how found the cost of executing.
         Bookkeep book;
     
-    SolutionRepresentation() {
+    SolutionRepresentation(int operations) {
         clusters = map<int, set<int>>();
         node_in_clusters = map<int, set<int>>();
+        Bookkeep b(operations);
+        book = b;
     }
 
     /*

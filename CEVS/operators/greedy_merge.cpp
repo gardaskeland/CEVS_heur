@@ -210,6 +210,9 @@ int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj)
 
     for (int v : nodes_si) {
         //deletion
+        //This makes it so that the cost of a merge can be affected even though
+        //neither of the two clusters are changed. So to be completely correct,
+        //we would need to calculate for all clusters. Same goes for addition.
         for (int w : g.adj[v]) {
             //if w is not in nodes_sj
             if (!(nodes_sj.find(w) != nodes_sj.end())) {
@@ -259,9 +262,32 @@ int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj)
 map<int, pair<int, int>> find_cost_of_merges_diff(Graph &g, SolutionRepresentation &sol) {
     map<int, pair<int, int>> cost_of_merges;
     vector<int> indices = sol.get_set_indices();
+    if (sol.book.b_merge.map_merge_cost.size() == 0) {
+        for (int i = 0; i < indices.size() - 1; i++) {
+            for (int j = i + 1; j < indices.size(); j++) {
+                cost_of_merges[cost_diff_after_merge(g, sol, indices[i], indices[j])] = pair<int, int>(indices[i], indices[j]);
+            }
+        }
+    } else {
+        //Updating the cost of merging clustered altered since last time with new clusters.
+        set<int> modified_clusters = sol.book.modified_clusters.query(sol.book.b_merge.last_merge_operation, sol.book.operation_number - 1);
+        for (int c : modified_clusters) {
+            if (!(sol.get_clusters().find(c) != sol.get_clusters().end())) continue;
+            
+            for (int i : indices) {
+                //sol.print_solution();
+                //cout << 15 << "\n";
+                if (c == i) {
+                    continue;
+                }
+                //cout << c << " and " << i << "\n";
+                sol.book.b_merge.map_merge_cost[minmax(c, i)] = cost_diff_after_merge(g, sol, c, i);
+            }
+        }
+    }
     for (int i = 0; i < indices.size() - 1; i++) {
         for (int j = i + 1; j < indices.size(); j++) {
-            cost_of_merges[cost_diff_after_merge(g, sol, indices[i], indices[j])] = pair<int, int>(indices[i], indices[j]);
+            cost_of_merges[sol.book.b_merge.map_merge_cost[minmax(indices[i],indices[j])]] = pair<int, int>(indices[i], indices[j]);
         }
     }
     return cost_of_merges;
@@ -324,6 +350,8 @@ int weighted_random_merge(Graph &g, SolutionRepresentation &sol) {
 
     pair<int, int> to_merge = it->second;
     int cost = cost_diff_after_merge(g, sol, to_merge.first, to_merge.second);
+    if (cost != it -> first) cout << "Issue: cost in cost_of_merges different from calculated:  " \
+         << cost << " vs " << it->first << "\n";
     sol.book.b_merge.si = to_merge.first;
     sol.book.b_merge.sj = to_merge.second;
     //sol.book.b_merge.map_merge_cost[to_merge] = cost;

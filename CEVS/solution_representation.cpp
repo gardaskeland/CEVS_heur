@@ -1,8 +1,3 @@
-
-#include <map>
-#include <set>
-#include <vector>
-#include <iostream>
 #include "solution_representation.h"
 
 using namespace std;
@@ -34,6 +29,7 @@ void SolutionRepresentation::add(int node, int si) {
     s = node_in_clusters[node];
     s.insert(si);
     node_in_clusters[node] = s;
+    book.modified_clusters.update_time(si, book.operation_number);
 }
 
 void SolutionRepresentation::remove(int node, int si) {
@@ -58,7 +54,13 @@ void SolutionRepresentation::merge(int si, int sj) {
         node_in_clusters[*it] = nodes_to_sets;
     }
     clusters[si] = s1;
-    clusters.erase(sj);
+    remove_set(sj);
+
+    //Updating book, erasing sj.
+    book.modified_clusters.update_time(si, book.operation_number);
+    for (int i : get_set_indices()) {
+        book.b_merge.map_merge_cost.erase(minmax(sj, i));
+    }
 }
 
 //TODO: test
@@ -107,11 +109,16 @@ void SolutionRepresentation::add_set(set<int> s) {
     for (int i : s) {
         node_in_clusters[i].insert(biggest + 1);
     }
+    biggest = biggest + 1;
+    book.modified_clusters.update_time(biggest, book.operation_number);
 }
+
 
 void SolutionRepresentation::add_set_ind(int si, set<int> s) {
     clusters[si] = s;
+    book.modified_clusters.update_time(si, book.operation_number);
 }
+
 
 void SolutionRepresentation::remove_set(int si) {
     if (!(clusters.find(si) != clusters.end())) {
@@ -125,6 +132,7 @@ void SolutionRepresentation::remove_set(int si) {
     }
     clusters.erase(si);
 }
+
 
 vector<int> SolutionRepresentation::get_set_indices() {
     vector<int> vec;
@@ -146,6 +154,7 @@ void printEdgeChanges(set<pair<int, int>> deletions, set<pair<int, int>> additio
     }
 }
 
+
 void print_integer_set(set<int> s) {
     cout << "[";
     for (set<int>::iterator it = s.begin(); it != s.end(); ++it) {
@@ -153,6 +162,7 @@ void print_integer_set(set<int> s) {
     }
     cout << "]";
 }
+
 
 tuple<int, int, int> SolutionRepresentation::cost_operations(Graph g) {
     set<pair<int, int>> edge_deletions;
@@ -251,7 +261,7 @@ SolutionRepresentation SolutionRepresentation::copy_solution() {
     new_clusters.insert(clusters.begin(), clusters.end());
     map<int, set<int>> new_nodes_in_clusters;
     new_nodes_in_clusters.insert(node_in_clusters.begin(), node_in_clusters.end());
-    SolutionRepresentation new_sol;
+    SolutionRepresentation new_sol(number_nodes);
     new_sol.clusters = new_clusters;
     new_sol.node_in_clusters = new_nodes_in_clusters;
     return new_sol;

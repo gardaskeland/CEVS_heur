@@ -3,6 +3,7 @@
 
 #include <set>
 #include "b_merge.h"
+#include "../utility/segment_tree.h"
 
 using namespace std;
 
@@ -16,7 +17,22 @@ class Bookkeep {
         int revert_add_node[2];
         int revert_merge_ind[2];
         set<int> revert_merge_sets[2];
+        int operation_number;
+        SegmentTree<int> modified_clusters;
         BMerge b_merge;
+
+    Bookkeep(int operations) {
+        operation_number = 0;
+        SegmentTree<int> sgt(operations);
+        modified_clusters = sgt;
+    }
+
+    Bookkeep() {
+        operation_number = 0;
+        SegmentTree<int> sgt(1);
+        modified_clusters = sgt;
+
+    }
 
 };
 
