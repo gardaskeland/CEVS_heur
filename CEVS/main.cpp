@@ -32,8 +32,8 @@ int main() {
 
     ostringstream oss;
     string filename;
-    int num_operations = 10;
-    for (int i = 1; i < 2; i = i + 2) {
+    int num_operations = 2000;
+    for (int i = 1; i < 10; i = i + 2) {
         oss.clear();
         oss.str(string());
         oss << "../../../heur/heur" << integer_to_three_digits(i) << ".gr";

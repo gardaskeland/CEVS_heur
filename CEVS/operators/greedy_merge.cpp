@@ -335,7 +335,7 @@ int weighted_random_merge(Graph &g, SolutionRepresentation &sol) {
 
     map<int, pair<int, int>> cost_of_merges = find_cost_of_merges_diff(g, sol);
 
-    int ind = weighted_random_index(10, cost_of_merges.size(), 2);
+    int ind = weighted_random_index(10, cost_of_merges.size(), 1.7);
 
     //cout << "r = " << r << "\n";
     //cout << "ind: " << ind << "\n";
@@ -350,8 +350,6 @@ int weighted_random_merge(Graph &g, SolutionRepresentation &sol) {
 
     pair<int, int> to_merge = it->second;
     int cost = cost_diff_after_merge(g, sol, to_merge.first, to_merge.second);
-    if (cost != it -> first) cout << "Issue: cost in cost_of_merges different from calculated:  " \
-         << cost << " vs " << it->first << "\n";
     sol.book.b_merge.si = to_merge.first;
     sol.book.b_merge.sj = to_merge.second;
     //sol.book.b_merge.map_merge_cost[to_merge] = cost;

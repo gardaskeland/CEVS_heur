@@ -42,6 +42,14 @@ class SolutionRepresentation
     void initial_solution(int n);
 
     /**
+     * @brief Modifies book according to modification of set si. That is, all sets
+     * that have common vertices with si are added to modified_clusters in book.
+     * 
+     * @param si 
+     */
+    void changed_set(int si);
+
+    /**
      *Add node to set si
      */
     void add(int node, int si);

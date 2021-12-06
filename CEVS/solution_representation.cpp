@@ -22,6 +22,18 @@ set<int> SolutionRepresentation::get_set(int si) {
     return clusters[si];
 }
 
+void SolutionRepresentation::changed_set(int si) {
+    set<int> neighbour_sets;
+    for (int i : clusters[si]) {
+        for (int j : node_in_clusters[i]) {
+            neighbour_sets.insert(j);
+        }
+    }
+    vector<int> vec;
+    for (int i : neighbour_sets) vec.push_back(i);
+    book.modified_clusters.update_time(vec, book.operation_number);
+}
+
 void SolutionRepresentation::add(int node, int si) {
     set<int> s = clusters[si];
     s.insert(node);
@@ -29,7 +41,7 @@ void SolutionRepresentation::add(int node, int si) {
     s = node_in_clusters[node];
     s.insert(si);
     node_in_clusters[node] = s;
-    book.modified_clusters.update_time(si, book.operation_number);
+    changed_set(si);
 }
 
 void SolutionRepresentation::remove(int node, int si) {
@@ -54,10 +66,10 @@ void SolutionRepresentation::merge(int si, int sj) {
         node_in_clusters[*it] = nodes_to_sets;
     }
     clusters[si] = s1;
-    remove_set(sj);
 
     //Updating book, erasing sj.
-    book.modified_clusters.update_time(si, book.operation_number);
+    remove_set(sj);
+    changed_set(si);
     for (int i : get_set_indices()) {
         book.b_merge.map_merge_cost.erase(minmax(sj, i));
     }
@@ -109,14 +121,13 @@ void SolutionRepresentation::add_set(set<int> s) {
     for (int i : s) {
         node_in_clusters[i].insert(biggest + 1);
     }
-    biggest = biggest + 1;
-    book.modified_clusters.update_time(biggest, book.operation_number);
+    changed_set(biggest + 1);
 }
 
 
 void SolutionRepresentation::add_set_ind(int si, set<int> s) {
     clusters[si] = s;
-    book.modified_clusters.update_time(si, book.operation_number);
+    changed_set(si);
 }
 
 
