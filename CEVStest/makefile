@@ -1,7 +1,9 @@
 cevstest: main.o test_solution_representation.o solution_representation.o read_file.o graph.o\
- 		test_greedy_merge.o greedy_merge.o read_sol.o test_add_node.o add_node.o weighted_random.o
+ 		test_greedy_merge.o greedy_merge.o read_sol.o test_add_node.o add_node.o weighted_random.o \
+		 segment_tree.o test_segment_tree.o
 	g++ -o cevstest main.o test_solution_representation.o solution_representation.o read_file.o\
-		graph.o test_greedy_merge.o greedy_merge.o read_sol.o test_add_node.o add_node.o weighted_random.o
+		graph.o test_greedy_merge.o greedy_merge.o read_sol.o test_add_node.o add_node.o weighted_random.o \
+		segment_tree.o test_segment_tree.o
 
 main.o: main.cpp test_solution_representation.h
 	g++ -c main.cpp
@@ -37,6 +39,12 @@ read_sol.o: read_sol.cpp read_sol.h
 weighted_random.o: ../CEVS/utility/weighted_random.cpp ../CEVS/utility/weighted_random.h
 	g++ -c ../CEVS/utility/weighted_random.cpp
 
+segment_tree.o: ../CEVS/utility/segment_tree.cpp ../CEVS/utility/segment_tree.h
+	g++ -c  ../CEVS/utility/segment_tree.cpp
+
+test_segment_tree.o: test_other/test_segment_tree.cpp test_other/test_segment_tree.h
+	g++ -c test_other/test_segment_tree.cpp;
+
 clean:
-	rm *.o cevstest
+	del *.o cevstest
 
