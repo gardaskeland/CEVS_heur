@@ -43,4 +43,4 @@ segment_tree.o: utility/segment_tree.cpp utility/segment_tree.h
 	g++ -c -g utility/segment_tree.cpp
 
 clean:
-	del *.o cevs
+	rm *.o cevs

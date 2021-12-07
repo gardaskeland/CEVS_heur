@@ -34,6 +34,7 @@ void SolutionRepresentation::changed_set(int si) {
     book.modified_clusters.update_time(vec, book.operation_number);
 }
 
+//slow. Change?
 void SolutionRepresentation::add(int node, int si) {
     set<int> s = clusters[si];
     s.insert(node);
@@ -44,6 +45,7 @@ void SolutionRepresentation::add(int node, int si) {
     changed_set(si);
 }
 
+//slow. Change?
 void SolutionRepresentation::remove(int node, int si) {
     set<int> s = clusters[si];
     s.erase(node);
