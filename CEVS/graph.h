@@ -19,6 +19,8 @@ class Graph {
         vector<vector<int>> adj;
 
         vector<vector<int>> adj_matrix;
+    
+    Graph();
 
     Graph(vector<vector<int>> adj_lst) {
         adj = adj_lst;
@@ -49,8 +51,6 @@ class Graph {
      */
     bool has_edge(int u, int v);
 };
-
-//TODO: Ikke sikkert jeg trenger så mye mer her ennå.
 
 
 #endif
