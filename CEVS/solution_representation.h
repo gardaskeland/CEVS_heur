@@ -29,6 +29,13 @@ class SolutionRepresentation
         // the values defining how to execute an operation we how found the cost of executing.
         Bookkeep book;
     
+    SolutionRepresentation() {
+        clusters = map<int, set<int>>();
+        node_in_clusters = map<int, set<int>>();
+        Bookkeep b(1);
+        book = b;
+    }
+
     SolutionRepresentation(int operations) {
         clusters = map<int, set<int>>();
         node_in_clusters = map<int, set<int>>();

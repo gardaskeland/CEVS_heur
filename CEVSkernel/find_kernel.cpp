@@ -110,6 +110,64 @@ vector<set<int>> find_connected_components(Graph &g) {
     return components;
 }
 
+vector<vector<int>> alter_vector_set_int(vector<set<int>> &vec) {
+    vector<vector<int>> to_return;
+    vector<int> new_vec;
+    for (set<int> s : vec) {
+        new_vec = vector<int>();
+        for (int i : s) {
+            new_vec.push_back(i);
+        }
+        to_return.push_back(new_vec);
+    }
+    return to_return;
+}
+
+WeightedGraph create_kernel_graph(Graph &g, RevertKernel &revert, vector<set<int>> &remaining) {
+    map<int, int> nodes_to_new_nodes;
+    int num_nodes = remaining.size();
+    int count = 0;
+    vector<int> weights;
+    for (set<int> s : remaining) {
+        for (int v : s) {
+            nodes_to_new_nodes[v] = count;
+        }
+        weights.push_back(s.size());
+        count += 1;
+    }
+
+    vector<set<int>> adj_lst(remaining.size());
+    for (int i = 0; i < g.n; i++) {
+        for(int v : g.adj[i]) {
+            int a = nodes_to_new_nodes[i];
+            int b = nodes_to_new_nodes[v];
+            if (a != b) {
+                adj_lst[a].insert(b);
+                adj_lst[b].insert(a);
+            }
+        }
+    }
+
+    vector<vector<int>> adj_lst_2 = alter_vector_set_int(adj_lst);
+
+    return WeightedGraph(adj_lst_2, weights);
+
+}
+
+//Checks if a set of nodes of G is a cluster in G so that all nodes have
+//edges to each other.
+bool is_cluster(Graph &g, set<int> &nodes) {
+    for (int i : nodes) {
+        for (int j : nodes) {
+            if (i <= j) continue;
+            if (!g.has_edge(i, j)) {
+                return false;
+            }
+        }
+    } return true;
+}
+
+
 WeightedGraph find_kernel(Graph &g, int &k, RevertKernel &revert) {
     vector<vector<set<int>>> hashed_cc = find_hashed_cc(g, 409);
     vector<set<int>> connected_components = find_connected_components(g);
@@ -118,6 +176,7 @@ WeightedGraph find_kernel(Graph &g, int &k, RevertKernel &revert) {
     int fetch;
     int index;
     for (set<int> comp : connected_components) {
+        if (!is_cluster(g, comp)) continue;
         hashed = sum_hash(comp, 409);
         index = 0;
         to_remove = -1;
@@ -136,18 +195,19 @@ WeightedGraph find_kernel(Graph &g, int &k, RevertKernel &revert) {
         }
     }
 
-    vector<set<int>> all;
+    vector<set<int>> remaining;
     for (vector<set<int>> vec : hashed_cc) {
         for (set<int> s : vec) {
             if (s.size() > 0) {
-                all.push_back(s);
+                remaining.push_back(s);
             }
         }
     }
 
-    WeightedGraph wg = create_kernel_graph(g, revert, all);
+    revert.other_cc = remaining;
+    WeightedGraph wg = create_kernel_graph(g, revert, remaining);
     return wg;
-
+}
     //For each remaining cc, give a node in the new graph. Index from nodes in G to
     //nodes in G'.
     //If there is an edge uv in E(G), add edge C(U) to C(V) in E(G').

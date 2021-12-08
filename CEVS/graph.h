@@ -20,7 +20,10 @@ class Graph {
 
         vector<vector<int>> adj_matrix;
     
-    Graph();
+    Graph() {
+        adj = vector<vector<int>>();
+        n = 0;
+    }
 
     Graph(vector<vector<int>> adj_lst) {
         adj = adj_lst;

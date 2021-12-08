@@ -1,9 +1,9 @@
 cevstest: main.o test_solution_representation.o solution_representation.o read_file.o graph.o\
  		test_greedy_merge.o greedy_merge.o read_sol.o test_add_node.o add_node.o weighted_random.o \
-		 segment_tree.o test_segment_tree.o
+		 segment_tree.o test_segment_tree.o find_kernel.o test_kernel.o
 	g++ -o cevstest main.o test_solution_representation.o solution_representation.o read_file.o\
 		graph.o test_greedy_merge.o greedy_merge.o read_sol.o test_add_node.o add_node.o weighted_random.o \
-		segment_tree.o test_segment_tree.o
+		segment_tree.o test_segment_tree.o find_kernel.o test_kernel.o
 
 main.o: main.cpp test_solution_representation.h
 	g++ -c -g main.cpp
@@ -44,6 +44,12 @@ segment_tree.o: ../CEVS/utility/segment_tree.cpp ../CEVS/utility/segment_tree.h
 
 test_segment_tree.o: test_other/test_segment_tree.cpp test_other/test_segment_tree.h
 	g++ -c -g test_other/test_segment_tree.cpp
+
+find_kernel.o: ../CEVSkernel/find_kernel.cpp ../CEVSkernel/find_kernel.h ../CEVSkernel/revert_kernel.h
+	g++ -c -g ../CEVSkernel/find_kernel.cpp
+
+test_kernel.o: test_kernel/test_kernel.cpp test_kernel/test_kernel.h
+	g++ -c -g test_kernel/test_kernel.cpp
 
 clean:
 	del *.o cevstest

@@ -28,6 +28,8 @@ class RevertKernel {
     //All non-isolated cc in.
     vector<set<int>> other_cc;
 
+    //Not needed at the moment, as the first node corresponds to the first clique in
+    //other_cc, the second to the second and i to i further.
     //Maps nodes in the weighted graph to corresponding critical cliques in other_cc.
     map<int, int> nodes_to_cc;
 

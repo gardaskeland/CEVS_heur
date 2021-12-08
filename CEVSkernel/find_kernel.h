@@ -15,4 +15,8 @@
  */
 WeightedGraph find_kernel(Graph &g, int &k, RevertKernel &revert);
 
+vector<set<int>> find_connected_components(Graph &g);
+
+
+
 #endif 
