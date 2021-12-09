@@ -52,5 +52,5 @@ test_kernel.o: test_kernel/test_kernel.cpp test_kernel/test_kernel.h
 	g++ -c -g test_kernel/test_kernel.cpp
 
 clean:
-	del *.o cevstest
+	rm *.o cevstest
 

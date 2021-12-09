@@ -176,7 +176,7 @@ void print_integer_set(set<int> s) {
     cout << "]";
 }
 
-
+//TODO: Change so that it uses the weights of edges and vertices.
 tuple<int, int, int> SolutionRepresentation::cost_operations(Graph g) {
     set<pair<int, int>> edge_deletions;
     set<pair<int, int>> edge_additions;

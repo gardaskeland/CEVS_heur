@@ -15,6 +15,16 @@
  */
 WeightedGraph find_kernel(Graph &g, int &k, RevertKernel &revert);
 
+/**
+ * Returns the critical clique graph derived from G. Information about mapping
+ * of nodes, removed isolated cliques etc. can be found in RevertKernel.
+ * Can be optimized.
+ */
+WeightedGraph find_critical_clique_graph(Graph &g, RevertKernel &revert);
+
+/**
+ * Finds the connected components of graph g. Uses dfs with stack.
+ */
 vector<set<int>> find_connected_components(Graph &g);
 
 

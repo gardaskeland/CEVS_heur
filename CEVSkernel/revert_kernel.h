@@ -22,6 +22,9 @@ class RevertKernel {
     //Stores the k of the kernelized graph, k' <= f(k) for some function f.
     int k_marked;
 
+    //Stores the number of edges in the reduced graph returned.
+    int num_edges;
+
     //All isolated critical cliques removed by the kernel algorithm.
     vector<set<int>> isolated_cc;
 

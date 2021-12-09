@@ -11,6 +11,7 @@
 class WeightedGraph : public Graph {
     protected:
         vector<int> node_weights;
+        int num_edges;
     
     public:
 
@@ -30,19 +31,23 @@ class WeightedGraph : public Graph {
         WeightedGraph(vector<vector<int>> &adj_lst, vector<int> &weights) {
             adj = adj_lst;
             n = adj.size();
+            //cout << n << "\n";
             vector<int> to_add;
-            adj_matrix = vector<vector<int>>(n);
-            for (int i = 0; i < n; i++) {
-                to_add = vector<int>(n, 0);
-                for (int j : adj_lst[i]) {
-                    to_add[j] = 1;
-                }
-                for (int elm : to_add) {
-                    adj_matrix[i].push_back(elm);
+            if (n < 30000) {
+                adj_matrix = vector<vector<int>>(n);
+                for (int i = 0; i < n; i++) {
+                    to_add = vector<int>(n, 0);
+                    for (int j : adj_lst[i]) {
+                        to_add[j] = 1;
+                    }
+                    for (int elm : to_add) {
+                        adj_matrix[i].push_back(elm);
+                    }
                 }
             }
             node_weights = weights;
         }
+
 };
 
 #endif

@@ -7,9 +7,9 @@
 int sum_hash(set<int> s, int z) {
     int sum_of_s = 0;
     for (int i : s) {
-        sum_of_s += i;
+        sum_of_s  = (sum_of_s + i) % z;
     }
-    return sum_of_s % z;
+    return sum_of_s;
 }
 
 //Return true if the sets are equal, false if they are not.
@@ -23,6 +23,8 @@ bool compare_neighbourhoods(set<int> first, set<int> second) {
     return true;
 }
 
+//Inefficient. Better to copy the entire adjacency graph once and
+//add v to N(v) for each vertex v.
 set<int> find_closed_neighbourhood(Graph &g, int &v) {
     set<int> to_return;
     to_return.insert(v);
@@ -110,6 +112,7 @@ vector<set<int>> find_connected_components(Graph &g) {
     return components;
 }
 
+//Changes a vector of sets into a vector of vectors.
 vector<vector<int>> alter_vector_set_int(vector<set<int>> &vec) {
     vector<vector<int>> to_return;
     vector<int> new_vec;
@@ -123,6 +126,12 @@ vector<vector<int>> alter_vector_set_int(vector<set<int>> &vec) {
     return to_return;
 }
 
+/**
+ * Creates the critical clique graph where each clique in remaining corresponds to one vertex
+ * in the returned graph. Two vertices have an edge between them if there is an edge between
+ * all vertices in the union of the corresponding cliques. Each vertex has the size of
+ * its corresponding critical clique as weight.
+ */
 WeightedGraph create_kernel_graph(Graph &g, RevertKernel &revert, vector<set<int>> &remaining) {
     map<int, int> nodes_to_new_nodes;
     int num_nodes = remaining.size();
@@ -135,6 +144,7 @@ WeightedGraph create_kernel_graph(Graph &g, RevertKernel &revert, vector<set<int
         weights.push_back(s.size());
         count += 1;
     }
+    //cout << "ok5";
 
     vector<set<int>> adj_lst(remaining.size());
     for (int i = 0; i < g.n; i++) {
@@ -147,8 +157,22 @@ WeightedGraph create_kernel_graph(Graph &g, RevertKernel &revert, vector<set<int
             }
         }
     }
+    //cout << "ok6";
 
     vector<vector<int>> adj_lst_2 = alter_vector_set_int(adj_lst);
+    
+    //Should remove this for optimisation. 
+    int num_edges = 0;
+    for (vector<int> vec : adj_lst_2) {
+        for (int i: vec) {
+            num_edges += 1;
+        }
+    }
+    //cout << "ok7";
+    //Since each edge is counted twice.
+    revert.num_edges = num_edges / 2;
+
+    //cout << "ok8";
 
     return WeightedGraph(adj_lst_2, weights);
 
@@ -160,6 +184,7 @@ bool is_cluster(Graph &g, set<int> &nodes) {
     for (int i : nodes) {
         for (int j : nodes) {
             if (i <= j) continue;
+            //cout << j;
             if (!g.has_edge(i, j)) {
                 return false;
             }
@@ -168,16 +193,20 @@ bool is_cluster(Graph &g, set<int> &nodes) {
 }
 
 
-WeightedGraph find_kernel(Graph &g, int &k, RevertKernel &revert) {
-    vector<vector<set<int>>> hashed_cc = find_hashed_cc(g, 409);
+WeightedGraph find_critical_clique_graph(Graph &g, RevertKernel &revert) {
+    //probably a lot slower than is possible
+    vector<vector<set<int>>> hashed_cc = find_hashed_cc(g, 50000);
+    //cout << "ok";
     vector<set<int>> connected_components = find_connected_components(g);
+    //cout << "ok";
     int hashed;
     int to_remove;
     int fetch;
     int index;
     for (set<int> comp : connected_components) {
         if (!is_cluster(g, comp)) continue;
-        hashed = sum_hash(comp, 409);
+        //cout << "ok1";
+        hashed = sum_hash(comp, 50000);
         index = 0;
         to_remove = -1;
         for (set<int> cc : hashed_cc[hashed]) {
@@ -194,6 +223,7 @@ WeightedGraph find_kernel(Graph &g, int &k, RevertKernel &revert) {
             hashed_cc[hashed].erase(hashed_cc[hashed].begin() + index);
         }
     }
+    //cout << "ok2";
 
     vector<set<int>> remaining;
     for (vector<set<int>> vec : hashed_cc) {
@@ -203,9 +233,11 @@ WeightedGraph find_kernel(Graph &g, int &k, RevertKernel &revert) {
             }
         }
     }
+    //cout << "ok3";
 
     revert.other_cc = remaining;
     WeightedGraph wg = create_kernel_graph(g, revert, remaining);
+    //cout << "ok4";
     return wg;
 }
     //For each remaining cc, give a node in the new graph. Index from nodes in G to

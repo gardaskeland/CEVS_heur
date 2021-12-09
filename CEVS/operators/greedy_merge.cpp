@@ -196,6 +196,8 @@ map<int, pair<int, int>> find_cost_of_merges(Graph &g, SolutionRepresentation &s
  * that are in the same set after merging and do not have an edge.
  * 
  * Splitting: When merging sets, nodes that are common to both sets must be split one time less.
+ * 
+ * TODO: Change so that it uses the weights of edges and vertices.
  */
 int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj) {
     set<int> nodes_si = sol.get_set(si);

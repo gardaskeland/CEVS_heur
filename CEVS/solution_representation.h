@@ -127,6 +127,8 @@ class SolutionRepresentation
      * Return a tuple telling us the number of edge deletions, edge additions and
      * vertex splittings we need to get a cluster graph using the clusters given
      * by the solution representation.
+     * 
+     * TODO: Change so that it uses the weights of edges and vertices.
      */
     tuple<int, int, int> cost_operations(Graph g);
 

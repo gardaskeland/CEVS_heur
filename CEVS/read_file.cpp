@@ -27,12 +27,13 @@ vector<vector<int>> read_gz_file(string s) {
         adj[v - 1].push_back(u - 1);
     }
 
-    //cout << "Edges of graph: \n";
+    /**cout << "Edges of graph: \n";
     for (int i = 0; i < nodes; i++) {
         for (int j : adj[i]) {
             //cout << j << " ";
         }
         //cout << "\n";
     }
+    */
     return adj;
 }
