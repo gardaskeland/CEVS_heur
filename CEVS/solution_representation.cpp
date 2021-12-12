@@ -217,7 +217,7 @@ tuple<int, int, int> SolutionRepresentation::cost_operations(Graph g) {
                     opposite = pair<int, int>(v, i);
                     edge_deletions.insert(edge);
                     edge_deletions.insert(opposite);
-                    delete_counter += 1;
+                    delete_counter += g.get_edge_cost(i, v);
                 }
             }
         }
@@ -240,7 +240,7 @@ tuple<int, int, int> SolutionRepresentation::cost_operations(Graph g) {
                      opposite = pair<int, int>(*it, i);
                      edge_additions.insert(edge);
                      edge_additions.insert(opposite);
-                     add_counter += 1;
+                     add_counter += g.get_edge_cost(i, *it);
                  }
              }
          } 
@@ -251,7 +251,7 @@ tuple<int, int, int> SolutionRepresentation::cost_operations(Graph g) {
     for (int i = 0; i < g.n; i++) {
         sz = node_in_clusters[i].size();
         if (sz > 0) {
-            vs_counter += sz - 1;
+            vs_counter += g.get_node_weight(i) * (sz - 1);
         }
     }
 
@@ -284,9 +284,23 @@ SolutionRepresentation SolutionRepresentation::copy_solution() {
 void SolutionRepresentation::print_solution() {
     cout << "[";
     for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); ++it) {
-        cout << "[";
+        cout << "[" << it->first << ": ";
         for (int i : it->second) {
             cout << i << ", ";
+        }
+        cout << "], ";
+    }
+    cout << "]\n";
+}
+
+void SolutionRepresentation::print_node_in_clusters() {
+    cout << "[";
+    for (map<int, set<int>>::iterator it = node_in_clusters.begin(); it != node_in_clusters.end(); ++it) {
+        cout << "[" << it->first << ": ";
+        if ((it->second).size() > 0) {
+            for (int i : it->second) {
+                cout << i << ", ";
+            }
         }
         cout << "], ";
     }

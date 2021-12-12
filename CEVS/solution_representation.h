@@ -145,6 +145,8 @@ class SolutionRepresentation
 
     void print_solution();
 
+    void print_node_in_clusters();
+
 };
 
 void hey();

@@ -41,13 +41,14 @@ void do_revert_add_node(SolutionRepresentation &sol, Bookkeep &book);
 
 /**
  * Chooses a set with high relative out-degree and finds neighbour node of the set that is added to the set.
+ * Returns the cost of adding.
  */
-void add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book);
+int add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book);
 
 /**
- * Like the above, but uses weighted randomness to choose the set and neighbour.
+ * Like the above, but uses weighted randomness to choose the set and neighbour. Returns the cost of adding.
  */
-void weighted_random_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book);
+int weighted_random_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book);
 
 
 #endif

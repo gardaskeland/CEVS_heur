@@ -232,7 +232,7 @@ int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj)
             }
             if (count) {
                 //Since after merge there is no need to delete the edge
-                cost -= 1;
+                cost -= g.get_edge_cost(v, w);
             }
         }
         //addition
@@ -241,13 +241,13 @@ int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj)
                 continue;
             }
             if (!g.has_edge(v, w)) {
-                cost += 1;
+                cost += g.get_edge_cost(v, w);
             }
         }
 
         if (nodes_sj.find(v) != nodes_sj.end()) {
             // vertex v must be split one time less after merge.
-            cost -= 1;
+            cost -= g.get_node_weight(v);
         }
     }
     return cost;

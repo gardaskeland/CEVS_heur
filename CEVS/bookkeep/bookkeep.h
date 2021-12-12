@@ -4,6 +4,7 @@
 #include <set>
 #include "b_merge.h"
 #include "../utility/segment_tree.h"
+#include "b_add_node.h"
 
 using namespace std;
 
@@ -20,6 +21,7 @@ class Bookkeep {
         int operation_number;
         SegmentTree<int> modified_clusters;
         BMerge b_merge;
+        BAddNode b_add_node;
 
     Bookkeep(int operations) {
         operation_number = 0;
