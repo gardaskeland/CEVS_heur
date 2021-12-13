@@ -11,6 +11,8 @@
 #include <set>
 #include <vector>
 #include <utility>
+#include "../../CEVSkernel/find_kernel.h"
+#include "../weighted_graph.h"
 
 
 /**
@@ -19,7 +21,14 @@
  */
 ShallowSolution local_search(Graph g, int num_operations);
 
-
+/**
+ * @brief Find the critical clique graph of g and uses a local search heuristic on this graph.
+ * 
+ * @param g 
+ * @param num_operations 
+ * @return ShallowSolution 
+ */
+ShallowSolution local_search_on_cc(Graph g, int num_operations);
 
 
 #endif

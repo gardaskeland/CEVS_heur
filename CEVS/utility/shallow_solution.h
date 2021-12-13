@@ -16,7 +16,12 @@ class ShallowSolution {
         node_in_clusters = node_in_clusters_sol;
     }
 
+    ShallowSolution() {
+
+    }
+
     map<int, set<int>> get_clusters();
+
 };
 
 

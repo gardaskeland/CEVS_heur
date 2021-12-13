@@ -201,15 +201,18 @@ map<int, pair<int, int>> find_cost_of_merges(Graph &g, SolutionRepresentation &s
  */
 int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj) {
     set<int> nodes_si = sol.get_set(si);
+    for (int i : nodes_si) {
+        //cout << "node " << i << "\n";
+    }
     set<int> nodes_sj = sol.get_set(sj);
     int cost = 0;
-    vector<int> v(nodes_si.size() + nodes_sj.size());
+    //vector<int> v(nodes_si.size() + nodes_sj.size());
     set<int> v_clusters;
     set<int> w_clusters;
-    bool count;
+    bool count = true;
 
 
-
+    //cout << "ok0";
     for (int v : nodes_si) {
         //deletion
         //This makes it so that the cost of a merge can be affected even though
@@ -237,6 +240,7 @@ int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj)
         }
         //addition. Not checking if two nodes are in the same cluster, so we don't need to
         //count the addition
+        //cout << "ok2";
         for (int w : nodes_sj) {
             v_clusters = sol.get_node_to_clusters(v);
             w_clusters = sol.get_node_to_clusters(w);
@@ -252,12 +256,14 @@ int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj)
                 cost += g.get_edge_cost(v, w);
             }
         }
-
+        //cout << "ok3\n";
         if (nodes_sj.find(v) != nodes_sj.end()) {
             // vertex v must be split one time less after merge.
             cost -= g.get_node_weight(v);
         }
+        //cout << "ok4\n";
     }
+    //cout << "ok5\n";
     return cost;
 }
 
@@ -272,20 +278,32 @@ int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj)
 map<int, pair<int, int>> find_cost_of_merges_diff(Graph &g, SolutionRepresentation &sol) {
     map<int, pair<int, int>> cost_of_merges;
     vector<int> indices = sol.get_set_indices();
+    int temp = 0;
     if (sol.book.b_merge.last_merge_operation == -1) {
         cout << "precomputing map_merge_cost\n";
+        cout << indices.size();
         for (int i = 0; i < indices.size() - 1; i++) {
             for (int j = i + 1; j < indices.size(); j++) {
-                sol.book.b_merge.map_merge_cost[pair<int, int>(indices[i], indices[j])] = cost_diff_after_merge(g, sol, indices[i], indices[j]);
+                temp = cost_diff_after_merge(g, sol, indices[i], indices[j]);
+                //cout << "1\n";
+                sol.book.b_merge.map_merge_cost[pair<int, int>(indices[i], indices[j])] = temp; 
+                //cout << "2\n";
+                sol.book.b_merge.pq_merge_cost.push(pair<int, pair<int,int>>(temp, pair<int, int>(indices[i], indices[j])));
+                //cout << "3\n";
             }
         }
+        //cout << "ok\n";
     } else {
         //Updating the cost of merging clustered altered since last time with new clusters.
         set<int> modified_clusters = sol.book.modified_clusters.query(sol.book.b_merge.last_merge_operation, sol.book.operation_number - 1);
+        set<int> indices;
+        for (int i : sol.get_set_indices()) {
+            indices.insert(i);
+        }
         //cout << "in modified clusters: ";
         for (int c : modified_clusters) {
             //cout << c << ", ";
-            if (!(sol.get_clusters().find(c) != sol.get_clusters().end())) continue;
+            if (!(indices.find(c) != indices.end())) continue;
             
             for (int i : indices) {
                 //sol.print_solution();
@@ -294,11 +312,15 @@ map<int, pair<int, int>> find_cost_of_merges_diff(Graph &g, SolutionRepresentati
                     continue;
                 }
                 //cout << c << " and " << i << "\n";
-                sol.book.b_merge.map_merge_cost[minmax(c, i)] = cost_diff_after_merge(g, sol, c, i);
+                temp = cost_diff_after_merge(g, sol, c, i);
+                sol.book.b_merge.map_merge_cost[minmax(c, i)] = temp;
+                sol.book.b_merge.pq_merge_cost.push(pair<int, pair<int, int>>(temp, pair<int, int>(minmax(c, i))));
+                //sol.print_solution();
             }
         }
         //cout << "\n";
     }
+    /*
     sol.book.b_merge.empty_pq();
     for (int i = 0; i < indices.size() - 1; i++) {
         for (int j = i + 1; j < indices.size(); j++) {
@@ -308,6 +330,7 @@ map<int, pair<int, int>> find_cost_of_merges_diff(Graph &g, SolutionRepresentati
             cost_of_merges[sol.book.b_merge.map_merge_cost[pair<int,int>(indices[i],indices[j])]] = pair<int, int>(indices[i], indices[j]);
         }
     }
+    */
     return cost_of_merges;
 }
 
@@ -351,20 +374,35 @@ int weighted_random_merge(Graph &g, SolutionRepresentation &sol) {
         return 0;
     }
 
+    //currently the side effects updating sol.book.b_merge are useful here.
     map<int, pair<int, int>> cost_of_merges = find_cost_of_merges_diff(g, sol);
+    //cout << "finished find_cost_of_merges_diff\n";
 
-    int ind = weighted_random_index(10, cost_of_merges.size(), 1.7);
+    int ind = weighted_random_index(10, sol.book.b_merge.pq_merge_cost.size(), 1.7);
 
-    //cout << "r = " << r << "\n";
+    //cout << "ind = " << ind << "\n";
     //cout << "ind: " << ind << "\n";
     //cout << "size of cost_of_merges: " << cost_of_merges.size() << "\n";
 
     int counter = 0;
     pair<int, pair<int, int>> next;
-    while (counter < ind + 1) {
-        next = sol.book.b_merge.pq_merge_cost.top();
-        sol.book.b_merge.pq_merge_cost.pop();
+    vector<pair<int, pair<int, int>>> to_reinsert;
+    while (counter < min(ind + 1, sol.num_sets()*(sol.num_sets() - 1)/2)) {
+        while (true) {
+            //cout << "ok" << counter << "\n";
+            next = sol.book.b_merge.pq_merge_cost.top();
+            sol.book.b_merge.pq_merge_cost.pop();
+            if (sol.book.b_merge.map_merge_cost[next.second] != next.first) {
+                 continue;
+            }
+            break;
+        }
+        to_reinsert.push_back(next);
         counter += 1;
+    }
+
+    for (pair<int, pair<int, int>> p : to_reinsert) {
+        sol.book.b_merge.pq_merge_cost.push(p);
     }
 
     pair<int, int> to_merge = next.second;

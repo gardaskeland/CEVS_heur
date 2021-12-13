@@ -59,8 +59,17 @@ void SolutionRepresentation::remove(int node, int si) {
 }
 
 void SolutionRepresentation::merge(int si, int sj) {
+    set<int> indices;
+    for (int i : get_set_indices()) {
+        indices.insert(i);
+    }
+    if (!(indices.find(si) != indices.end()) || !(indices.find(sj) != indices.end())) {
+        return;
+    }
     set<int> s1 = get_set(si);
     set<int> s2 = get_set(sj);
+    //cout << "in sp: line 64";
+    //print_solution();
     set<int> nodes_to_sets;
     for (set<int>::iterator it = s2.begin(); it != s2.end(); ++it) {
         //cout << *it;
@@ -71,11 +80,16 @@ void SolutionRepresentation::merge(int si, int sj) {
         node_in_clusters[*it] = nodes_to_sets;
     }
     clusters[si] = s1;
+    //cout << "in sp: line 74: ";
+    //print_solution();
 
     //Updating book, erasing sj.
     changed_set(sj);
-    remove_set(sj);
     changed_set(si);
+    remove_set(sj);
+
+    //cout << "in sp: line 82";
+    //print_solution();
     //?
     for (int i : get_set_indices()) {
         book.b_merge.map_merge_cost.erase(minmax(sj, i));
@@ -139,7 +153,11 @@ void SolutionRepresentation::add_set_ind(int si, set<int> s) {
 
 
 void SolutionRepresentation::remove_set(int si) {
-    if (!(clusters.find(si) != clusters.end())) {
+    set<int> indices;
+    for (int i : get_set_indices()) {
+        indices.insert(i);
+    }
+    if (!(indices.find(si) != indices.end())) {
         return;
     }
     set<int> s = clusters[si];
@@ -158,6 +176,14 @@ vector<int> SolutionRepresentation::get_set_indices() {
         vec.push_back(it->first);
     }
     return vec;
+}
+
+set<int> SolutionRepresentation::get_set_indices_as_set() {
+    set<int> s;
+    for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
+        s.insert(it->first);
+    }
+    return s;
 }
 
 

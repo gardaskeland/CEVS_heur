@@ -123,6 +123,8 @@ class SolutionRepresentation
      */
     vector<int> get_set_indices();
 
+    set<int> get_set_indices_as_set();
+
     /**
      * Return a tuple telling us the number of edge deletions, edge additions and
      * vertex splittings we need to get a cluster graph using the clusters given

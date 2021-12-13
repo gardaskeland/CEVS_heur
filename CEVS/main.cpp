@@ -35,7 +35,7 @@ int main() {
     string filename;
     int num_operations = 2000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 1; i < 6; i = i + 2) {
+    for (int i = 95; i < 96; i = i + 2) {
         oss.clear();
         oss.str(string());
         oss << "../../../heur/heur" << integer_to_three_digits(i) << ".gr";
@@ -43,7 +43,7 @@ int main() {
         cout << "Working on file " << filename << "\n";
         vector<vector<int>> adj = read_gz_file(filename);
         Graph g(adj);
-        ShallowSolution sol = local_search(g, num_operations);
+        ShallowSolution sol = local_search_on_cc(g, num_operations);
         cout << "Best solution:\n";
         SolutionRepresentation calculate_sol = SolutionRepresentation(num_operations);
         map<int, set<int>> clusters = sol.get_clusters();

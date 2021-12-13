@@ -17,10 +17,10 @@ struct cmp {
 class BAddNode {
     public:
         //Stores the index of the node to be added to set si.
-        int v;
+        int v = -1;
 
         //Stores the index of the set node v is to be added to.
-        int si;
+        int si = -1;
 
         //Stores the relative out-degrees of sets. Mapped from set index to relative out-degree.
         map<int, int> relative_out_degrees;
