@@ -33,10 +33,10 @@ int highest_relative_out_degree(Graph &g, SolutionRepresentation &sol);
 
 
 /**
- * Returns a sorted map. The keys are the value of S/N(v) - N(v)US, the estimated cost of adding v to S. The values
+ * Returns a sorted vector of pairs (key, value). The keys are the value of S/N(v) - N(v)US, the estimated cost of adding v to S. The values
  * are the nodes v. The key-value pair that appears first is the best node to add to S.
  */
-map<int, int> best_nodes_to_add(Graph &g, SolutionRepresentation &sol, int si);
+vector<pair<int, int>> best_nodes_to_add(Graph &g, SolutionRepresentation &sol, int si);
 
 
 void do_revert_add_node(SolutionRepresentation &sol, Bookkeep &book);

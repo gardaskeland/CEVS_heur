@@ -24,25 +24,32 @@ double relative_out_degree(Graph &g, SolutionRepresentation &sol, int si) {
 
 void get_relative_out_degrees(Graph &g, SolutionRepresentation &sol) {
     set<int> indices;
+    int temp;
     for (int i : sol.get_set_indices()) indices.insert(i);
     if (sol.book.b_add_node.last_add_operation == -1) {
         cout << "Precomputing relative_out_degrees\n";
         for (int i : sol.get_set_indices()) {
-            sol.book.b_add_node.relative_out_degrees[i] = relative_out_degree(g, sol, i);
+            temp = relative_out_degree(g, sol, i);
+            sol.book.b_add_node.relative_out_degrees[i] = temp;
+            sol.book.b_add_node.pq_relative_out_degrees.push(pair<int, int>(temp, i));
         }
     } else {
         set<int> modified_clusters = sol.book.modified_clusters.query(sol.book.b_add_node.last_add_operation, sol.book.operation_number - 1);
         for (int i : modified_clusters) {
             if (indices.find(i) != indices.end()) {
+                temp = relative_out_degree(g, sol, i);
                 sol.book.b_add_node.relative_out_degrees[i] = relative_out_degree(g, sol, i);
+                sol.book.b_add_node.pq_relative_out_degrees.push(pair<int, int>(temp, i));
             }
         }   
     }
     //cout << "ok\n";
+    /*
     sol.book.b_add_node.empty_pq();
     for (int i : sol.get_set_indices()) {
         sol.book.b_add_node.pq_relative_out_degrees.push(pair<int, int>(sol.book.b_add_node.relative_out_degrees[i], i));
     }
+    */
     //cout << "ok2\n";
 }
 
@@ -51,7 +58,20 @@ int highest_relative_out_degree(Graph &g, SolutionRepresentation &sol) {
     //map<double, int>::reverse_iterator it = relative_out_degrees.rbegin();
     //return it->second;
     get_relative_out_degrees(g, sol);
-    return sol.book.b_add_node.pq_relative_out_degrees.top().second;
+    pair<int, int> pending;
+    set<int> indices;
+    for (int i : sol.get_set_indices()) {
+        indices.insert(i);
+    }
+    while (true) {
+        pending = sol.book.b_add_node.pq_relative_out_degrees.top();
+        if (indices.find(pending.second) != indices.end() && pending.first == sol.book.b_add_node.relative_out_degrees[pending.second]) {
+            return pending.second;
+        }
+        sol.book.b_add_node.pq_relative_out_degrees.pop();
+    }
+    cout << "Error in highest_relative_out_degree\n";
+    return -1;
 }
 
 int add_node_to_set_cost(Graph &g, SolutionRepresentation &sol, int si, set<int> &set_nodes, int v) {
@@ -89,8 +109,8 @@ int add_node_to_set_cost(Graph &g, SolutionRepresentation &sol, int si, set<int>
     return edges_to_add - edges_to_delete + 1;
 }
 
-map<int, int> best_nodes_to_add(Graph &g, SolutionRepresentation &sol, int si) {
-    map<int, int> results;
+vector<pair<int, int>> best_nodes_to_add(Graph &g, SolutionRepresentation &sol, int si) {
+    vector<pair<int, int>> results;
     set<int> marked_neighbours;
     set<int> set_nodes = sol.get_set(si);
     for (int v : set_nodes) {
@@ -98,11 +118,12 @@ map<int, int> best_nodes_to_add(Graph &g, SolutionRepresentation &sol, int si) {
             if (set_nodes.find(w) != set_nodes.end() || marked_neighbours.find(w) != marked_neighbours.end()) {
                 continue;
             } else {
-                results[add_node_to_set_cost(g, sol, si, set_nodes, w)] = w;
+                results.push_back(pair<int, int>(add_node_to_set_cost(g, sol, si, set_nodes, w), w));
                 marked_neighbours.insert(w);
             }
         }
     }
+    sort(results.begin(), results.end());
     return results;
 }
 
@@ -115,17 +136,19 @@ void do_revert_add_node(SolutionRepresentation &sol, Bookkeep &book) {
     sol.remove(book.revert_add_node[0], book.revert_add_node[1]);
 }
 
+
 int add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
     int si = highest_relative_out_degree(g, sol);
-    map<int, int> best_nodes = best_nodes_to_add(g, sol, si);
-    sol.book.b_add_node.v = best_nodes.begin()->second;
+    vector<pair<int, int>> best_nodes = best_nodes_to_add(g, sol, si);
+    sol.book.b_add_node.v = best_nodes[0].second;
     sol.book.b_add_node.si = si;
     //sol.add(best_nodes.begin()->second, si);
     //book.revert_add_node[0] = best_nodes.begin()->second;
     //book.revert_add_node[1] = si;
     //sol.print_solution();
-    return best_nodes.begin()->first;
+    return best_nodes[0].first;
 }
+
 /*
 //Possibly not working yet.
 int weighted_random_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
