@@ -235,12 +235,20 @@ int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj)
                 cost -= g.get_edge_cost(v, w);
             }
         }
-        //addition
+        //addition. Not checking if two nodes are in the same cluster, so we don't need to
+        //count the addition
         for (int w : nodes_sj) {
-            if (nodes_si.find(w) != nodes_si.end()) {
-                continue;
+            v_clusters = sol.get_node_to_clusters(v);
+            w_clusters = sol.get_node_to_clusters(w);
+            count = true;
+            //Since both vertices are in the same cluster, it is not deleted.
+            for (int c_v : v_clusters) {
+                if (w_clusters.find(c_v) != w_clusters.end()) {
+                    count = false;
+                    break;
+                }
             }
-            if (!g.has_edge(v, w)) {
+            if (count && !g.has_edge(v, w)) {
                 cost += g.get_edge_cost(v, w);
             }
         }
@@ -264,16 +272,19 @@ int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj)
 map<int, pair<int, int>> find_cost_of_merges_diff(Graph &g, SolutionRepresentation &sol) {
     map<int, pair<int, int>> cost_of_merges;
     vector<int> indices = sol.get_set_indices();
-    if (sol.book.b_merge.map_merge_cost.size() == 0) {
+    if (sol.book.b_merge.last_merge_operation == 0) {
+        cout << "precomputing map_merge_cost\n";
         for (int i = 0; i < indices.size() - 1; i++) {
             for (int j = i + 1; j < indices.size(); j++) {
-                cost_of_merges[cost_diff_after_merge(g, sol, indices[i], indices[j])] = pair<int, int>(indices[i], indices[j]);
+                sol.book.b_merge.map_merge_cost[pair<int, int>(indices[i], indices[j])] = cost_diff_after_merge(g, sol, indices[i], indices[j]);
             }
         }
     } else {
         //Updating the cost of merging clustered altered since last time with new clusters.
         set<int> modified_clusters = sol.book.modified_clusters.query(sol.book.b_merge.last_merge_operation, sol.book.operation_number - 1);
+        //cout << "in modified clusters: ";
         for (int c : modified_clusters) {
+            //cout << c << ", ";
             if (!(sol.get_clusters().find(c) != sol.get_clusters().end())) continue;
             
             for (int i : indices) {
@@ -286,10 +297,15 @@ map<int, pair<int, int>> find_cost_of_merges_diff(Graph &g, SolutionRepresentati
                 sol.book.b_merge.map_merge_cost[minmax(c, i)] = cost_diff_after_merge(g, sol, c, i);
             }
         }
+        //cout << "\n";
     }
+    sol.book.b_merge.empty_pq();
     for (int i = 0; i < indices.size() - 1; i++) {
         for (int j = i + 1; j < indices.size(); j++) {
-            cost_of_merges[sol.book.b_merge.map_merge_cost[minmax(indices[i],indices[j])]] = pair<int, int>(indices[i], indices[j]);
+            //Picks only one of the least valued. Doesn't store several. Should use pq?
+            sol.book.b_merge.pq_merge_cost.push(pair<int, pair<int,int>>(sol.book.b_merge.map_merge_cost[pair<int, int>(indices[i], indices[j])],
+            pair<int, int> (indices[i], indices[j])));
+            cost_of_merges[sol.book.b_merge.map_merge_cost[pair<int,int>(indices[i],indices[j])]] = pair<int, int>(indices[i], indices[j]);
         }
     }
     return cost_of_merges;
@@ -343,15 +359,16 @@ int weighted_random_merge(Graph &g, SolutionRepresentation &sol) {
     //cout << "ind: " << ind << "\n";
     //cout << "size of cost_of_merges: " << cost_of_merges.size() << "\n";
 
-    map<int, pair<int, int>>::iterator it = cost_of_merges.begin();
     int counter = 0;
-    while (counter != ind) {
-        it++;
+    pair<int, pair<int, int>> next;
+    while (counter < ind + 1) {
+        next = sol.book.b_merge.pq_merge_cost.top();
+        sol.book.b_merge.pq_merge_cost.pop();
         counter += 1;
     }
 
-    pair<int, int> to_merge = it->second;
-    int cost = cost_diff_after_merge(g, sol, to_merge.first, to_merge.second);
+    pair<int, int> to_merge = next.second;
+    int cost = next.first;
     sol.book.b_merge.si = to_merge.first;
     sol.book.b_merge.sj = to_merge.second;
     //sol.book.b_merge.map_merge_cost[to_merge] = cost;

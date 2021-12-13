@@ -30,7 +30,10 @@ void SolutionRepresentation::changed_set(int si) {
         }
     }
     vector<int> vec;
-    for (int i : neighbour_sets) vec.push_back(i);
+    for (int i : neighbour_sets) {
+        vec.push_back(i);
+        //cout << "changed " << i << "\n";
+    }
     book.modified_clusters.update_time(vec, book.operation_number);
 }
 
@@ -70,6 +73,7 @@ void SolutionRepresentation::merge(int si, int sj) {
     clusters[si] = s1;
 
     //Updating book, erasing sj.
+    changed_set(sj);
     remove_set(sj);
     changed_set(si);
     for (int i : get_set_indices()) {

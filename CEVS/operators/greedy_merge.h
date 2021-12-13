@@ -12,6 +12,7 @@
 #include <cmath>
 #include <algorithm>
 #include "../utility/segment_tree.h"
+#include <queue>
 
 using namespace std;
 

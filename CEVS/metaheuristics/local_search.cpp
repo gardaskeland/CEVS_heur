@@ -25,7 +25,7 @@ ShallowSolution local_search(Graph g, int num_operations) {
             //cout << "add\n";
         } else {
             choice = 1;
-           // cout << "do merge\n";
+            //cout << "do merge\n";
             new_cost = current_cost + weighted_random_merge(g, current_solution);
             current_solution.book.b_merge.last_merge_operation = i;
         }
