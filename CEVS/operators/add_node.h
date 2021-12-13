@@ -9,6 +9,7 @@
 #include <vector>
 #include <utility>
 #include <iostream>
+#include <limits>
 
 using namespace std;
 
@@ -20,9 +21,10 @@ double relative_out_degree(Graph &g, SolutionRepresentation &sol, int si);
 
 
 /**
- * Returns a map with relative out degrees of the sets mapped to sets.
+ * Updates the map with relative out degrees of the sets mapped to sets in sol.book.b_add_node.relative_out_degrees.
+ * Pushes the updated and old relative out degrees on the pq for relative out degrees in book.b_add_node.
  */
-map<double, int> get_relative_out_degrees(Graph &g, SolutionRepresentation &sol);
+void get_relative_out_degrees(Graph &g, SolutionRepresentation &sol);
 
 /**
  * Returns the number of the set with the highest relative out-degree in the solution.

@@ -35,7 +35,7 @@ class BMerge {
         priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, cmp2> pq_merge_cost; 
 
         BMerge() {
-            last_merge_operation = 0;
+            last_merge_operation = -1;
         }
 
         void empty_pq();

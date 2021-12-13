@@ -76,6 +76,7 @@ void SolutionRepresentation::merge(int si, int sj) {
     changed_set(sj);
     remove_set(sj);
     changed_set(si);
+    //?
     for (int i : get_set_indices()) {
         book.b_merge.map_merge_cost.erase(minmax(sj, i));
     }

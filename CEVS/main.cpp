@@ -9,6 +9,7 @@
 #include "metaheuristics/local_search.h"
 #include "utility/shallow_solution.h"
 #include "bookkeep/b_merge.h"
+#include <chrono>
 using namespace std;
 
 string integer_to_three_digits(int i) {
@@ -33,7 +34,8 @@ int main() {
     ostringstream oss;
     string filename;
     int num_operations = 2000;
-    for (int i = 1; i < 7; i = i + 2) {
+    chrono::steady_clock::time_point begin = chrono::steady_clock::now();
+    for (int i = 1; i < 6; i = i + 2) {
         oss.clear();
         oss.str(string());
         oss << "../../../heur/heur" << integer_to_three_digits(i) << ".gr";
@@ -51,5 +53,8 @@ int main() {
         calculate_sol.print_solution();
         cout << "Cost of solution: " << calculate_sol.cost_solution(g) << "\n"; 
     }
+    chrono::steady_clock::time_point end = chrono::steady_clock::now();
+    double time_elapsed = chrono::duration_cast<chrono::microseconds>(end - begin).count();
+    cout << "time used in seconds: " << time_elapsed / 1000000 << "\n";
 
 }

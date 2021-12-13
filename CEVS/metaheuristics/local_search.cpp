@@ -5,6 +5,7 @@ ShallowSolution local_search(Graph g, int num_operations) {
     current_solution.initial_solution(g.n);
     ShallowSolution best_solution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
     int current_cost = current_solution.cost_solution(g);
+    cout << "cost of initial solution: " << current_cost << "\n";
     int best_cost = current_cost;
     int weights[2] = {50, 50}; // should sum to 100.
     int choice;
@@ -17,11 +18,13 @@ ShallowSolution local_search(Graph g, int num_operations) {
     int sol_diff = 0;
 
     for (int i = 0; i < num_operations; i++) {
+        //cout << "i\n";
         int r = rand() % 100;
         if (r < 50) {
             //cout << "do add_node\n";
             choice = 0;
             new_cost = current_cost + add_node(g, current_solution, book);
+            current_solution.book.b_add_node.last_add_operation = i;
             //cout << "add\n";
         } else {
             choice = 1;
@@ -86,6 +89,15 @@ ShallowSolution local_search(Graph g, int num_operations) {
         //Makes the current number of operations executed available in all operations.
         current_solution.book.operation_number += 1;
         choices.push_back(choice);
+        //current_solution.print_solution();
+        /**
+        for (map<int, set<int>>::iterator it = current_solution.get_clusters().begin(); it != current_solution.get_clusters().end(); it++) {
+            if ((it->second).size() == 0) {
+                cout << "After operation " << choice << " we have a zero set in the solution.\n";
+                exit(0);
+            }
+        }
+        */
 
     }
 

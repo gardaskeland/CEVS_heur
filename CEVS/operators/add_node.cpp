@@ -16,22 +16,42 @@ double relative_out_degree(Graph &g, SolutionRepresentation &sol, int si) {
             }
         }
     }
+   // cout << "nodes in si size: " << nodes_in_si.size() << "\n";
+    //if (nodes_in_si.size() == 0) {return numeric_limits<int>::max();}
     return count_out_edges / nodes_in_si.size();
 
 }
 
-map<double, int> get_relative_out_degrees(Graph &g, SolutionRepresentation &sol) {
-    map<double, int> relative_out_degrees;
-    for (int i : sol.get_set_indices()) {
-        relative_out_degrees[relative_out_degree(g, sol, i)] = i;
+void get_relative_out_degrees(Graph &g, SolutionRepresentation &sol) {
+    set<int> indices;
+    for (int i : sol.get_set_indices()) indices.insert(i);
+    if (sol.book.b_add_node.last_add_operation == -1) {
+        cout << "Precomputing relative_out_degrees\n";
+        for (int i : sol.get_set_indices()) {
+            sol.book.b_add_node.relative_out_degrees[i] = relative_out_degree(g, sol, i);
+        }
+    } else {
+        set<int> modified_clusters = sol.book.modified_clusters.query(sol.book.b_add_node.last_add_operation, sol.book.operation_number - 1);
+        for (int i : modified_clusters) {
+            if (indices.find(i) != indices.end()) {
+                sol.book.b_add_node.relative_out_degrees[i] = relative_out_degree(g, sol, i);
+            }
+        }   
     }
-    return relative_out_degrees;
+    //cout << "ok\n";
+    sol.book.b_add_node.empty_pq();
+    for (int i : sol.get_set_indices()) {
+        sol.book.b_add_node.pq_relative_out_degrees.push(pair<int, int>(sol.book.b_add_node.relative_out_degrees[i], i));
+    }
+    //cout << "ok2\n";
 }
 
 int highest_relative_out_degree(Graph &g, SolutionRepresentation &sol) {
-    map<double, int> relative_out_degrees = get_relative_out_degrees(g, sol);
-    map<double, int>::reverse_iterator it = relative_out_degrees.rbegin();
-    return it->second;
+    //map<double, int> relative_out_degrees = get_relative_out_degrees(g, sol);
+    //map<double, int>::reverse_iterator it = relative_out_degrees.rbegin();
+    //return it->second;
+    get_relative_out_degrees(g, sol);
+    return sol.book.b_add_node.pq_relative_out_degrees.top().second;
 }
 
 int add_node_to_set_cost(Graph &g, SolutionRepresentation &sol, int si, set<int> &set_nodes, int v) {
@@ -106,7 +126,7 @@ int add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
     //sol.print_solution();
     return best_nodes.begin()->first;
 }
-
+/*
 //Possibly not working yet.
 int weighted_random_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
     map<double, int> out_deg = get_relative_out_degrees(g, sol);
@@ -137,3 +157,4 @@ int weighted_random_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &bo
     //book.revert_add_node[0] = it2->second;
     //book.revert_add_node[1] = si;
 }
+**/

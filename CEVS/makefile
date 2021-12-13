@@ -1,10 +1,10 @@
 
 cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o \
-		b_merge.o shallow_solution.o segment_tree.o
+		b_merge.o shallow_solution.o segment_tree.o b_add_node.o
 	g++ -g -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o b_merge.o \
-		shallow_solution.o segment_tree.o
+		shallow_solution.o segment_tree.o b_add_node.o
 
 main.o: main.cpp read_file.h
 	g++ -c -g main.cpp
@@ -35,6 +35,9 @@ bookkeep.o: bookkeep/bookkeep.cpp bookkeep/bookkeep.h
 
 b_merge.o: bookkeep/b_merge.cpp bookkeep/b_merge.h
 	g++ -c -g bookkeep/b_merge.cpp
+
+b_add_node.o: bookkeep/b_add_node.cpp bookkeep/b_add_node.h
+	g++ -c -g bookkeep/b_add_node.cpp
 
 shallow_solution.o: utility/shallow_solution.cpp utility/shallow_solution.h
 	g++ -c -g utility/shallow_solution.cpp

@@ -272,7 +272,7 @@ int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj)
 map<int, pair<int, int>> find_cost_of_merges_diff(Graph &g, SolutionRepresentation &sol) {
     map<int, pair<int, int>> cost_of_merges;
     vector<int> indices = sol.get_set_indices();
-    if (sol.book.b_merge.last_merge_operation == 0) {
+    if (sol.book.b_merge.last_merge_operation == -1) {
         cout << "precomputing map_merge_cost\n";
         for (int i = 0; i < indices.size() - 1; i++) {
             for (int j = i + 1; j < indices.size(); j++) {
