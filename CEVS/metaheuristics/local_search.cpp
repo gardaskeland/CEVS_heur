@@ -265,5 +265,4 @@ ShallowSolution local_search_on_cc(Graph &g, int &num_operations) {
 
     //cout << "ok\n";
     return from_cc_sol_to_sol(g, best_solution, revert);
-
 }
