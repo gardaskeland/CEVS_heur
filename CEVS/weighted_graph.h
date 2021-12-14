@@ -16,7 +16,7 @@ class WeightedGraph : public Graph {
     public:
 
         // Gets the weight of the node.
-        int get_node_weight(int v);
+        int get_node_weight(int v) override;
 
         /**
          * Since the graph is a critical clique graph, an edge uv has size node_weight[u] *
@@ -26,7 +26,7 @@ class WeightedGraph : public Graph {
          * @param v 
          * @return int 
          */
-        int get_edge_cost(int u, int v);
+        int get_edge_cost(int u, int v) override;
 
         WeightedGraph(vector<vector<int>> &adj_lst, vector<int> &weights) {
             adj = adj_lst;

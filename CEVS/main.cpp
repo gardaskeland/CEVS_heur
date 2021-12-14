@@ -39,10 +39,10 @@ int main() {
         oss.clear();
         oss.str(string());
         oss << "../../../heur/heur" << integer_to_three_digits(i) << ".gr";
-        filename = oss.str();
+        filename = oss.str(); // "../CEVStest/test_graphs/g8.txt";
         cout << "Working on file " << filename << "\n";
         vector<vector<int>> adj = read_gz_file(filename);
-        Graph g(adj);
+        Graph g = Graph(adj);
         ShallowSolution sol = local_search_on_cc(g, num_operations);
         cout << "Best solution:\n";
         SolutionRepresentation calculate_sol = SolutionRepresentation(num_operations);

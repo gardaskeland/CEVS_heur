@@ -19,7 +19,7 @@
  * Uses a local search metaheuristic to find a solution for CEVS.
  * Operators: add_node and weighted_average greedy_merge.
  */
-ShallowSolution local_search(Graph g, int num_operations);
+ShallowSolution local_search(Graph &g, int &num_operations);
 
 /**
  * @brief Find the critical clique graph of g and uses a local search heuristic on this graph.
@@ -28,7 +28,7 @@ ShallowSolution local_search(Graph g, int num_operations);
  * @param num_operations 
  * @return ShallowSolution 
  */
-ShallowSolution local_search_on_cc(Graph g, int num_operations);
+ShallowSolution local_search_on_cc(Graph &g, int &num_operations);
 
 
 #endif

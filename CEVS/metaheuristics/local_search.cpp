@@ -1,6 +1,6 @@
 #include "local_search.h"
 
-ShallowSolution local_search(Graph g, int num_operations) {
+ShallowSolution local_search(Graph &g, int &num_operations) {
     SolutionRepresentation current_solution = SolutionRepresentation(num_operations);
     current_solution.initial_solution(g.n);
     ShallowSolution best_solution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
@@ -80,10 +80,11 @@ ShallowSolution local_search(Graph g, int num_operations) {
             best_cost = current_cost;
             best_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
         }
-
+        /*
         if (i % 10 == 9) {
             cout << i << "\n";
         }
+        */
 
         if (i % 500 == 499) { 
             cout << "Current cost: " << current_cost << "\n";
@@ -121,7 +122,7 @@ ShallowSolution local_search(Graph g, int num_operations) {
 
 }
 
-ShallowSolution local_search_on_cc(Graph g, int num_operations) {
+ShallowSolution local_search_on_cc(Graph &g, int &num_operations) {
 
     SolutionRepresentation current_solution = SolutionRepresentation(num_operations);
     RevertKernel revert;
@@ -198,10 +199,11 @@ ShallowSolution local_search_on_cc(Graph g, int num_operations) {
             best_cost = current_cost;
             best_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
         }
-
+        /*
         if (i % 10 == 9) {
             cout << i << "\n";
         }
+        */
 
         if (i % 500 == 499) { 
             cout << "Current cost: " << current_cost << "\n";
@@ -209,13 +211,14 @@ ShallowSolution local_search_on_cc(Graph g, int num_operations) {
             current_solution.print_solution();
         }
         /**
-        if (current_cost - current_solution.cost_solution(g) != sol_diff) {
-            sol_diff = current_cost - current_solution.cost_solution(g);
+        if (current_cost - current_solution.cost_solution(wg) != sol_diff) {
+            sol_diff = current_cost - current_solution.cost_solution(wg);
             cout << "Change in sol_diff after operation " << choice << "\n";
             cout << "Current cost: " << current_cost << "\n";
             cout << "sol_diff: " << sol_diff << "\n";
         }
         */
+        
         
 
         //Makes the current number of operations executed available in all operations.
@@ -234,38 +237,22 @@ ShallowSolution local_search_on_cc(Graph g, int num_operations) {
         
 
     }
-    //The result is not quite the same. Must debug.
+    /**
+    cout << "edges:\n";
+    for (int i = 0; i < wg.n; i++) {
+        for (int j : wg.adj[i]) {
+            cout << i << " " << j << " with weight " << wg.get_edge_cost(i, j) << "\n";
+        }
+    }
+    for (int i = 0; i < wg.n; i++) {
+        cout << "node weight of " << i << ": " << wg.get_node_weight(i) << "\n";
+    }
+    */
+
     cout << "final cost: " << current_solution.cost_solution(wg) << "\n";
-    ShallowSolution to_return;
-    set<int> next_cluster;
-    vector<set<int>> node_to_cluster = vector<set<int>>(g.n, set<int>());
-    int counter = 0;
-    //cout << "ok0\n";
-    for (map<int, set<int>>::iterator it = best_solution.clusters.begin(); it != best_solution.clusters.end(); it++) {
-        next_cluster = set<int>();
-        for (int i : it->second) {
-            for (int j : revert.other_cc[i]) {
-                next_cluster.insert(j);
-                node_to_cluster[j].insert(counter);
-            }
-        }
-        to_return.clusters[counter] = next_cluster;
-        counter += 1;
-    }
-    //cout << "ok1\n";
-    for (set<int> s : revert.isolated_cc) {
-        to_return.clusters[counter] = s;
-        for (int i : s) {
-            node_to_cluster[i].insert(counter);
-        }
-        counter += 1;
-    }
-    //cout << "ok2\n";
-    for (int i = 0; i < node_to_cluster.size(); i++) {
-        to_return.node_in_clusters[i] = node_to_cluster[i];
-    }
 
     //print out other_cc
+    /*
     int c = 0;
     for (set<int> s : revert.other_cc) {
         cout << "node " << c << " is mapped to: ";
@@ -274,9 +261,9 @@ ShallowSolution local_search_on_cc(Graph g, int num_operations) {
         }
         cout << "\n";
         c += 1;
-    }
+    }*/
 
     //cout << "ok\n";
-    return to_return;
+    return from_cc_sol_to_sol(g, best_solution, revert);
 
 }

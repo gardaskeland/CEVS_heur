@@ -208,7 +208,7 @@ void print_integer_set(set<int> s) {
 }
 
 //TODO: Change so that it uses the weights of edges and vertices.
-tuple<int, int, int> SolutionRepresentation::cost_operations(Graph g) {
+tuple<int, int, int> SolutionRepresentation::cost_operations(Graph &g) {
     set<pair<int, int>> edge_deletions;
     set<pair<int, int>> edge_additions;
     int delete_counter = 0;
@@ -249,6 +249,7 @@ tuple<int, int, int> SolutionRepresentation::cost_operations(Graph g) {
                     edge_deletions.insert(edge);
                     edge_deletions.insert(opposite);
                     delete_counter += g.get_edge_cost(i, v);
+                    //cout << "edge cost of " << i << " " << v << ": " << g.get_edge_cost(i, v) << "\n";
                 }
             }
         }
@@ -272,6 +273,7 @@ tuple<int, int, int> SolutionRepresentation::cost_operations(Graph g) {
                      edge_additions.insert(edge);
                      edge_additions.insert(opposite);
                      add_counter += g.get_edge_cost(i, *it);
+                     //cout << "edge cost of " << i << " " << *it << ": " << g.get_edge_cost(i, *it) << "\n";
                  }
              }
          } 
@@ -283,6 +285,7 @@ tuple<int, int, int> SolutionRepresentation::cost_operations(Graph g) {
         sz = node_in_clusters[i].size();
         if (sz > 0) {
             vs_counter += g.get_node_weight(i) * (sz - 1);
+            //cout << "g.get_node_weight for " << i << ": " << g.get_node_weight(i) << "\n";
         }
     }
 
@@ -294,7 +297,7 @@ tuple<int, int, int> SolutionRepresentation::cost_operations(Graph g) {
 }
 
 
-int SolutionRepresentation::cost_solution(Graph g) {
+int SolutionRepresentation::cost_solution(Graph &g) {
     tuple<int, int, int> result = cost_operations(g);
     return get<0>(result) + get<1>(result) + get<2>(result);
 }

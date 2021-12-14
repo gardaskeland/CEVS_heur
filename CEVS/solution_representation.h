@@ -132,13 +132,13 @@ class SolutionRepresentation
      * 
      * TODO: Change so that it uses the weights of edges and vertices.
      */
-    tuple<int, int, int> cost_operations(Graph g);
+    tuple<int, int, int> cost_operations(Graph &g);
 
     /**
      * Return the total number of operations needed to change graph G to the cluster graph
      * in the solution.
      */
-    int cost_solution(Graph g);
+    int cost_solution(Graph &g);
 
     /**
      * Creates an exact copy of the solution.

@@ -73,12 +73,12 @@ class Graph {
     /**
      * Returns the edge cost of edge u and v (1 for simple graph).
      */
-    int get_edge_cost(int u, int v);
+    virtual int get_edge_cost(int u, int v);
 
     /**
-     * Returbs the node weight of node u in V(G) (1 for simple graph).
+     * Returns the node weight of node u in V(G) (1 for simple graph).
      */
-    int get_node_weight(int u);
+    virtual int get_node_weight(int u);
 
 };
 
