@@ -195,7 +195,7 @@ bool is_cluster(Graph &g, set<int> &nodes) {
 
 WeightedGraph find_critical_clique_graph(Graph &g, RevertKernel &revert) {
     //probably a lot slower than is possible
-    vector<vector<set<int>>> hashed_cc = find_hashed_cc(g, 50000);
+    vector<vector<set<int>>> hashed_cc = find_hashed_cc(g, 1000000);
     //cout << "ok";
     vector<set<int>> connected_components = find_connected_components(g);
     //cout << "ok";
@@ -206,7 +206,7 @@ WeightedGraph find_critical_clique_graph(Graph &g, RevertKernel &revert) {
     for (set<int> comp : connected_components) {
         if (!is_cluster(g, comp)) continue;
         //cout << "ok1";
-        hashed = sum_hash(comp, 50000);
+        hashed = sum_hash(comp, 1000000);
         index = 0;
         to_remove = -1;
         for (set<int> cc : hashed_cc[hashed]) {
@@ -243,3 +243,35 @@ WeightedGraph find_critical_clique_graph(Graph &g, RevertKernel &revert) {
     //For each remaining cc, give a node in the new graph. Index from nodes in G to
     //nodes in G'.
     //If there is an edge uv in E(G), add edge C(U) to C(V) in E(G').
+
+ShallowSolution from_cc_sol_to_sol(Graph &g, ShallowSolution &sol, RevertKernel &revert) {
+    ShallowSolution to_return;
+    set<int> next_cluster;
+    vector<set<int>> node_to_cluster = vector<set<int>>(g.n, set<int>());
+    int counter = 0;
+    //cout << "ok0\n";
+    for (map<int, set<int>>::iterator it = sol.clusters.begin(); it != sol.clusters.end(); it++) {
+        next_cluster = set<int>();
+        for (int i : it->second) {
+            for (int j : revert.other_cc[i]) {
+                next_cluster.insert(j);
+                node_to_cluster[j].insert(counter);
+            }
+        }
+        to_return.clusters[counter] = next_cluster;
+        counter += 1;
+    }
+    //cout << "ok1\n";
+    for (set<int> s : revert.isolated_cc) {
+        to_return.clusters[counter] = s;
+        for (int i : s) {
+            node_to_cluster[i].insert(counter);
+        }
+        counter += 1;
+    }
+    //cout << "ok2\n";
+    for (int i = 0; i < node_to_cluster.size(); i++) {
+        to_return.node_in_clusters[i] = node_to_cluster[i];
+    }
+    return to_return;
+}

@@ -3,6 +3,7 @@
 
 #include "../CEVS/weighted_graph.h"
 #include "revert_kernel.h"
+#include "../CEVS/utility/shallow_solution.h"
 
 /**
  * @brief Finds a kernel on the CEVS-problem for input (G,k). Stores information
@@ -26,6 +27,13 @@ WeightedGraph find_critical_clique_graph(Graph &g, RevertKernel &revert);
  * Finds the connected components of graph g. Uses dfs with stack.
  */
 vector<set<int>> find_connected_components(Graph &g);
+
+/**
+ * @brief Transform a solution on the critical clique graph into a solution on the
+ * original graph. The given g is the original graph.
+ * 
+ */
+ShallowSolution from_cc_sol_to_sol(Graph &g, ShallowSolution &sol, RevertKernel &revert);
 
 
 
