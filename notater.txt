@@ -1,0 +1,79 @@
+Graf 95: Beste funn ved vanlig local search er 4255, brukte 80 sek.
+Dette er en graf som blir cirka 50% mindre i cc-form.
+På graf på cc-form finner vi en løsning av størrelse 3619 på 21 sekund.
+Må teste om dette resultatet fungerer ved å gjøre løsningen for cc om til
+en løsning for den vanlige grafen. (Viste seg å være feil)
+Ved rekonstruksjon av grafen får løsningen kostnad 4628, noe som tyder på at det er en
+feil i overgangen fra den ene grafen til den andre.
+
+Etter debugging fant vi samme løsning (4275) med graf på cc-form, men på 19.98 s (2000 operasjoner.)
+Ved å bruke bare local search fikk jeg løsning med verdi 4269 på 74 sek.
+Dette tyder på at for noen grafer får man gode resultater raskere ved å bruke cc-graf.
+
+Code overview (mostly for my own benefit):
+The purpose of the project is to design a heuristic algorithm to solve the Cluster Editing with Vertex Splitting (CEVS) problem.
+The heuristic I aim towards is to be based on metaheuristic like adaptive large neighbourhood search or variable neighbourhood
+search, but so far I have only implemented a local search heuristic in order to test the operators that I'm making and build 
+a framework for efficient updates of the solution and cost using these operators. So far there are three main folders for the
+project:
+- CEVS: Contains datastructures, metaheuristics, operators and other useful files that on its own should make a decent heuristic
+algorithm.
+- CEVSkernel: Contains code to implement the kernel in [1]. Since this is exact algorithmic and of interest on its own, this is
+in its own folder. It contains code to find the critical clique graph (cc-graph), since this is part of the kernel, and this graph
+can be used in the heuristic part of the algorithm to obtain valid results for the original graph, likely with gain in running time.
+- CEVStest: Contains test code and test graphs in txt-files that I have used to debug the code in the other two folders.
+
+Most of the code in CEVSkernel at the moment is directed at computing the cc-graph. It should be relatively simple to make some
+changes to this code so that we get the kernel of the graph, but this is postponed as the heuristic algorithm us the
+main focus.
+
+The first level in CEVS contains these cpp-files:
+- graph/weighted_graph.cpp: Graph datastructure. weighted_graph is a subclass of graph.
+- solutionrepresentation.cpp: Contains the solution representation (family of sets), bookkeeping (Bookkeep) for calculations done
+by the algorithm and the cost function.
+- read_file.cpp: Makes us able to read graph files of undirected graphs (gz-file).
+- main.cpp: The main method that we use to read files, call heuristics etc.
+
+abbreviations:
+sol: solutionrepresentation/solution
+cc: critical clique, not to be confused with connected components
+cluster/sets: used interchangeably.
+
+Then we consider the folders in CEVS:
+- bookkeep: Contains code used to do bookkeeping of calculations done by the heuristics. Has a segment tree as a field variable that
+stores which clusters have been changed over a range of recent operations. Contains an object (e.g. BMerge()) that stores results
+of calculations relevant to a certain operation (e.g. merge) and the most recent operation it has done/considers to do/decided not to do.
+This last detail is useful since we may decide not to do an operation if it is deemed to expensive, for example by techniques found
+in simulated annealing.
+- operators: Contains operators used in the metaheuristics. See in the description of the folder metaheuristics just below for more details.
+- utility: method for weighted randomness, segment tree implementation, shallow solutionrepresentation.
+- metaheuristics: so far stores the code for local search. It is useful to sketch the framwork for such a heuristic:
+Preprocessing:
+1. We may find the cc-graph and execute the heuristic on this graph.
+2. Initialise variables, solution representation etc.
+
+The order of one operation loop of a heuristic is as follows:
+1. Choose an operation weighted randomly. The operation gives us a change to the solutionrepresentation that may be done, with adaptive
+corresponding cost. Note that the details of the change are stored in book.b_(operation).
+2. If the cost is deemed reasonable, execute the change to the solutionrepresentation.
+3. If the new solution is better than the best solution, store the new solution as best solution.
+4. Update the operation number so that operations can range query the segment tree in book for which clusters have been changed.
+
+Inside one operation the following things happen:
+1. We find the cost of executing the operation on different entities (nodes, sets) of the solutionrepresentation. We only consider
+parts of the graphs (e.g. sets) that may have been changed since the last time we called this operation. Otherwise we derive the cost
+of the operations stored in Bookkeep. Frequently we use a pq that is pushed each time the operation is called, and when we pop from the
+queue we check if the change in question still has the same cost.
+2. We choose one of the cheapest actions to execute, either greedily the cheapest or by using weighted randomness on a handful of the 
+cheapest.
+3. We store the actions we perhaps execute in sol.book.b_(operation).
+
+To execute changes to the solutionrepresentation, we call one of its methods, e.g. merge or add. These do the following:
+1. Update the family of sets and assisting datastructures in solutionrepresentation. We give the method instructions of what to do,
+which we read from sol.book.
+2. Updates the segment tree in book storing which clusters where effected by the operations executed
+
+Postprocessing:
+If we executed the heuristic on the cc-graph, we reconstruct the solution for the original graph using a mapping stored in the RevertKernel 
+object found in CEVSkernel. We return a shallow solutionrepresentation.
+
