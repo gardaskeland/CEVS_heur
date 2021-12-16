@@ -49,7 +49,7 @@ void test_best_nodes_to_add() {
 
     SolutionRepresentation sr = read_sol_file("test_sol_rep/g6_sol_1.txt");
 
-    map<int, int> best_nodes = best_nodes_to_add(g, sr, 1);
+    vector<pair<int, int>> best_nodes = best_nodes_to_add(g, sr, 1);
     int res = best_nodes.begin()->second;
     if (res != 2) {
         cout << "FAIL test_best_nodes_to_add Wrong result for g6: " << res << "\n";

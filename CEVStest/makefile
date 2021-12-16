@@ -1,9 +1,9 @@
 cevstest: main.o test_solution_representation.o solution_representation.o read_file.o graph.o\
  		test_greedy_merge.o greedy_merge.o read_sol.o test_add_node.o add_node.o weighted_random.o \
-		 segment_tree.o test_segment_tree.o find_kernel.o test_kernel.o
+		 segment_tree.o test_segment_tree.o test_karger.o karger.o
 	g++ -o cevstest main.o test_solution_representation.o solution_representation.o read_file.o\
 		graph.o test_greedy_merge.o greedy_merge.o read_sol.o test_add_node.o add_node.o weighted_random.o \
-		segment_tree.o test_segment_tree.o find_kernel.o test_kernel.o
+		segment_tree.o test_segment_tree.o test_karger.o karger.o
 
 main.o: main.cpp test_solution_representation.h
 	g++ -c -g main.cpp
@@ -48,9 +48,12 @@ test_segment_tree.o: test_other/test_segment_tree.cpp test_other/test_segment_tr
 find_kernel.o: ../CEVSkernel/find_kernel.cpp ../CEVSkernel/find_kernel.h ../CEVSkernel/revert_kernel.h
 	g++ -c -g ../CEVSkernel/find_kernel.cpp
 
-test_kernel.o: test_kernel/test_kernel.cpp test_kernel/test_kernel.h
-	g++ -c -g test_kernel/test_kernel.cpp
+karger.o: ../CEVS/utility/karger.cpp ../CEVS/utility/karger.h
+	g++ -c -g ../CEVS/utility/karger.cpp
+
+test_karger.o: test_other/test_karger.cpp test_other/test_karger.h
+	g++ -c -g test_other/test_karger.cpp
 
 clean:
-	rm *.o cevstest
+	del *.o cevstest
 

@@ -35,7 +35,7 @@ int main() {
     string filename;
     int num_operations = 2000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 95; i < 96; i = i + 2) {
+    for (int i = 1; i < 20; i = i + 2) {
         oss.clear();
         oss.str(string());
         oss << "../../../heur/heur" << integer_to_three_digits(i) << ".gr";

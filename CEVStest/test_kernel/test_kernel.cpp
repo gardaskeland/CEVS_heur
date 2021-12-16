@@ -10,7 +10,7 @@ void test_kernel() {
     RevertKernel revert;
     int k = 100;
     
-    WeightedGraph wg = find_kernel(g, k, revert);
+    WeightedGraph wg = find_critical_clique_graph(g, revert);
     /**
     for (int i = 0; i < wg.n; i++) {
         cout << "edges from vertex " << i << ":\n";
@@ -28,7 +28,7 @@ void test_kernel() {
     g = Graph(adj);
     RevertKernel revert2;
     k = 100;
-    wg = find_kernel(g, k, revert2);
+    wg = find_critical_clique_graph(g, revert2);
     /**
     for (int i = 0; i < wg.n; i++) {
         cout << "edges from vertex " << i << ":\n";

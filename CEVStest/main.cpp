@@ -5,6 +5,7 @@
 #include "test_ops/test_add_node.h"
 #include "test_other/test_segment_tree.h"
 #include "test_kernel/test_kernel.h"
+#include "test_other/test_karger.h"
 
 using namespace std;
 
@@ -17,6 +18,6 @@ int main() {
     run_tests_greedy_merge();
     run_tests_add_node();
     run_tests_segment_tree();
-    run_tests_kernel();
+    run_tests_karger();
     cout << "Tests finished";
 }
