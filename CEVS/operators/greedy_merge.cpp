@@ -400,6 +400,9 @@ int weighted_random_merge(Graph &g, SolutionRepresentation &sol) {
         to_reinsert.push_back(next);
         counter += 1;
     }
+    //Removing the element stored in next
+    //to_reinsert.pop_back();
+    //The above doesn't work since we don't necessarily do the oepration.
 
     for (pair<int, pair<int, int>> p : to_reinsert) {
         sol.book.b_merge.pq_merge_cost.push(p);

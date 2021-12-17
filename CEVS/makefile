@@ -2,11 +2,11 @@
 cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o \
 		b_merge.o shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
-		find_kernel.o
+		find_kernel.o split.o karger.o
 	g++ -g -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o b_merge.o \
 		shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
-		find_kernel.o
+		find_kernel.o split.o karger.o
 
 main.o: main.cpp read_file.h
 	g++ -c -g main.cpp
@@ -52,6 +52,12 @@ weighted_graph.o: weighted_graph.cpp weighted_graph.h
 
 find_kernel.o: ../CEVSkernel/find_kernel.cpp ../CEVSkernel/find_kernel.h ../CEVSkernel/revert_kernel.h
 	g++ -c -g ../CEVSkernel/find_kernel.cpp
+
+split.o: operators/split.cpp operators/split.h
+	g++ -c -g operators/split.cpp
+
+karger.o: utility/karger.cpp utility/karger.h
+	g++ -c -g utility/karger.cpp
 
 clean:
 	del *.o cevs

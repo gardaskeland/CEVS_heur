@@ -72,6 +72,15 @@ class SolutionRepresentation
     void merge(int si, int sj);
 
     /**
+     * @brief Splits a set into the two disjoint sets set_1 and set_2.
+     * 
+     * @param si 
+     * @param set_1 
+     * @param set_2 
+     */
+    void disjoint_split(int si, set<int> &set_1, set<int> &set_2);
+
+    /**
      * Gets a reference to a set si.
      */
     set<int> get_set(int si);

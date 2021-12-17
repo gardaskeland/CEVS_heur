@@ -7,6 +7,8 @@
 #include <set>
 #include "../graph.h"
 #include "../solution_representation.h"
+#include "../utility/karger.h"
+#include "../utility/weighted_random.h"
 
 using namespace std;
 

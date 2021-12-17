@@ -8,13 +8,14 @@
 
 using namespace std;
 
-struct cmp {
+struct cmp3 {
     bool operator() (pair<int, int> &left, pair<int, int> &right) {
         return left.first > right.first;
     }
 };
 
 class BSplit {
+    public:
     //The next set to split
     int si;
 
@@ -27,7 +28,7 @@ class BSplit {
     //The index of the last operation that was a split.
     int last_split_operation;
 
-    priority_queue<pair<int, int>, vector<pair<int, int>>, cmp> pq_innner_cost;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, cmp3> pq_inner_cost;
 
     BSplit() {
         last_split_operation = -1;

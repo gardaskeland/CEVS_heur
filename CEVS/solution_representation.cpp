@@ -94,6 +94,22 @@ void SolutionRepresentation::merge(int si, int sj) {
     for (int i : get_set_indices()) {
         book.b_merge.map_merge_cost.erase(minmax(sj, i));
     }
+    book.b_split.inner_cost.erase(sj);
+}
+
+void SolutionRepresentation::disjoint_split(int si, set<int> &set_1, set<int> &set_2) {
+    set<int> to_split = get_set(si);
+    set<int> node_to_its_clusters;
+    add_set(set_2);
+    map<int,set<int>>::reverse_iterator it = clusters.rbegin();
+    for (int u : set_2) {
+        to_split.erase(u);
+        node_to_its_clusters = node_in_clusters[u];
+        node_to_its_clusters.erase(si);
+        node_in_clusters[u] = node_to_its_clusters;
+    }
+    clusters[si] = to_split;
+    changed_set(si);
 }
 
 //TODO: test

@@ -20,6 +20,6 @@ using namespace std;
  * @param si 
  * @return pair<set<int>, set<int>> 
  */
-pair<set<int>, set<int>> find_min_cut(Graph &g, SolutionRepresentation &sol, int &si);
+pair<int, pair<set<int>, set<int>>> find_min_cut(Graph &g, SolutionRepresentation &sol, int &si);
 
 #endif

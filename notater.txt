@@ -77,3 +77,8 @@ Postprocessing:
 If we executed the heuristic on the cc-graph, we reconstruct the solution for the original graph using a mapping stored in the RevertKernel 
 object found in CEVSkernel. We return a shallow solutionrepresentation.
 
+TODO: Test split with simulated annealing.
+Make delete node operator.
+Make alns.
+Think of shaking operators.
+Think of cheaper operators for large input sizes.
