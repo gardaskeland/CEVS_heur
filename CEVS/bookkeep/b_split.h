@@ -7,12 +7,13 @@
 #include <set>
 
 using namespace std;
-
+/**
 struct cmp3 {
     bool operator() (pair<int, int> &left, pair<int, int> &right) {
         return left.first > right.first;
     }
 };
+*/
 
 class BSplit {
     public:
@@ -28,7 +29,10 @@ class BSplit {
     //The index of the last operation that was a split.
     int last_split_operation;
 
-    priority_queue<pair<int, int>, vector<pair<int, int>>, cmp3> pq_inner_cost;
+    priority_queue<pair<int, int>> pq_inner_cost;
+
+    //Stores the most recent cut found for a set.
+    map<int, pair<set<int>, set<int>>> recent_cuts;
 
     BSplit() {
         last_split_operation = -1;

@@ -129,7 +129,7 @@ ShallowSolution local_search_on_cc(Graph &g, int &num_operations) {
     SolutionRepresentation current_solution = SolutionRepresentation(num_operations);
     RevertKernel revert;
     WeightedGraph wg = find_critical_clique_graph(g, revert);
-    current_solution.initial_solution(wg.n);
+    current_solution.initial_solution_complete_graph(wg.n);
     ShallowSolution best_solution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
     int current_cost = current_solution.cost_solution(wg);
     cout << "cost of initial solution: " << current_cost << "\n";
@@ -196,12 +196,12 @@ ShallowSolution local_search_on_cc(Graph &g, int &num_operations) {
                 set<int> indices = current_solution.get_set_indices_as_set();
                 if (!(current_solution.book.b_split.si == -1) &&
                     indices.find(current_solution.book.b_split.si) != indices.end()) {
-                    cout << "before: ";
-                    current_solution.print_solution();
+                    //cout << "before: ";
+                    //current_solution.print_solution();
                     pair<set<int>, set<int>> p = current_solution.book.b_split.cut;
                     current_solution.disjoint_split(current_solution.book.b_split.si, p.first, p.second);
-                    cout << "after: ";
-                    current_solution.print_solution();
+                    //cout << "after: ";
+                    //current_solution.print_solution();
                 }
             }
             else if (choice == 2) {
@@ -211,7 +211,6 @@ ShallowSolution local_search_on_cc(Graph &g, int &num_operations) {
             }     
         }
         //cout << "Line 71: ";
-        //current_solution.print_solution();
         //}
 
 
@@ -245,6 +244,7 @@ ShallowSolution local_search_on_cc(Graph &g, int &num_operations) {
         current_solution.book.operation_number += 1;
         choices.push_back(choice);
         //cout << "line 95: ";
+        //cout <<"current cost: " << current_cost << "\ncurrent solution: ";
         //current_solution.print_solution();
         /**
         for (map<int, set<int>>::iterator it = current_solution.get_clusters().begin(); it != current_solution.get_clusters().end(); it++) {

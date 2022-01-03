@@ -59,6 +59,8 @@ void SegmentTree<T>::update_time(T &elm, int &time_step) {
 template <typename T>
 set<T> SegmentTree<T>::query(int left, int right) {
     set<T> to_return;
+    //if (left < 0) return to_return;
+    //if (right < left) return to_return;
     int real_left = size + left;
     int real_right = size + right;
     for(T elm : tree[real_left]) {

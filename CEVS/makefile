@@ -2,11 +2,11 @@
 cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o \
 		b_merge.o shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
-		find_kernel.o split.o karger.o
+		find_kernel.o split.o karger.o simulated_annealing.o
 	g++ -g -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o b_merge.o \
 		shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
-		find_kernel.o split.o karger.o
+		find_kernel.o split.o karger.o simulated_annealing.o
 
 main.o: main.cpp read_file.h
 	g++ -c -g main.cpp
@@ -58,6 +58,9 @@ split.o: operators/split.cpp operators/split.h
 
 karger.o: utility/karger.cpp utility/karger.h
 	g++ -c -g utility/karger.cpp
+
+simulated_annealing.o: metaheuristics/simulated_annealing.cpp metaheuristics/simulated_annealing.h
+	g++ -c -g metaheuristics/simulated_annealing.cpp
 
 clean:
 	del *.o cevs

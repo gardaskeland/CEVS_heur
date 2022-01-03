@@ -18,6 +18,19 @@ void SolutionRepresentation::initial_solution(int n)
     }
 }
 
+void SolutionRepresentation::initial_solution_complete_graph(int n) {
+    number_nodes = n;
+    set<int> nodes_in_set;
+    set<int> set_of_sets_nodes_are_in;
+    for (int i = 0; i < n; i++) {
+        nodes_in_set.insert(i);
+        set_of_sets_nodes_are_in = set<int>();
+        set_of_sets_nodes_are_in.insert(0);
+        node_in_clusters[i] = set_of_sets_nodes_are_in;
+    }
+    clusters[0] = nodes_in_set;
+}
+
 set<int> SolutionRepresentation::get_set(int si) {
     return clusters[si];
 }

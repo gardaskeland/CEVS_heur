@@ -49,6 +49,11 @@ class SolutionRepresentation
     void initial_solution(int n);
 
     /**
+     * @brief Sets the state of the initial solution to be a complete graph.
+     * 
+     */
+    void initial_solution_complete_graph(int n);
+    /**
      * @brief Modifies book according to modification of set si. That is, all sets
      * that have common vertices with si are added to modified_clusters in book.
      * 

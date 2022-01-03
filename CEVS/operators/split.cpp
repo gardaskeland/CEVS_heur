@@ -62,13 +62,16 @@ int greedy_split(Graph &g, SolutionRepresentation &sol) {
     find_inner_costs(g, sol);
     //cout << "2 \n";
     //sol.print_solution();
-    int ind = weighted_random_index(10, sol.book.b_split.pq_inner_cost.size(), 1.7);
+    int ind = weighted_random_index(10, sol.book.b_split.pq_inner_cost.size(), 2);
     int counter = 0;
     pair<int, int> next;
     vector<pair<int, int>> to_reinsert;
+    //cout << "new\n";
     while (counter < min(ind + 1, sol.num_sets())) {
         while(true) {
             next = sol.book.b_split.pq_inner_cost.top();
+            //cout << "next.first: " << next.first << ", ";
+            //cout << "next.second: " << next.second << "\n";
             sol.book.b_split.pq_inner_cost.pop();
             //removing pair with wrong inner cost for set of sol.
             if (sol.book.b_split.inner_cost[next.second] != next.first) {
@@ -97,20 +100,39 @@ int greedy_split(Graph &g, SolutionRepresentation &sol) {
     sol.book.b_split.si = next.second;
     //cout << "4\n";
     //sol.print_solution();
-    pair<int, pair<set<int>, set<int>>> min_cut = find_min_cut(g, sol, next.second);
+    pair<int, pair<set<int>, set<int>>> min_cut;
+    /**
+    set<int> modified_clusters = sol.book.modified_clusters.query(sol.book.b_split.last_split_operation, sol.book.operation_number - 1);
+    if (modified_clusters.find(next.second) != modified_clusters.end() || 
+        !(sol.book.b_split.recent_cuts.find(next.second) != sol.book.b_split.recent_cuts.end())) {
+        min_cut = find_min_cut(g, sol, next.second);
+        sol.book.b_split.recent_cuts[next.second] = min_cut.second;
+    }
+    else {
+        cout << "operation number: " << sol.book.operation_number - 1 << "\n";
+        min_cut = pair<int, pair<set<int>, set<int>>>(0, sol.book.b_split.recent_cuts[next.second]);
+    }
+    */
+    min_cut = find_min_cut(g, sol, next.second);
+
     //Cost of removing edges - cost of adding. Does not yet consider that edges may be covered
     //by other sets.
     int cost_of_cut = 0;
     for (int i : min_cut.second.first) {
         for (int j : min_cut.second.second) {
-            if (!edge_covered_by_cluster(i, j, g, sol, next.second)) {
+            //Should check whether the edge is in the graph before counting deletion.
+            if (g.has_edge(i, j) && !edge_covered_by_cluster(i, j, g, sol, next.second)) {
                 cost_of_cut += g.get_edge_cost(i, j);
+            }
+            //g does not have the edge, so it have been added and can now be deleted.
+            else if (!edge_covered_by_cluster(i, j, g, sol, next.second)) {
+                cost_of_cut -= g.get_edge_cost(i, j);
             }
         }
     }
     //Second part reconstructed from inner_cost.
-    int cost = cost_of_cut - next.first * sol.get_set(next.second).size();
+    //int cost = cost_of_cut - next.first * sol.get_set(next.second).size();
     sol.book.b_split.cut = min_cut.second;
-    return cost;
+    return cost_of_cut;
     
 }
