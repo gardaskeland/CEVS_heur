@@ -31,6 +31,49 @@ void SolutionRepresentation::initial_solution_complete_graph(int n) {
     clusters[0] = nodes_in_set;
 }
 
+int get_vertex_degree(Graph &g, int &v, set<int> &marked) {
+    int counter = 0;
+    for (int i : g.adj[v]) {
+        if (!(marked.find(i) != marked.end())) {
+            counter += 1;
+        }
+    }
+    return counter;
+}
+
+void SolutionRepresentation::initial_solution_max_degree(Graph &g) {
+    number_nodes = g.n;
+    set<int> marked;
+    while(marked.size() < g.n) {
+        //cout << "size of marked: " << marked.size() << "\n";
+        int max_degree = 0;
+        int v_max = -1;
+        for (int i = 0; i < g.n; i++) {
+            if (marked.find(i) != marked.end()) continue;
+            int degree = get_vertex_degree(g, i, marked);
+            if (degree == 0) {
+                set<int> singleton_set;
+                singleton_set.insert(i);
+                marked.insert(i);
+                add_set(singleton_set);
+            }
+            if (degree > max_degree) {
+                max_degree = degree;
+                v_max = i;
+            }
+        }
+        if (v_max == -1) continue;
+        set<int> to_add;
+        to_add.insert(v_max);
+        marked.insert(v_max);
+        for (int u : g.adj[v_max]) {
+            to_add.insert(u);
+            marked.insert(u);
+        } 
+        add_set(to_add);
+    }
+}
+
 set<int> SolutionRepresentation::get_set(int si) {
     return clusters[si];
 }
@@ -111,6 +154,7 @@ void SolutionRepresentation::merge(int si, int sj) {
 }
 
 void SolutionRepresentation::disjoint_split(int si, set<int> &set_1, set<int> &set_2) {
+    changed_set(si);
     set<int> to_split = get_set(si);
     set<int> node_to_its_clusters;
     add_set(set_2);
@@ -122,7 +166,6 @@ void SolutionRepresentation::disjoint_split(int si, set<int> &set_1, set<int> &s
         node_in_clusters[u] = node_to_its_clusters;
     }
     clusters[si] = to_split;
-    changed_set(si);
 }
 
 //TODO: test

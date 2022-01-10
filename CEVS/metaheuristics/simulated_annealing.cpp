@@ -5,7 +5,7 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
     SolutionRepresentation current_solution = SolutionRepresentation(num_operations);
     RevertKernel revert;
     WeightedGraph wg = find_critical_clique_graph(g, revert);
-    current_solution.initial_solution_complete_graph(wg.n);
+    current_solution.initial_solution_max_degree(wg);
     ShallowSolution best_solution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
     int current_cost = current_solution.cost_solution(wg);
     cout << "cost of initial solution: " << current_cost << "\n";
@@ -86,14 +86,14 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
             //cout << "Current cost by cost function " << current_solution.cost_solution(g) << "\n";
             current_solution.print_solution();
         }
-        /**
+        
         if (current_cost - current_solution.cost_solution(wg) != sol_diff) {
             sol_diff = current_cost - current_solution.cost_solution(wg);
             cout << "Change in sol_diff after operation " << choice << "\n";
             cout << "Current cost: " << current_cost << "\n";
             cout << "sol_diff: " << sol_diff << "\n";
         }
-        */
+        
         
         
 

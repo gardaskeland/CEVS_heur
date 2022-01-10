@@ -53,6 +53,17 @@ class SolutionRepresentation
      * 
      */
     void initial_solution_complete_graph(int n);
+
+    /**
+     * @brief Makes a cluster out of the closed neighbourhood of the maxdegree node and
+     * repeats this until all vertices are included in a cluster. Clusters are disjoint.
+     * Sets the state of the solution to this solution.
+     * 
+     * @param n 
+     */
+    void initial_solution_max_degree(Graph &g);
+
+    
     /**
      * @brief Modifies book according to modification of set si. That is, all sets
      * that have common vertices with si are added to modified_clusters in book.

@@ -62,7 +62,7 @@ int greedy_split(Graph &g, SolutionRepresentation &sol) {
     find_inner_costs(g, sol);
     //cout << "2 \n";
     //sol.print_solution();
-    int ind = weighted_random_index(10, sol.book.b_split.pq_inner_cost.size(), 2);
+    int ind = weighted_random_index(10, sol.book.b_split.pq_inner_cost.size(), 1.7);
     int counter = 0;
     pair<int, int> next;
     vector<pair<int, int>> to_reinsert;
@@ -101,18 +101,27 @@ int greedy_split(Graph &g, SolutionRepresentation &sol) {
     //cout << "4\n";
     //sol.print_solution();
     pair<int, pair<set<int>, set<int>>> min_cut;
-    /**
+
     set<int> modified_clusters = sol.book.modified_clusters.query(sol.book.b_split.last_split_operation, sol.book.operation_number - 1);
-    if (modified_clusters.find(next.second) != modified_clusters.end() || 
-        !(sol.book.b_split.recent_cuts.find(next.second) != sol.book.b_split.recent_cuts.end())) {
+
+    //Problem with his: May not find the min-cut since karger runs only n times. So instead we find a min-cut with 1/e prob. every time the operation is called,
+    //which after some operations is likely to result in the min-cut.
+    /**
+    if (!(sol.book.b_split.recent_cuts.find(next.second) != sol.book.b_split.recent_cuts.end())) {
+        min_cut = find_min_cut(g, sol, next.second);
+        sol.book.b_split.recent_cuts[next.second] = min_cut.second;
+    }
+    //if cluster has changed since last cut was found
+    else if (modified_clusters.find(next.second) != modified_clusters.end()) {
         min_cut = find_min_cut(g, sol, next.second);
         sol.book.b_split.recent_cuts[next.second] = min_cut.second;
     }
     else {
-        cout << "operation number: " << sol.book.operation_number - 1 << "\n";
+        //cout << "operation number: " << sol.book.operation_number - 1 << "\n";
         min_cut = pair<int, pair<set<int>, set<int>>>(0, sol.book.b_split.recent_cuts[next.second]);
     }
     */
+
     min_cut = find_min_cut(g, sol, next.second);
 
     //Cost of removing edges - cost of adding. Does not yet consider that edges may be covered

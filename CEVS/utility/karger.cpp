@@ -58,7 +58,8 @@ pair<int, pair<set<int>, set<int>>> find_min_cut(Graph &g, SolutionRepresentatio
     int edge_vector_size;
     int miss_counter;
     vector<Edge> remaining_edges;
-    for (int x = 0; x < vertices.size(); x++) {
+    double max_ = vertices.size();
+    for (double x = 0; x < max_; x++) {
         remaining_edges = edges;
         uf.clear();
         for (int u : vertices) {

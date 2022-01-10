@@ -36,7 +36,7 @@ int main() {
     string filename;
     int num_operations = 3000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 3; i < 4; i = i + 2) {
+    for (int i = 7; i < 10; i = i + 2) {
         oss.clear();
         oss.str(string());
         oss << "../../../heur/heur" << integer_to_three_digits(i) << ".gr";
@@ -44,15 +44,17 @@ int main() {
         cout << "Working on file " << filename << "\n";
         vector<vector<int>> adj = read_gz_file(filename);
         Graph g = Graph(adj);
-        ShallowSolution sol = simulated_annealing(g, num_operations);
-        cout << "Best solution:\n";
-        SolutionRepresentation calculate_sol = SolutionRepresentation(num_operations);
-        map<int, set<int>> clusters = sol.get_clusters();
-        for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
-            calculate_sol.add_set(it->second);
+        for (int j = 0; j < 5; j++) {
+            ShallowSolution sol = simulated_annealing(g, num_operations);
+            cout << "Best solution:\n";
+            SolutionRepresentation calculate_sol = SolutionRepresentation(num_operations);
+            map<int, set<int>> clusters = sol.get_clusters();
+            for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
+                calculate_sol.add_set(it->second);
+            }
+            calculate_sol.print_solution();
+            cout << "Cost of solution: " << calculate_sol.cost_solution(g) << "\n";
         }
-        calculate_sol.print_solution();
-        cout << "Cost of solution: " << calculate_sol.cost_solution(g) << "\n"; 
     }
     chrono::steady_clock::time_point end = chrono::steady_clock::now();
     double time_elapsed = chrono::duration_cast<chrono::microseconds>(end - begin).count();
