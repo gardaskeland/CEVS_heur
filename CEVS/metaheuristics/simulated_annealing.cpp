@@ -11,6 +11,7 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
     cout << "cost of initial solution: " << current_cost << "\n";
     int best_cost = current_cost;
     int weights[3] = {33, 33, 34}; // should sum to 100.
+    double time_taken[3] = {0, 0, 0};
     int choice;
     Bookkeep book(num_operations);
     cout << "Starting simulated annealing\n";
@@ -19,30 +20,40 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
     int sol_diff = 0;
     double t_max = 50;
     double t = t_max;
-    double alpha = pow(1/t_max, 1.0/num_operations);
+    double alpha = pow(0.01/t_max, 1.0/num_operations);
 
     for (int i = 0; i < num_operations; i++) {
         t *= alpha; //t_max * (1 - ((static_cast<float>(i + 1))/num_operations));
         int r = rand() % 100;
         //cout << "r = " << r << "\n";
         if (r < weights[0]) {
+            chrono::steady_clock::time_point begin_0 = chrono::steady_clock::now();
             choice = 0;
-            new_cost = current_cost + add_node(wg, current_solution, book);
+            new_cost = current_cost + random_choice_add_node(wg, current_solution, book);
             current_solution.book.b_add_node.last_add_operation = i;
+            chrono::steady_clock::time_point end_0 = chrono::steady_clock::now();
+            time_taken[0] += chrono::duration_cast<chrono::microseconds>(end_0 - begin_0).count();
         } else if (r < weights[0] + weights[1]) {
+            chrono::steady_clock::time_point begin_1 = chrono::steady_clock::now();
             choice = 1;
             //cout << "choice: " << choice << "\n";
-            new_cost = current_cost + greedy_split(wg, current_solution);
+            //current_solution.print_solution();
+            new_cost = current_cost + random_choice_split(wg, current_solution);
             current_solution.book.b_split.last_split_operation = i;
+            chrono::steady_clock::time_point end_1 = chrono::steady_clock::now();
+            time_taken[1] += chrono::duration_cast<chrono::microseconds>(end_1 - begin_1).count();
             //cout << "current cost - new cost: " << current_cost - new_cost << "\n";
         } else {
+            chrono::steady_clock::time_point begin_2 = chrono::steady_clock::now();
             choice = 2;
             new_cost = current_cost + weighted_random_merge(wg, current_solution);
             current_solution.book.b_merge.last_merge_operation = i;
+            chrono::steady_clock::time_point end_2 = chrono::steady_clock::now();
+            time_taken[2] += chrono::duration_cast<chrono::microseconds>(end_2 - begin_2).count();
         }
 
         
-        if (new_cost <= current_cost || rand() < 100 * exp(-(new_cost - current_cost)/t)) {
+        if (new_cost <= current_cost || rand() % 100 < 100 * exp(-(new_cost - current_cost)/t)) {
             current_cost = new_cost;
             if (choice == 0) {
                 if (!(current_solution.book.b_add_node.v == -1) &&
@@ -114,6 +125,11 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
         
 
     }
+    int count_choices[3] = {0, 0, 0};
+    for (int x : choices) count_choices[x] += 1;
+    cout << "Average time spent on add_node: " << (time_taken[0] / count_choices[0]) / 1000000 << "\n";
+    cout << "Average time spent on greedy_split: " << (time_taken[1] / count_choices[1]) / 1000000 << "\n";
+    cout << "Average time spent on merge: " << (time_taken[2] / count_choices[2]) / 1000000 << "\n";
     /**
     cout << "edges:\n";
     for (int i = 0; i < wg.n; i++) {
@@ -126,7 +142,7 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
     }
     */
 
-    cout << "final cost: " << current_solution.cost_solution(wg) << "\n";
+    //cout << "final cost: " << current_solution.cost_solution(wg) << "\n";
 
     //print out other_cc
     /*

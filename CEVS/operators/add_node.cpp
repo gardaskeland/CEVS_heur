@@ -137,6 +137,16 @@ void do_revert_add_node(SolutionRepresentation &sol, Bookkeep &book) {
 }
 
 
+int random_choice_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
+    vector<int> set_indices = sol.get_set_indices();
+    int si = set_indices[rand() % set_indices.size()];
+    vector<pair<int, int>> best_nodes = best_nodes_to_add(g, sol, si);
+    if (best_nodes.size() == 0) return 0;
+    sol.book.b_add_node.v = best_nodes[0].second;
+    sol.book.b_add_node.si = si;
+    return best_nodes[0].first;
+}
+
 int add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
     int si = highest_relative_out_degree(g, sol);
     vector<pair<int, int>> best_nodes = best_nodes_to_add(g, sol, si);

@@ -42,8 +42,18 @@ vector<pair<int, int>> best_nodes_to_add(Graph &g, SolutionRepresentation &sol, 
 void do_revert_add_node(SolutionRepresentation &sol, Bookkeep &book);
 
 /**
- * Chooses a set with high relative out-degree and finds neighbour node of the set that is added to the set.
- * Returns the cost of adding.
+ * @brief Chooses a random set and finds a neighbour node of that set. Returns the cost of adding this node.
+ * 
+ * @param g 
+ * @param sol 
+ * @param book 
+ * @return int 
+ */
+int random_choice_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book);
+
+/**
+ * Chooses a set with high relative out-degree and finds neighbour node of the set.
+ * Returns the cost of adding the node to the set.
  */
 int add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book);
 
