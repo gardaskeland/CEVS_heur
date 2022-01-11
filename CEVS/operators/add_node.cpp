@@ -97,11 +97,15 @@ int add_node_to_set_cost(Graph &g, SolutionRepresentation &sol, int si, set<int>
                 //cout << "counting edge " << i << " " << v << "\n";
             }
         }
+        
         //g does not have an edge between i and v
         else {
             if (!in_same_cluster) edges_to_add += g.get_edge_cost(i, v);
             
         }
+        //if (v == 1 && in_same_cluster) {
+        //    cout << "in_same cluster as 1: " << i << "\n";
+        //}
     } 
     //+1 since we split the node by adding it
     //cout << "edges to add: " << edges_to_add << "\n";
@@ -141,7 +145,10 @@ int random_choice_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book
     vector<int> set_indices = sol.get_set_indices();
     int si = set_indices[rand() % set_indices.size()];
     vector<pair<int, int>> best_nodes = best_nodes_to_add(g, sol, si);
-    if (best_nodes.size() == 0) return 0;
+    if (best_nodes.size() == 0) {
+        sol.book.b_add_node.v = -1;
+        return 0;
+    }
     sol.book.b_add_node.v = best_nodes[0].second;
     sol.book.b_add_node.si = si;
     return best_nodes[0].first;

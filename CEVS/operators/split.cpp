@@ -142,9 +142,9 @@ pair<int, pair<set<int>, set<int>>> clique_split(Graph &g, SolutionRepresentatio
         for (int v : clique_2) {
             if (g.has_edge(u, v)) score_1 += 1;
         }
-        if (score_2 > score_1) {
+        if (score_2 / (double)clique_2.size() > score_1 / (double)clique_1.size()) {
             clique_1.insert(u);
-        } else if (score_2 < score_1) {
+        } else if (score_2 / (double)clique_2.size() < score_1 / (double)clique_1.size()) {
             clique_2.insert(u);
         }
         else {

@@ -5,8 +5,9 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
     SolutionRepresentation current_solution = SolutionRepresentation(num_operations);
     RevertKernel revert;
     WeightedGraph wg = find_critical_clique_graph(g, revert);
-    current_solution.initial_solution_max_degree(wg);
+    current_solution.initial_solution(wg.n);
     ShallowSolution best_solution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
+    ShallowSolution last_solution;
     int current_cost = current_solution.cost_solution(wg);
     cout << "cost of initial solution: " << current_cost << "\n";
     int best_cost = current_cost;
@@ -23,6 +24,7 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
     double alpha = pow(0.01/t_max, 1.0/num_operations);
 
     for (int i = 0; i < num_operations; i++) {
+        last_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
         t *= alpha; //t_max * (1 - ((static_cast<float>(i + 1))/num_operations));
         int r = rand() % 100;
         //cout << "r = " << r << "\n";
@@ -54,11 +56,11 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
 
         
         if (new_cost <= current_cost || rand() % 100 < 100 * exp(-(new_cost - current_cost)/t)) {
-            current_cost = new_cost;
             if (choice == 0) {
                 if (!(current_solution.book.b_add_node.v == -1) &&
                     current_solution.get_set_indices_as_set().find(current_solution.book.b_add_node.si) != current_solution.get_set_indices_as_set().end()) {
                     current_solution.add(current_solution.book.b_add_node.v, current_solution.book.b_add_node.si);
+                    current_cost = new_cost;
                 }
             } else if (choice == 1) {
                 set<int> indices = current_solution.get_set_indices_as_set();
@@ -70,12 +72,14 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
                     current_solution.disjoint_split(current_solution.book.b_split.si, p.first, p.second);
                     //cout << "after: ";
                     //current_solution.print_solution();
+                    current_cost = new_cost;
                 }
             }
             else if (choice == 2) {
                 //cout << "line 66: ";
                 //current_solution.print_solution();
                 current_solution.merge(current_solution.book.b_merge.si, current_solution.book.b_merge.sj);
+                current_cost = new_cost;
             }     
         }
         //cout << "Line 71: ";
@@ -103,6 +107,11 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
             cout << "Change in sol_diff after operation " << choice << "\n";
             cout << "Current cost: " << current_cost << "\n";
             cout << "sol_diff: " << sol_diff << "\n";
+            cout << "last operation (v, set): " << current_solution.book.b_add_node.v << ", " << current_solution.book.b_add_node.si << "\n";
+            cout << "previous solution: \n";
+            last_solution.print_solution();
+            cout << "current solution: \n"; 
+            current_solution.print_solution();
         }
         
         

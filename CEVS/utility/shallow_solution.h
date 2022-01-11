@@ -3,7 +3,10 @@
 
 #include <set>
 #include <map>
-
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
 using namespace std;
 
 class ShallowSolution {
@@ -21,6 +24,8 @@ class ShallowSolution {
     }
 
     map<int, set<int>> get_clusters();
+
+    void print_solution();
 
 };
 

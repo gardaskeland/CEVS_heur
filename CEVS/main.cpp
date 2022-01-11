@@ -36,7 +36,7 @@ int main() {
     string filename;
     int num_operations = 3000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 5; i < 6; i = i + 2) {
+    for (int i = 3; i < 5; i = i + 2) {
         oss.clear();
         oss.str(string());
         oss << "../../../heur/heur" << integer_to_three_digits(i) << ".gr";
@@ -45,8 +45,12 @@ int main() {
         vector<vector<int>> adj = read_gz_file(filename);
         Graph g = Graph(adj);
         for (int j = 0; j < 5; j++) {
+            chrono::steady_clock::time_point begin_ = chrono::steady_clock::now();
             ShallowSolution sol = simulated_annealing(g, num_operations);
+            chrono::steady_clock::time_point end_ = chrono::steady_clock::now();
             cout << "Best solution:\n";
+            double time_elapsed_ = chrono::duration_cast<chrono::microseconds>(end_ - begin_).count();
+            cout << "time used in seconds for graph " << filename << ": " << time_elapsed_ / 1000000 << "\n";
             SolutionRepresentation calculate_sol = SolutionRepresentation(num_operations);
             map<int, set<int>> clusters = sol.get_clusters();
             for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
