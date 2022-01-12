@@ -16,6 +16,7 @@ using namespace std;
  */
 class Bookkeep {
     public:
+        int total_operations;
         int revert_add_node[2];
         int revert_merge_ind[2];
         set<int> revert_merge_sets[2];
@@ -26,6 +27,7 @@ class Bookkeep {
         BSplit b_split;
 
     Bookkeep(int operations) {
+        total_operations = operations;
         operation_number = 0;
         SegmentTree<int> sgt(operations);
         modified_clusters = sgt;

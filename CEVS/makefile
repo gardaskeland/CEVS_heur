@@ -2,11 +2,13 @@
 cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o \
 		b_merge.o shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
-		find_kernel.o split.o karger.o simulated_annealing.o
+		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
+		label_propagation.o
 	g++ -g -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o b_merge.o \
 		shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
-		find_kernel.o split.o karger.o simulated_annealing.o
+		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
+		label_propagation.o
 
 main.o: main.cpp read_file.h
 	g++ -c -g main.cpp
@@ -61,6 +63,12 @@ karger.o: utility/karger.cpp utility/karger.h
 
 simulated_annealing.o: metaheuristics/simulated_annealing.cpp metaheuristics/simulated_annealing.h
 	g++ -c -g metaheuristics/simulated_annealing.cpp
+
+label_propagation.o: operators/label_propagation.cpp operators/label_propagation.h
+	g++ -c -g operators/label_propagation.cpp
+
+local_search_lp.o: metaheuristics/local_search_lp.cpp metaheuristics/local_search_lp.h
+	g++ -c -g metaheuristics/local_search_lp.cpp
 
 clean:
 	del *.o cevs

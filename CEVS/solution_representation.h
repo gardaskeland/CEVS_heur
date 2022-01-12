@@ -36,7 +36,14 @@ class SolutionRepresentation
         book = b;
     }
 
-    SolutionRepresentation(int operations) {
+    /**
+     * @brief Construct a new Solution Representation object
+     * 
+     * @param n - number of nodes in the graph
+     * @param operations 
+     */
+    SolutionRepresentation(int n, int operations) {
+        number_nodes = n;
         clusters = map<int, set<int>>();
         node_in_clusters = map<int, set<int>>();
         Bookkeep b(operations);
@@ -173,6 +180,13 @@ class SolutionRepresentation
     void print_solution();
 
     void print_node_in_clusters();
+
+    /**
+     * @brief Returns the number of split operations needed to change the graph into the solution represented.
+     * 
+     * @return int 
+     */
+    int num_splits();
 
 };
 

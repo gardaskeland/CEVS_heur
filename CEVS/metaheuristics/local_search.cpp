@@ -1,7 +1,7 @@
 #include "local_search.h"
 
 ShallowSolution local_search(Graph &g, int &num_operations) {
-    SolutionRepresentation current_solution = SolutionRepresentation(num_operations);
+    SolutionRepresentation current_solution = SolutionRepresentation(g.n, num_operations);
     current_solution.initial_solution(g.n);
     ShallowSolution best_solution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
     int current_cost = current_solution.cost_solution(g);
@@ -126,7 +126,7 @@ ShallowSolution local_search(Graph &g, int &num_operations) {
 //can be accounted for by another cluster at the moment.
 ShallowSolution local_search_on_cc(Graph &g, int &num_operations) {
 
-    SolutionRepresentation current_solution = SolutionRepresentation(num_operations);
+    SolutionRepresentation current_solution = SolutionRepresentation(g.n, num_operations);
     RevertKernel revert;
     WeightedGraph wg = find_critical_clique_graph(g, revert);
     current_solution.initial_solution_complete_graph(wg.n);

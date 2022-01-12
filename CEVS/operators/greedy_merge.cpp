@@ -201,9 +201,6 @@ map<int, pair<int, int>> find_cost_of_merges(Graph &g, SolutionRepresentation &s
  */
 int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj) {
     set<int> nodes_si = sol.get_set(si);
-    for (int i : nodes_si) {
-        //cout << "node " << i << "\n";
-    }
     set<int> nodes_sj = sol.get_set(sj);
     int cost = 0;
     //vector<int> v(nodes_si.size() + nodes_sj.size());

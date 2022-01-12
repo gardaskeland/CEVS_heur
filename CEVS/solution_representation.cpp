@@ -107,8 +107,12 @@ void SolutionRepresentation::add(int node, int si) {
 //slow. Change?
 void SolutionRepresentation::remove(int node, int si) {
     set<int> s = clusters[si];
-    s.erase(node);
-    clusters[si] = s;
+    if (s.size() > 1) {
+        s.erase(node);
+        clusters[si] = s;
+    } else {
+        clusters.erase(si);
+    }
     s = node_in_clusters[node];
     s.erase(si);
     node_in_clusters[node] = s;
@@ -171,11 +175,14 @@ void SolutionRepresentation::disjoint_split(int si, set<int> &set_1, set<int> &s
 //TODO: test
 bool SolutionRepresentation::simple_feasibility_check() {
     set<int> count_nodes;
-    for (int i = 0; i < number_nodes; i++) {
-        for (set<int>::iterator it = clusters[i].begin(); it != clusters[i].end(); ++it) {
-            count_nodes.insert(*it);
-        }
+    map<int, set<int>> clusters = get_clusters();
+    for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
+        for (int i : it->second) count_nodes.insert(i);
     }
+    //cout << "number nodes: " << number_nodes << "\n";
+    //cout << "all nodes in count_nodes: ";
+    //for (int i : count_nodes) cout << i << " ";
+    //cout << "\n";
     if (count_nodes.size() == number_nodes) {
         return true;
     } else {
@@ -380,7 +387,7 @@ SolutionRepresentation SolutionRepresentation::copy_solution() {
     new_clusters.insert(clusters.begin(), clusters.end());
     map<int, set<int>> new_nodes_in_clusters;
     new_nodes_in_clusters.insert(node_in_clusters.begin(), node_in_clusters.end());
-    SolutionRepresentation new_sol(number_nodes);
+    SolutionRepresentation new_sol(number_nodes, book.total_operations);
     new_sol.clusters = new_clusters;
     new_sol.node_in_clusters = new_nodes_in_clusters;
     return new_sol;
@@ -411,6 +418,16 @@ void SolutionRepresentation::print_node_in_clusters() {
         cout << "], ";
     }
     cout << "]\n";
+}
+
+int SolutionRepresentation::num_splits() {
+    int count = 0;
+    for (map<int, set<int>>::iterator it = node_in_clusters.begin(); it != node_in_clusters.end(); it++) {
+        //for (int i : it-> second) cout << i << " ";
+        //cout << "\n";
+        count += (it->second).size() - 1;
+    }
+    return count;
 }
 
 /**

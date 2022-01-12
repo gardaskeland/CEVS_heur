@@ -54,7 +54,7 @@ pair<int, pair<set<int>, set<int>>> find_min_cut(Graph &g, SolutionRepresentatio
     map<int, int> uf;
     int num_components;
     pair<set<int>, set<int>> min_cut;
-    int min_cut_value = pow(2, 31);
+    int min_cut_value = pow(2, 30);
     int edge_vector_size;
     int miss_counter;
     vector<Edge> remaining_edges;
