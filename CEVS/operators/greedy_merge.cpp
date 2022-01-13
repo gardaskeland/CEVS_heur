@@ -293,6 +293,8 @@ map<int, pair<int, int>> find_cost_of_merges_diff(Graph &g, SolutionRepresentati
     } else {
         //Updating the cost of merging clustered altered since last time with new clusters.
         set<int> modified_clusters = sol.book.modified_clusters.query(sol.book.b_merge.last_merge_operation, sol.book.operation_number - 1);
+        //for (int i : modified_clusters) cout << i << " ";
+        //cout << "\n";
         set<int> indices;
         for (int i : sol.get_set_indices()) {
             indices.insert(i);
@@ -389,8 +391,10 @@ int weighted_random_merge(Graph &g, SolutionRepresentation &sol) {
             //cout << "ok" << counter << "\n";
             next = sol.book.b_merge.pq_merge_cost.top();
             sol.book.b_merge.pq_merge_cost.pop();
-            if (sol.book.b_merge.map_merge_cost[next.second] != next.first) {
-                 continue;
+            set<int> indices = sol.get_set_indices_as_set();
+            if (sol.book.b_merge.map_merge_cost[next.second] != next.first || !(indices.find(next.second.first) != indices.end()) ||
+                !(indices.find(next.second.second) != indices.end())) {
+                continue;
             }
             break;
         }

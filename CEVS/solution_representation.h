@@ -28,12 +28,16 @@ class SolutionRepresentation
         // Stores calculations from operations so that we don't need to repeat them and
         // the values defining how to execute an operation we how found the cost of executing.
         Bookkeep book;
+        vector<int> to_permute;
     
     SolutionRepresentation() {
         clusters = map<int, set<int>>();
         node_in_clusters = map<int, set<int>>();
         Bookkeep b(1);
         book = b;
+        for (int i = 0; i < number_nodes; i++) {
+            to_permute.push_back(i);
+        }
     }
 
     /**
@@ -48,6 +52,9 @@ class SolutionRepresentation
         node_in_clusters = map<int, set<int>>();
         Bookkeep b(operations);
         book = b;
+        for (int i = 0; i < number_nodes; i++) {
+            to_permute.push_back(i);
+        }
     }
 
     /*

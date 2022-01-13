@@ -3,12 +3,12 @@ cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o \
 		b_merge.o shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
-		label_propagation.o
+		label_propagation.o perturbation.o
 	g++ -g -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o b_merge.o \
 		shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
-		label_propagation.o
+		label_propagation.o perturbation.o
 
 main.o: main.cpp read_file.h
 	g++ -c -g main.cpp
@@ -70,5 +70,7 @@ label_propagation.o: operators/label_propagation.cpp operators/label_propagation
 local_search_lp.o: metaheuristics/local_search_lp.cpp metaheuristics/local_search_lp.h
 	g++ -c -g metaheuristics/local_search_lp.cpp
 
+perturbation.o: operators/perturbation.cpp operators/perturbation.h
+	g++ -c -g operators/perturbation.cpp
 clean:
 	del *.o cevs

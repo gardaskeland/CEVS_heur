@@ -74,6 +74,16 @@ void do_revert_add_node(SolutionRepresentation &sol, Bookkeep &book);
 int random_choice_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book);
 
 /**
+ * @brief Goes through all sets and finds the neighbour node of each that gives the most reduction
+ * in cost to add to the set. Adds this node to the set. Returns the cost of adding this node and 
+ * 
+ * @param g 
+ * @param sol 
+ * @return int 
+ */
+int add_node_to_all(Graph &g, SolutionRepresentation &sol);
+
+/**
  * Chooses a set with high relative out-degree and finds neighbour node of the set.
  * Returns the cost of adding the node to the set.
  */

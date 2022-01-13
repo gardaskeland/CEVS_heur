@@ -106,6 +106,7 @@ void SolutionRepresentation::add(int node, int si) {
 
 //slow. Change?
 void SolutionRepresentation::remove(int node, int si) {
+    changed_set(si);
     set<int> s = clusters[si];
     if (s.size() > 1) {
         s.erase(node);

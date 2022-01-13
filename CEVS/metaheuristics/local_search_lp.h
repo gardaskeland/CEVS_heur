@@ -15,6 +15,7 @@
 #include "../weighted_graph.h"
 #include "../operators/split.h"
 #include "../operators/label_propagation.h"
+#include "../operators/perturbation.h"
 
 using namespace std;
 

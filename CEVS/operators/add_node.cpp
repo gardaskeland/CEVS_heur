@@ -64,9 +64,9 @@ int highest_relative_out_degree(Graph &g, SolutionRepresentation &sol) {
 
 int add_node_to_set_cost(Graph &g, SolutionRepresentation &sol, int si, int v) {
     set<int> set_nodes = sol.get_set(si);
-    //edges we must delete before adding the node
+    //edges between v and i deleted before adding the node (these edges are in G)
     int edges_to_delete = 0;
-    //edges we must add after adding the node
+    //edges we must add after adding the node (these edges are not in G)
     int edges_to_add = 0;
     bool in_same_cluster = false;
     for (int i : set_nodes) {
@@ -139,6 +139,23 @@ int random_choice_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book
     return best_nodes[0].first;
 }
 
+int add_node_to_all(Graph &g, SolutionRepresentation &sol) {
+    int cost = 0;
+    vector<int> set_indices = sol.get_set_indices();
+    for (int si : set_indices) {
+        vector<pair<int, int>> best_nodes = best_nodes_to_add(g, sol, si);
+        if (best_nodes.size() == 0) {
+            //sol.book.b_add_node.v = -1;
+            continue;
+        }
+        //sol.book.b_add_node.v = best_nodes[0].second;
+        //sol.book.b_add_node.si = si;
+        sol.add(best_nodes[0].second, si);
+        cost += best_nodes[0].first;
+    }
+    return cost;
+}
+
 
 int add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
     int si = highest_relative_out_degree(g, sol);
@@ -153,16 +170,6 @@ int add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
     return best_nodes[0].first;
 }
 
-
-/**
- * @brief Calculates the cost of removing node u from set si.
- * 
- * @param g 
- * @param sol 
- * @param u 
- * @param si 
- * @return int 
- */
 int removal_cost(Graph &g, SolutionRepresentation &sol, int si, int u) {
     set<int> set_nodes = sol.get_set(si);
     //edges we must delete when deleting the node that are in G (+ to cost)
@@ -171,6 +178,7 @@ int removal_cost(Graph &g, SolutionRepresentation &sol, int si, int u) {
     int edges_added = 0;
     bool in_same_cluster = false;
     for (int i : set_nodes) {
+        if (i == u) continue;
         in_same_cluster = false;
         for (int w : sol.get_node_to_clusters(u)) {
             if (w == si) continue;
