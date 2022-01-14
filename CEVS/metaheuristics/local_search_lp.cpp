@@ -1,10 +1,12 @@
 #include "local_search_lp.h"
 
 ShallowSolution local_search_lp(Graph &g, int &num_operations) {
-    SolutionRepresentation current_solution = SolutionRepresentation(g.n, num_operations);
-    current_solution.initial_solution(g.n);
+    RevertKernel revert;
+    WeightedGraph wg = find_critical_clique_graph(g, revert);
+    SolutionRepresentation current_solution = SolutionRepresentation(wg.n, num_operations);
+    current_solution.initial_solution(wg.n);
     ShallowSolution best_solution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
-    int current_cost = current_solution.cost_solution(g);
+    int current_cost = current_solution.cost_solution(wg);
     cout << "cost of initial solution: " << current_cost << "\n";
     Bookkeep book = Bookkeep(num_operations);
     int best_cost = current_cost;
@@ -29,7 +31,7 @@ ShallowSolution local_search_lp(Graph &g, int &num_operations) {
            }
         }
         */
-        current_cost += add_node_to_all(g, current_solution);
+        current_cost += add_node_to_all(wg, current_solution);
         for (int j = 0; j < 5; j++) {
             /*
             current_cost += random_choice_add_node(g, current_solution, book);
@@ -41,16 +43,16 @@ ShallowSolution local_search_lp(Graph &g, int &num_operations) {
             
             //cout << "current_cost: " << current_cost << "\n";
             //cout << "actual_cost: " << current_solution.cost_solution(g) << "\n";
-            current_cost += vertex_isolator(g, current_solution) + vertex_mover(g, current_solution) + \
-            add_adjacent_vertex(g, current_solution); // clique_splitter(g, current_solution);
+            current_cost += vertex_isolator(wg, current_solution) + vertex_mover(wg, current_solution) + \
+            add_adjacent_vertex(wg, current_solution); //clique_splitter(wg, current_solution);
         }
         
-        for (double j = 0; j < max((double)15, 15*converge_counter*0.3); j++) {
-            current_cost += label_propagation_round(g, current_solution);
+        for (double j = 0; j < 10; j++) { //max((double)15, 15*converge_counter*0.3); j++) {
+            current_cost += label_propagation_round(wg, current_solution);
             //cout << "current_cost: " << current_cost << "\n";
             //cout << "actual_cost: " << current_solution.cost_solution(g) << "\n";
         }
-        current_cost += remove_nodes(g, current_solution);
+        current_cost += remove_nodes(wg, current_solution);
 
         //Also using some merge and split with hope of speedup.
         
@@ -67,8 +69,8 @@ ShallowSolution local_search_lp(Graph &g, int &num_operations) {
         }
         cout << "current_cost: " << current_cost << "\n";
         current_solution.book.operation_number += 1;
-        cout << "actual_cost: " << current_solution.cost_solution(g) << "\n";
+        //cout << "actual_cost: " << current_solution.cost_solution(wg) << "\n";
         //current_solution.print_solution();
     }
-    return best_solution;
+    return from_cc_sol_to_sol(g, best_solution, revert);
 }

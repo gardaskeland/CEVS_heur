@@ -57,7 +57,7 @@ int label_propagation_round(Graph &g, SolutionRepresentation &sol) {
             sol.add_set(to_add);
             //0 for adding, all cost measured in removal.
             //+1 since we add back a node.
-            cost += vertex_cost + 1;
+            cost += vertex_cost + g.get_node_weight(u);
             continue;
         }
         
