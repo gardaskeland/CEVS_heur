@@ -1,6 +1,7 @@
 #include "find_kernel.h"
 #include "revert_kernel.h"
 #include "../CEVS/read_file.h"
+#include "operators/add_node.h"
 
 #include <sstream>
 #include <fstream>
@@ -35,7 +36,7 @@ int main() {
     double sum_percent_edges = 0;
     double best_percentage_nodes = 0;
     double best_percentage_edges = 0;
-    int num_graphs = 100;
+    int num_graphs = 3000;
     for (int i = 1; i < num_graphs*2; i = i + 2) {
         oss.clear();
         oss.str(string());

@@ -60,7 +60,7 @@ ShallowSolution local_search_lp(Graph &g, int &num_operations) {
             converge_counter = 1;
         } else {
             converge_counter += 1;
-            if (converge_counter == 10) {
+            if (converge_counter == 30) {
                 cout << "Solution has converged after " << i << " rounds\n";
                 break;
             }
