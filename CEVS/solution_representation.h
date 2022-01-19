@@ -158,6 +158,12 @@ class SolutionRepresentation
     int num_sets();
 
     /**
+     * @brief Return average set size.
+     * 
+     */
+    int avg_set_size();
+
+    /**
      * Obtain the indices of the sets currently in the solution.
      */
     vector<int> get_set_indices();

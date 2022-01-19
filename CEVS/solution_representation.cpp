@@ -195,6 +195,14 @@ int SolutionRepresentation::num_sets() {
     return clusters.size();
 }
 
+int SolutionRepresentation::avg_set_size() {
+    int sum_ = 0;
+    for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
+        sum_ += (it->second).size();
+    }
+    return sum_ / clusters.size();
+}
+
 
 set<int> SolutionRepresentation::get_node_to_clusters(int vi) {
     return node_in_clusters[vi];

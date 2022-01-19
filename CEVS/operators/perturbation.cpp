@@ -25,6 +25,7 @@ int choose_random_set_entry(set<int> s) {
 
 int vertex_isolator(Graph &g, SolutionRepresentation &sol) {
     int v = rand() % g.n;
+    //sol.print_solution();
     set<int> sets = sol.get_node_to_clusters(v);
     int si = choose_random_set_entry(sets);
     int cost = removal_cost(g, sol, si, v);
@@ -32,8 +33,9 @@ int vertex_isolator(Graph &g, SolutionRepresentation &sol) {
     set<int> to_add;
     to_add.insert(v);
     sol.add_set(to_add);
-    //+1 since added node
-    return cost + 1;
+    //sol.print_solution();
+    //cout << "node weight: " << g.get_node_weight(v) << "\n";
+    return cost + g.get_node_weight(v);
 }
 
 int vertex_mover(Graph &g, SolutionRepresentation &sol) {
@@ -82,11 +84,9 @@ int clique_splitter(Graph &g, SolutionRepresentation &sol) {
     set<int> new_set; new_set.insert(u); new_set.insert(v);
     sol.add_set(new_set);
     if (in_other_cluster) {
-        //since we add two nodes.
-        return cost + 2;
+        return cost + g.get_node_weight(u) + g.get_node_weight(v);
     } else {
-        //since we add two nodes and no longer have to delete an edge: 2 - 1.
-        return cost + 1;
+        return cost + g.get_node_weight(u) + g.get_node_weight(v) - g.get_edge_cost(u, v);
     }
 }
 

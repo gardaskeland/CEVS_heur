@@ -92,7 +92,7 @@ int add_node_to_set_cost(Graph &g, SolutionRepresentation &sol, int si, int v) {
         }
     } 
     //+1 since we split the node by adding it
-    return edges_to_add - edges_to_delete + 1;
+    return edges_to_add - edges_to_delete + g.get_node_weight(v);
 }
 
 
@@ -201,7 +201,7 @@ int removal_cost(Graph &g, SolutionRepresentation &sol, int si, int u) {
         }
     }
     //-1 since we split one less
-    return edges_to_delete - edges_added - 1;
+    return edges_to_delete - edges_added - g.get_node_weight(u);
 }
 
 
