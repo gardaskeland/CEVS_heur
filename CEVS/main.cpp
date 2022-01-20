@@ -42,7 +42,7 @@ int main() {
     fstream out_file;
     ifstream read("bipartite_graphs/bgraph_sizes.txt");
     out_file.open("avg_cluster_sizes_for_bipartite_graphs.txt");
-    for (int i = 1; i < 22; i = i + 1) {
+    for (int i = 22; i < 23; i = i + 1) {
         oss.clear();
         oss.str(string());
         oss << "bipartite_graphs/bgraph" << i << ".txt";//s../../../heur/heur" << integer_to_three_digits(i) << ".gr";
@@ -50,7 +50,7 @@ int main() {
         cout << "Working on file " << filename << "\n";
         vector<vector<int>> adj = read_gz_file(filename);
         Graph g = Graph(adj);
-        for (int j = 1; j < 2; j++) {
+        for (int j = 1; j < 6; j++) {
             chrono::steady_clock::time_point begin_ = chrono::steady_clock::now();
             ShallowSolution sol = local_search_lp(g, num_operations);
             chrono::steady_clock::time_point end_ = chrono::steady_clock::now();

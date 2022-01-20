@@ -200,7 +200,6 @@ int removal_cost(Graph &g, SolutionRepresentation &sol, int si, int u) {
             
         }
     }
-    //-1 since we split one less
     return edges_to_delete - edges_added - g.get_node_weight(u);
 }
 
