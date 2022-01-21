@@ -40,17 +40,17 @@ int main() {
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
     vector<double> time_elapsed_record;
     fstream out_file;
-    ifstream read("bipartite_graphs/bgraph_sizes.txt");
-    out_file.open("avg_cluster_sizes_for_bipartite_graphs.txt");
-    for (int i = 22; i < 23; i = i + 1) {
+    ifstream read("bipartite_graphs/bgraph_sizes2.txt");
+    out_file.open("best_solutions_bipartite_graphs.txt");
+    for (int i = 1; i < 211; i = i + 1) {
         oss.clear();
         oss.str(string());
-        oss << "bipartite_graphs/bgraph" << i << ".txt";//s../../../heur/heur" << integer_to_three_digits(i) << ".gr";
+        oss << "bipartite_graphs/bgraph2." << i << ".txt";//s../../../heur/heur" << integer_to_three_digits(i) << ".gr";
         filename = oss.str(); // "../CEVStest/test_graphs/g8.txt";
         cout << "Working on file " << filename << "\n";
         vector<vector<int>> adj = read_gz_file(filename);
         Graph g = Graph(adj);
-        for (int j = 1; j < 6; j++) {
+        for (int j = 1; j < 2; j++) {
             chrono::steady_clock::time_point begin_ = chrono::steady_clock::now();
             ShallowSolution sol = local_search_lp(g, num_operations);
             chrono::steady_clock::time_point end_ = chrono::steady_clock::now();
@@ -79,13 +79,14 @@ int main() {
             iss >> next;
             out_file << next << " ";
             iss >> next;
-            out_file << next << " " << (double)sum_cluster_size / calculate_sol.clusters.size() << "\n";
+            int cost = calculate_sol.cost_solution(g);
+            out_file << next << " " << calculate_sol.solution_to_string() << " " << cost << "\n";
 
             calculate_sol.print_solution();
             cout << "Smallest and largest cluster size: " << smallest_cluster << ", " << largest_cluster << "\n";
             cout << "Average cluster size: " << (double)sum_cluster_size / calculate_sol.clusters.size() << "\n"; 
             cout << "Solution feasible: " << calculate_sol.simple_feasibility_check() << "\n";
-            cout << "Cost of solution: " << calculate_sol.cost_solution(g) << "\n";
+            cout << "Cost of solution: " << cost << "\n";
             cout << "Number of splitting operations: " << calculate_sol.num_splits() << "\n";
             remove_nodes(g, calculate_sol);
             cout << "After using remove nodes: " << "\n";

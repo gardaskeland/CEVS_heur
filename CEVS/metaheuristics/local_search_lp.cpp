@@ -32,7 +32,7 @@ ShallowSolution local_search_lp(Graph &g, int &num_operations) {
         }
         */
         current_cost += add_node_to_all(g, current_solution);
-        for (int j = 0; j < 10; j++) {
+        for (int j = 0; j < 5; j++) {
             /*
             current_cost += random_choice_add_node(g, current_solution, book);
             set<int> indices = current_solution.get_set_indices_as_set();

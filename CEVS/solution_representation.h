@@ -14,6 +14,13 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
 
 using namespace std;
 
@@ -191,6 +198,8 @@ class SolutionRepresentation
     SolutionRepresentation copy_solution();
 
     void print_solution();
+
+    string solution_to_string();
 
     void print_node_in_clusters();
 
