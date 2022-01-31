@@ -10,6 +10,7 @@
 #include <utility>
 #include <iostream>
 #include <limits>
+#include <optional>
 
 using namespace std;
 
@@ -71,7 +72,9 @@ void do_revert_add_node(SolutionRepresentation &sol, Bookkeep &book);
  * @param book 
  * @return int 
  */
-int random_choice_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book);
+optional<int> random_choice_add_node(Graph &g, SolutionRepresentation &sol);
+
+//int random_choice_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book)
 
 /**
  * @brief Goes through all sets and finds the neighbour node of each that gives the most reduction
@@ -94,6 +97,8 @@ int add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book);
  */
 int weighted_random_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book);
 
+
+
 /**
  * @brief Considers all vertices and removes them from every cluster that it costs more than it
  * gains for it to be in, down to one cluster.
@@ -103,6 +108,13 @@ int weighted_random_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &bo
  * @return int 
  */
 int remove_nodes(Graph &g, SolutionRepresentation &sol);
+
+/**
+ * @brief Apply the latest add-operation to sol.
+ * 
+ * @param sol 
+ */
+void do_add(SolutionRepresentation &sol);
 
 
 #endif

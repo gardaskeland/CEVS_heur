@@ -10,6 +10,7 @@
 #include "../utility/karger.h"
 #include "../utility/weighted_random.h"
 #include <chrono>
+#include <optional>
 
 using namespace std;
 
@@ -34,7 +35,7 @@ int compute_inner_cost(Graph &g, SolutionRepresentation &sol, int si);
  * @param si 
  * @return int 
  */
-int random_choice_split(Graph &g, SolutionRepresentation &sol);
+optional<int> random_choice_split(Graph &g, SolutionRepresentation &sol);
 
 /**
 * Stores info about a split that may be executed in sol.book.b_split and returns
@@ -44,4 +45,11 @@ int random_choice_split(Graph &g, SolutionRepresentation &sol);
 * instead.
 */
 int greedy_split(Graph &g, SolutionRepresentation &sol, string f = "min_cut");
+
+/**
+ * @brief Executes the latest split.
+ * 
+ * @param sol 
+ */
+void do_split(SolutionRepresentation &sol);
 #endif

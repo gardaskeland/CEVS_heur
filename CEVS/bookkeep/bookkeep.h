@@ -6,6 +6,7 @@
 #include "../utility/segment_tree.h"
 #include "b_add_node.h"
 #include "b_split.h"
+#include "b_lp.h"
 
 using namespace std;
 
@@ -25,6 +26,7 @@ class Bookkeep {
         BMerge b_merge;
         BAddNode b_add_node;
         BSplit b_split;
+        BLP b_lp;
 
     Bookkeep(int operations) {
         total_operations = operations;

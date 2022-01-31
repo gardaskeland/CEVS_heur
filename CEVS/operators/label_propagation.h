@@ -15,6 +15,16 @@
 
 using namespace std;
 
+/**
+ * @brief Stores the details of a move in label propagation: One vertex is moved from a set s0
+ * to a set s1.
+ * 
+ */
+struct lp_move {
+    int v;
+    int s0;
+    int s1;
+};
 
 /**
  * @brief Returns the neighbour clusters of a vertex u. Here a neighbour cluster either is
@@ -27,6 +37,16 @@ using namespace std;
  * @return vector<int> 
  */
 set<int> neighbour_clusters(Graph &g, SolutionRepresentation &sol, int u);
+
+/**
+ * @brief Suggests the best vertex move to do in the current state of the solution, from one set to another.
+ * Returns the cost or a failed attempt and stores the details of the move in b_lp.
+ * 
+ * @param g 
+ * @param sol 
+ * @return optional<int> 
+ */
+optional<int> best_vertex_move(Graph &g, SolutionRepresentation &sol);
 
 /**
  * @brief Goes through every vertex in input order, removes the costliest copy

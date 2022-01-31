@@ -126,17 +126,17 @@ void do_revert_add_node(SolutionRepresentation &sol, Bookkeep &book) {
 }
 
 
-int random_choice_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
+optional<int> random_choice_add_node(Graph &g, SolutionRepresentation &sol) {
     vector<int> set_indices = sol.get_set_indices();
     int si = set_indices[rand() % set_indices.size()];
     vector<pair<int, int>> best_nodes = best_nodes_to_add(g, sol, si);
     if (best_nodes.size() == 0) {
         sol.book.b_add_node.v = -1;
-        return 0;
+        return {};
     }
     sol.book.b_add_node.v = best_nodes[0].second;
     sol.book.b_add_node.si = si;
-    return best_nodes[0].first;
+    return optional(best_nodes[0].first);
 }
 
 int add_node_to_all(Graph &g, SolutionRepresentation &sol) {
@@ -231,6 +231,11 @@ int remove_nodes(Graph &g, SolutionRepresentation &sol) {
         }
     }
     return cost;
+}
+
+
+void do_add(SolutionRepresentation &sol) {
+    sol.add(sol.book.b_add_node.v, sol.book.b_add_node.si);
 }
         /**
         set<int> in_clusters = sol.get_node_to_clusters(u);

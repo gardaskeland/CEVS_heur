@@ -429,3 +429,7 @@ int weighted_random_merge(Graph &g, SolutionRepresentation &sol) {
 
 }
 
+void do_merge(SolutionRepresentation &sol) {
+    sol.merge(sol.book.b_merge.si, sol.book.b_merge.sj);
+}
+

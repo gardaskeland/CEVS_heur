@@ -78,3 +78,70 @@ int label_propagation_round(Graph &g, SolutionRepresentation &sol) {
     }
     return cost;
 }
+
+void precompute_b_lp(Graph &g, SolutionRepresentation &sol) {
+    //initialise cooccurence-map.
+    for (int v = 0; v < g.n - 1; v++) {
+        for (int u = v+1; u < g.n; u++) {
+            int counter = 0;
+            set<int> set_v = sol.get_node_to_clusters(v);
+            set<int> set_u = sol.get_node_to_clusters(u);
+            for (int i : set_v) {
+                if (set_u.find(v) != set_u.end()) counter += 1;
+            }
+            if (counter > 0) {
+                sol.book.b_lp.co_occurence[minmax(v, u)] = counter; 
+            }
+        }
+    }
+
+    //find cost of an operation and how it changes other operations.
+    for (int v = 0; v < g.n; v++) {
+        set<pair<int, int>> edges_unadded;
+        set<pair<int, int>> edges_removed;
+        set<int> set_v = sol.get_node_to_clusters(v);
+        set<int> neighbourhood = neighbour_clusters(g, sol, v);
+        for (int u : set_v) {
+            if (sol.book.b_lp.co_occurence[minmax(v, u)] > 1) continue;
+            if (g.has_edge(v, u)) edges_removed.insert(minmax(v, u));
+            else edges_unadded.insert(minmax(v, u));
+        }
+
+        for (int si : neighbourhood) {
+            int op_cost = 0;
+            set<pair<int, int>> edges_readded;
+            set<pair<int, int>> edge_remove_ignore;
+            set<pair<int, int>> edges_added;
+            set<pair<int, int>> edge_unadd_ignore;
+            set<int> si_nodes = sol.get_set(si);
+            for (int w : si_nodes) {
+                if (sol.book.b_lp.co_occurence[minmax(v, w)] > 0) continue;
+                if (g.has_edge(v, w)) {
+                    if (edges_removed.find(minmax(v, w)) != edges_removed.end()) {
+                        edge_remove_ignore.insert(minmax(v, w));
+                    }
+                    else {
+                         edges_readded.insert(minmax(v, w));
+                    }
+                }
+                else {
+                    if (edges_unadded.find(minmax(v, w)) != edges_unadded.end()) {
+                        edge_unadd_ignore.insert(minmax(v, w));
+                    }
+                    else {
+                        edges_added.insert(minmax(v, w));
+                    }
+                }
+            }
+            vector<tuple<int, int, int>> to_change;
+
+            for (pair<int,int> e : edges_readded) {}
+        }
+
+    }
+
+}
+
+optional<int> best_vertex_move(Graph &g, SolutionRepresentation &sol) {
+    if (sol.book.b_lp.v == -1) precompute_b_lp(g, sol);
+}

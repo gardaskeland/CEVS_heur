@@ -4,6 +4,7 @@
 #include <cmath>
 #include <algorithm>
 #include <map>
+#include <queue>
 
 using namespace std;
 
@@ -13,5 +14,4 @@ using namespace std;
  * where length is the length of the datastructure for which we need an index to query.
  */
 int weighted_random_index(int max_index, int length, double log_base);
-
 #endif

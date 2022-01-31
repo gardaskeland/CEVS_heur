@@ -28,10 +28,12 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
         t *= alpha; //t_max * (1 - ((static_cast<float>(i + 1))/num_operations));
         int r = rand() % 100;
         //cout << "r = " << r << "\n";
+        optional<int> res0, res1, res2;
         if (r < weights[0]) {
             chrono::steady_clock::time_point begin_0 = chrono::steady_clock::now();
             choice = 0;
-            new_cost = current_cost + random_choice_add_node(wg, current_solution, book);
+            res0 = random_choice_add_node(wg, current_solution);
+            new_cost = current_cost + res0.value_or(0);
             current_solution.book.b_add_node.last_add_operation = i;
             chrono::steady_clock::time_point end_0 = chrono::steady_clock::now();
             time_taken[0] += chrono::duration_cast<chrono::microseconds>(end_0 - begin_0).count();
@@ -40,7 +42,8 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
             choice = 1;
             //cout << "choice: " << choice << "\n";
             //current_solution.print_solution();
-            new_cost = current_cost + random_choice_split(wg, current_solution);
+            res1 = random_choice_split(wg, current_solution);
+            new_cost = current_cost + res1.value_or(0);
             current_solution.book.b_split.last_split_operation = i;
             chrono::steady_clock::time_point end_1 = chrono::steady_clock::now();
             time_taken[1] += chrono::duration_cast<chrono::microseconds>(end_1 - begin_1).count();
@@ -48,7 +51,8 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
         } else {
             chrono::steady_clock::time_point begin_2 = chrono::steady_clock::now();
             choice = 2;
-            new_cost = current_cost + weighted_random_merge(wg, current_solution);
+            res2 = weighted_random_merge(wg, current_solution);
+            new_cost = current_cost + res2.value_or(0);
             current_solution.book.b_merge.last_merge_operation = i;
             chrono::steady_clock::time_point end_2 = chrono::steady_clock::now();
             time_taken[2] += chrono::duration_cast<chrono::microseconds>(end_2 - begin_2).count();
@@ -58,10 +62,8 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
         if (new_cost <= current_cost || rand() % 100 < 100 * exp(-(new_cost - current_cost)/t)) {
             if (choice == 0) {
                 chrono::steady_clock::time_point begin_3 = chrono::steady_clock::now();
-                set<int> indices = current_solution.get_set_indices_as_set();
-                if (!(current_solution.book.b_add_node.v == -1) &&
-                    indices.find(current_solution.book.b_add_node.si) != indices.end()) {
-                    current_solution.add(current_solution.book.b_add_node.v, current_solution.book.b_add_node.si);
+                if (res0.has_value()) {
+                    do_add(current_solution);
                     current_cost = new_cost;
                 }
                 chrono::steady_clock::time_point end_3 = chrono::steady_clock::now();
@@ -69,14 +71,8 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
             } else if (choice == 1) {
                 chrono::steady_clock::time_point begin_4 = chrono::steady_clock::now();
                 set<int> indices = current_solution.get_set_indices_as_set();
-                if (!(current_solution.book.b_split.si == -1) &&
-                    indices.find(current_solution.book.b_split.si) != indices.end()) {
-                    //cout << "before: ";
-                    //current_solution.print_solution();
-                    pair<set<int>, set<int>> p = current_solution.book.b_split.cut;
-                    current_solution.disjoint_split(current_solution.book.b_split.si, p.first, p.second);
-                    //cout << "after: ";
-                    //current_solution.print_solution();
+                if (res1.has_value()) {
+                    do_split(current_solution);
                     current_cost = new_cost;
                 }
                 chrono::steady_clock::time_point end_4 = chrono::steady_clock::now();
@@ -86,8 +82,10 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
                 chrono::steady_clock::time_point begin_5 = chrono::steady_clock::now();
                 //cout << "line 66: ";
                 //current_solution.print_solution();
-                current_solution.merge(current_solution.book.b_merge.si, current_solution.book.b_merge.sj);
-                current_cost = new_cost;
+                if (res2.has_value()) {
+                    do_merge(current_solution);
+                    current_cost = new_cost;
+                } 
                 chrono::steady_clock::time_point end_5 = chrono::steady_clock::now();
                 time_taken[5] += chrono::duration_cast<chrono::microseconds>(end_5 - begin_5).count();
             }     
@@ -112,7 +110,7 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
             current_solution.print_solution();
         }
         
-        /*
+        /**
         if (current_cost - current_solution.cost_solution(wg) != sol_diff) {
             sol_diff = current_cost - current_solution.cost_solution(wg);
             cout << "Change in sol_diff after operation " << choice << "\n";

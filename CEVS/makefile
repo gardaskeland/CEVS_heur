@@ -1,76 +1,82 @@
 
+boiler=g++ -std=c++17 -c -g
+
 cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o \
 		b_merge.o shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
-		label_propagation.o perturbation.o
-	g++ -g -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
+		label_propagation.o perturbation.o b_lp.o
+	g++ -std=c++17 -g -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o b_merge.o \
 		shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
-		label_propagation.o perturbation.o
+		label_propagation.o perturbation.o b_lp.o
 
 main.o: main.cpp read_file.h
-	g++ -c -g main.cpp
+	$(boiler) main.cpp
 
 read_file.o: read_file.cpp read_file.h
-	g++ -c -g read_file.cpp
+	$(boiler) read_file.cpp
 
 graph.o: graph.cpp graph.h
-	g++ -c -g graph.cpp
+	$(boiler) graph.cpp
 
 solution_representation.o: solution_representation.cpp solution_representation.h
-	g++ -c -g solution_representation.cpp
+	$(boiler) solution_representation.cpp
 
 add_node.o: operators/add_node.cpp operators/add_node.h
-	g++ -c -g operators/add_node.cpp
+	$(boiler) operators/add_node.cpp
 
 greedy_merge.o: operators/greedy_merge.cpp operators/greedy_merge.h
-	g++ -c -g operators/greedy_merge.cpp
+	$(boiler) operators/greedy_merge.cpp
 
 local_search.o: metaheuristics/local_search.cpp metaheuristics/local_search.h
-	g++ -c -g metaheuristics/local_search.cpp
+	$(boiler) metaheuristics/local_search.cpp
 
 weighted_random.o: utility/weighted_random.cpp utility/weighted_random.h
-	g++ -c -g utility/weighted_random.cpp
+	$(boiler) utility/weighted_random.cpp
 
 bookkeep.o: bookkeep/bookkeep.cpp bookkeep/bookkeep.h
-	g++ -c -g bookkeep/bookkeep.cpp
+	$(boiler) bookkeep/bookkeep.cpp
 
 b_merge.o: bookkeep/b_merge.cpp bookkeep/b_merge.h
-	g++ -c -g bookkeep/b_merge.cpp
+	$(boiler) bookkeep/b_merge.cpp
 
 b_add_node.o: bookkeep/b_add_node.cpp bookkeep/b_add_node.h
-	g++ -c -g bookkeep/b_add_node.cpp
+	$(boiler) bookkeep/b_add_node.cpp
 
 shallow_solution.o: utility/shallow_solution.cpp utility/shallow_solution.h
-	g++ -c -g utility/shallow_solution.cpp
+	$(boiler) utility/shallow_solution.cpp
 
 segment_tree.o: utility/segment_tree.cpp utility/segment_tree.h
-	g++ -c -g utility/segment_tree.cpp
+	$(boiler) utility/segment_tree.cpp
 
 weighted_graph.o: weighted_graph.cpp weighted_graph.h
-	g++ -c -g weighted_graph.cpp
+	$(boiler) weighted_graph.cpp
 
 find_kernel.o: ../CEVSkernel/find_kernel.cpp ../CEVSkernel/find_kernel.h ../CEVSkernel/revert_kernel.h
-	g++ -c -g ../CEVSkernel/find_kernel.cpp
+	$(boiler) ../CEVSkernel/find_kernel.cpp
 
 split.o: operators/split.cpp operators/split.h
-	g++ -c -g operators/split.cpp
+	$(boiler) operators/split.cpp
 
 karger.o: utility/karger.cpp utility/karger.h
-	g++ -c -g utility/karger.cpp
+	$(boiler) utility/karger.cpp
 
 simulated_annealing.o: metaheuristics/simulated_annealing.cpp metaheuristics/simulated_annealing.h
-	g++ -c -g metaheuristics/simulated_annealing.cpp
+	$(boiler) metaheuristics/simulated_annealing.cpp
 
 label_propagation.o: operators/label_propagation.cpp operators/label_propagation.h
-	g++ -c -g operators/label_propagation.cpp
+	$(boiler) operators/label_propagation.cpp
 
 local_search_lp.o: metaheuristics/local_search_lp.cpp metaheuristics/local_search_lp.h
-	g++ -c -g metaheuristics/local_search_lp.cpp
+	$(boiler) metaheuristics/local_search_lp.cpp
 
 perturbation.o: operators/perturbation.cpp operators/perturbation.h
-	g++ -c -g operators/perturbation.cpp
+	$(boiler) operators/perturbation.cpp
+
+b_lp.o: bookkeep/b_lp.cpp bookkeep/b_lp.h
+	$(boiler) bookkeep/b_lp.cpp
+
 clean:
 	del *.o cevs

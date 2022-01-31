@@ -158,20 +158,20 @@ pair<int, pair<set<int>, set<int>>> clique_split(Graph &g, SolutionRepresentatio
     return pair<int, pair<set<int>, set<int>>> (0, pair<set<int>, set<int>>(clique_1, clique_2));
 }
 
-int random_choice_split(Graph &g, SolutionRepresentation &sol) {
+optional<int> random_choice_split(Graph &g, SolutionRepresentation &sol) {
     vector<int> set_indices = sol.get_set_indices();
     int r = rand() % set_indices.size();
     int si = set_indices[r];
     //cout << "r: " << r << "\n";
     if (sol.get_set(si).size() <= 1) {
         sol.book.b_split.si = -1;
-        return 1000000;
+        return {};
     }
     sol.book.b_split.si = si;
     pair<int, pair<set<int>, set<int>>> min_cut = find_min_cut(g, sol, si);
     int cost_of_cut = cost_of_split(g, sol, min_cut.second.first, min_cut.second.second, si);
     sol.book.b_split.cut = min_cut.second;
-    return cost_of_cut;
+    return optional(cost_of_cut);
 }
 
 int greedy_split(Graph &g, SolutionRepresentation &sol, string f) {
@@ -278,4 +278,9 @@ int greedy_split(Graph &g, SolutionRepresentation &sol, string f) {
     sol.book.b_split.cut = min_cut.second;
     return cost_of_cut;
     
+}
+
+void do_split(SolutionRepresentation &sol) {
+    pair<set<int>, set<int>> p = sol.book.b_split.cut;
+    sol.disjoint_split(sol.book.b_split.si, p.first, p.second);
 }

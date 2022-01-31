@@ -14,6 +14,7 @@
 #include "../../CEVSkernel/find_kernel.h"
 #include "../weighted_graph.h"
 #include "../operators/split.h"
+#include <optional>
 
 using namespace std;
 

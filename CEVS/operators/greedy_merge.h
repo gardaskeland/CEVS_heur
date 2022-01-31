@@ -24,6 +24,8 @@ int merge_cost(SolutionRepresentation &sol, Graph &g, int si, int sj);
 
 void merge(SolutionRepresentation &sol, int si, int sj);
 
+void do_merge(SolutionRepresentation &sol);
+
 struct revert_greedy_merge;
 
 void do_revert_merge(SolutionRepresentation &sol, Bookkeep &book);
