@@ -73,4 +73,4 @@ local_search_lp.o: metaheuristics/local_search_lp.cpp metaheuristics/local_searc
 perturbation.o: operators/perturbation.cpp operators/perturbation.h
 	g++ -c -g operators/perturbation.cpp
 clean:
-	rm *.o cevs
+	del *.o cevs

@@ -415,6 +415,20 @@ void SolutionRepresentation::print_solution() {
     cout << "]\n";
 }
 
+string SolutionRepresentation::solution_to_string() {
+    stringstream a;
+    a << "[";
+    for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); ++it) {
+        a << "[" << it->first << ": ";
+        for (int i : it->second) {
+            a << i << ", ";
+        }
+        a << "], ";
+    }
+    a << "]";
+    return a.str();
+}
+
 void SolutionRepresentation::print_node_in_clusters() {
     cout << "[";
     for (map<int, set<int>>::iterator it = node_in_clusters.begin(); it != node_in_clusters.end(); ++it) {
@@ -432,7 +446,7 @@ void SolutionRepresentation::print_node_in_clusters() {
 int SolutionRepresentation::num_splits() {
     int count = 0;
     for (map<int, set<int>>::iterator it = node_in_clusters.begin(); it != node_in_clusters.end(); it++) {
-        cout << it->first << " is split " << (it->second).size() - 1 << " times\n";
+        //cout << it->first << " is split " << (it->second).size() - 1 << " times\n";
         count += (it->second).size() - 1;
     }
     return count;
