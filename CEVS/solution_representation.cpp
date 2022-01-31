@@ -432,8 +432,7 @@ void SolutionRepresentation::print_node_in_clusters() {
 int SolutionRepresentation::num_splits() {
     int count = 0;
     for (map<int, set<int>>::iterator it = node_in_clusters.begin(); it != node_in_clusters.end(); it++) {
-        //for (int i : it-> second) cout << i << " ";
-        //cout << "\n";
+        cout << it->first << " is split " << (it->second).size() - 1 << " times\n";
         count += (it->second).size() - 1;
     }
     return count;

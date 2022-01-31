@@ -42,10 +42,10 @@ int main() {
     fstream out_file;
     ifstream read("bipartite_graphs/bgraph_sizes.txt");
     out_file.open("avg_cluster_sizes_for_bipartite_graphs.txt");
-    for (int i = 1; i < 22; i = i + 1) {
+    for (int i = 1; i < 100; i = i + 10) {
         oss.clear();
         oss.str(string());
-        oss << "bipartite_graphs/bgraph" << i << ".txt";//s../../../heur/heur" << integer_to_three_digits(i) << ".gr";
+        oss << "../../../exact/exact" << integer_to_three_digits(i) << ".gr"; // "bipartite_graphs/bgraph" << i << ".txt";//s../../../heur/heur" << integer_to_three_digits(i) << ".gr";
         filename = oss.str(); // "../CEVStest/test_graphs/g8.txt";
         cout << "Working on file " << filename << "\n";
         vector<vector<int>> adj = read_gz_file(filename);
