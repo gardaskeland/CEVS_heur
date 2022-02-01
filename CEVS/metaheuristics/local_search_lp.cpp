@@ -50,7 +50,7 @@ ShallowSolution local_search_lp(Graph &g, int &num_operations) {
             //cout << "current_cost: " << current_cost << "\n";
             //cout << "actual_cost: " << current_solution.cost_solution(g) << "\n";
         }
-        current_cost += remove_nodes(g, current_solution);
+        current_cost += remove_nodes_(g, current_solution);
 
         //Also using some merge and split with hope of speedup.
         

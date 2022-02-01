@@ -5,12 +5,12 @@ cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o \
 		b_merge.o shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
-		label_propagation.o perturbation.o b_lp.o
+		label_propagation.o perturbation.o
 	g++ -std=c++17 -g -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o b_merge.o \
 		shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
-		label_propagation.o perturbation.o b_lp.o
+		label_propagation.o perturbation.o
 
 main.o: main.cpp read_file.h
 	$(boiler) main.cpp
@@ -22,7 +22,7 @@ graph.o: graph.cpp graph.h
 	$(boiler) graph.cpp
 
 solution_representation.o: solution_representation.cpp solution_representation.h
-	$(boiler) solution_representation.cpp
+	g++ -std=c++17 -c -g solution_representation.cpp
 
 add_node.o: operators/add_node.cpp operators/add_node.h
 	$(boiler) operators/add_node.cpp
@@ -74,9 +74,6 @@ local_search_lp.o: metaheuristics/local_search_lp.cpp metaheuristics/local_searc
 
 perturbation.o: operators/perturbation.cpp operators/perturbation.h
 	$(boiler) operators/perturbation.cpp
-
-b_lp.o: bookkeep/b_lp.cpp bookkeep/b_lp.h
-	$(boiler) bookkeep/b_lp.cpp
 
 clean:
 	del *.o cevs

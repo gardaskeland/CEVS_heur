@@ -1,7 +1,6 @@
 #ifndef ADD_NODE_H   // To make sure you don't declare the function more than once by including the header multiple times.
 #define ADD_NODE_H
 
-#include "../solution_representation.h"
 #include "../graph.h"
 #include "../bookkeep/bookkeep.h"
 #include "../utility/weighted_random.h"
@@ -11,6 +10,7 @@
 #include <iostream>
 #include <limits>
 #include <optional>
+#include "../solution_representation.h"
 
 using namespace std;
 
@@ -107,7 +107,7 @@ int weighted_random_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &bo
  * @param sol 
  * @return int 
  */
-int remove_nodes(Graph &g, SolutionRepresentation &sol);
+int remove_nodes_(Graph &g, SolutionRepresentation &sol);
 
 /**
  * @brief Apply the latest add-operation to sol.

@@ -3,6 +3,7 @@
 
 #include "../graph.h"
 #include "../solution_representation.h"
+#include "../bookkeep/bookkeep.h"
 #include "add_node.h"
 #include <iostream>     // std::cout
 #include <algorithm>    // std::random_shuffle
@@ -12,6 +13,7 @@
 #include <random>
 #include <iterator>
 #include <iostream>
+#include <tuple>
 
 using namespace std;
 
@@ -38,6 +40,7 @@ struct lp_move {
  */
 set<int> neighbour_clusters(Graph &g, SolutionRepresentation &sol, int u);
 
+
 /**
  * @brief Suggests the best vertex move to do in the current state of the solution, from one set to another.
  * Returns the cost or a failed attempt and stores the details of the move in b_lp.
@@ -46,7 +49,7 @@ set<int> neighbour_clusters(Graph &g, SolutionRepresentation &sol, int u);
  * @param sol 
  * @return optional<int> 
  */
-optional<int> best_vertex_move(Graph &g, SolutionRepresentation &sol);
+//optional<int> best_vertex_move(Graph &g, SolutionRepresentation &sol);
 
 /**
  * @brief Goes through every vertex in input order, removes the costliest copy

@@ -158,12 +158,34 @@ pair<int, pair<set<int>, set<int>>> clique_split(Graph &g, SolutionRepresentatio
     return pair<int, pair<set<int>, set<int>>> (0, pair<set<int>, set<int>>(clique_1, clique_2));
 }
 
+bool is_connected_component(Graph &g, SolutionRepresentation &sol, int si) {
+    set<int> seen;
+    queue<int> q;
+    set<int> si_nodes = sol.get_set(si);
+    q.push(*si_nodes.begin());
+
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        seen.insert(u);
+        for (int v : g.adj[u]) {
+            if (seen.find(v) != seen.end()) continue;
+            if (si_nodes.find(v) != si_nodes.end()) {
+                q.push(v);
+            }
+        }
+    }
+    if (seen.size() < si_nodes.size()) return false;
+    else return true;
+    
+}
+
 optional<int> random_choice_split(Graph &g, SolutionRepresentation &sol) {
     vector<int> set_indices = sol.get_set_indices();
     int r = rand() % set_indices.size();
     int si = set_indices[r];
     //cout << "r: " << r << "\n";
-    if (sol.get_set(si).size() <= 1) {
+    if (sol.get_set(si).size() <= 1 || !is_connected_component(g, sol, si)) {
         sol.book.b_split.si = -1;
         return {};
     }

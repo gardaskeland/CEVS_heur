@@ -92,7 +92,7 @@ int add_node_to_set_cost(Graph &g, SolutionRepresentation &sol, int si, int v) {
         }
     } 
     //+1 since we split the node by adding it
-    return edges_to_add - edges_to_delete + 1;
+    return edges_to_add - edges_to_delete + g.get_node_weight(v);
 }
 
 
@@ -201,14 +201,14 @@ int removal_cost(Graph &g, SolutionRepresentation &sol, int si, int u) {
         }
     }
     //-1 since we split one less
-    return edges_to_delete - edges_added - 1;
+    return edges_to_delete - edges_added - g.get_node_weight(u);
 }
 
 
 //Problem: Removing a node from a cluster can affect the cost of removing the node from
 //other clusters if they share common vertices. Can therefore only remove the one with best cost
 //at all times, before calculating all over. May be very expensive, worst case O(n^3 * m) at least.
-int remove_nodes(Graph &g, SolutionRepresentation &sol) {
+int remove_nodes_(Graph &g, SolutionRepresentation &sol) {
     int cost = 0;
     for (int u = 0; u < g.n; u++) {
         while (true) {

@@ -8,11 +8,13 @@
 #include "graph.h"
 //#include "metaheuristics/local_search.h"
 #include "metaheuristics/simulated_annealing.h"
-//#include "metaheuristics/local_search_lp.h"
+#include "metaheuristics/local_search_lp.h"
 #include "utility/shallow_solution.h"
 #include "bookkeep/b_merge.h"
 #include <chrono>
 #include "operators/add_node.h"
+#include "solution_representation.h"
+#include "bookkeep/bookkeep.h"
 using namespace std;
 
 string integer_to_three_digits(int i) {
@@ -62,7 +64,7 @@ int main() {
             cout << "Solution feasible: " << calculate_sol.simple_feasibility_check() << "\n";
             cout << "Cost of solution: " << calculate_sol.cost_solution(g) << "\n";
             cout << "Number of splitting operations: " << calculate_sol.num_splits() << "\n";
-            remove_nodes(g, calculate_sol);
+            remove_nodes_(g, calculate_sol);
             cout << "After using remove nodes: " << "\n";
             calculate_sol.print_solution();
             cout << "Solution feasible: " << calculate_sol.simple_feasibility_check() << "\n";

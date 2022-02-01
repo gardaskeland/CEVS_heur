@@ -1,7 +1,6 @@
 #ifndef SIMULATED_ANNEALING_H
 #define SIMULATED_ANNEALING_H
 
-#include "../solution_representation.h"
 #include "../graph.h"
 #include "../operators/add_node.h"
 #include "../operators/greedy_merge.h"
@@ -15,6 +14,8 @@
 #include "../weighted_graph.h"
 #include "../operators/split.h"
 #include <optional>
+#include"../operators/label_propagation.h"
+#include "../solution_representation.h"
 
 using namespace std;
 
