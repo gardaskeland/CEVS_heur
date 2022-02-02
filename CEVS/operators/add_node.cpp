@@ -64,6 +64,7 @@ int highest_relative_out_degree(Graph &g, SolutionRepresentation &sol) {
 
 int add_node_to_set_cost(Graph &g, SolutionRepresentation &sol, int si, int v) {
     set<int> set_nodes = sol.get_set(si);
+    if (set_nodes.find(v) != set_nodes.end()) return 0;
     //edges between v and i deleted before adding the node (these edges are in G)
     int edges_to_delete = 0;
     //edges we must add after adding the node (these edges are not in G)

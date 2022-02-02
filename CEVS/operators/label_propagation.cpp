@@ -18,6 +18,7 @@ int label_propagation_round(Graph &g, SolutionRepresentation &sol) {
     int cost = 0;
     int original_cost = sol.cost_solution(g);
     vector<int> to_permute = sol.to_permute;
+    int sol_diff = 0;
     //Shuffle from: https://en.cppreference.com/w/cpp/algorithm/random_shuffle 13.01.2021
     std::random_device rd;
     std::mt19937 gr(rd());
@@ -53,13 +54,17 @@ int label_propagation_round(Graph &g, SolutionRepresentation &sol) {
         }
         //put in set by itself
         //cout << "best_set_cost: " << best_set_cost << "\n";
-        if ((best_set_cost > 0 && vertex_cost <= 0) || best_set_add == -1) {
+        if ((best_set_cost > 0 && vertex_cost + g.get_node_weight(u) <= 0) || best_set_add == -1) {
             set<int> to_add;
             to_add.insert(u);
             sol.add_set(to_add);
             //0 for adding, all cost measured in removal.
             //+1 since we add back a node.
             cost += vertex_cost + g.get_node_weight(u);
+            //if (original_cost + cost - sol.cost_solution(g) != sol_diff) {
+            //    sol_diff = original_cost + cost - sol.cost_solution(g);
+            //    cout << "change in sol diff when removing " << u << " from " << best_set_remove << " and isolating it\n";
+            //}
             continue;
         }
         
@@ -69,10 +74,18 @@ int label_propagation_round(Graph &g, SolutionRepresentation &sol) {
         if (vertex_cost > 0) {
             //add the node back to original set
             sol.add(u, best_set_remove);
+            //if (original_cost + cost - sol.cost_solution(g) != sol_diff) {
+            //    sol_diff = original_cost + cost - sol.cost_solution(g);
+            //    cout << "change in sol diff when removing " << u << " from " << best_set_remove << " and adding it back \n";
+            //}
             continue;
         };
         sol.add(u, best_set_add);
         cost += vertex_cost;
+        //if (original_cost + cost - sol.cost_solution(g) != sol_diff) {
+        //    sol_diff = original_cost + cost - sol.cost_solution(g);
+        //    cout << "change in sol diff when removing " << u << " from " << best_set_remove << " and adding it to " << best_set_add << "\n";
+        //}
         //cout << "for node " << u << ":\n";
         //sol.print_solution();
         //cout << "current cost: " << sol.cost_solution(g) << "\n";
