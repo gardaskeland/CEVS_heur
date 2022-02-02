@@ -5,12 +5,12 @@ cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o \
 		b_merge.o shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
-		label_propagation.o perturbation.o
+		label_propagation.o perturbation.o alns.o
 	g++ -std=c++17 -g -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o b_merge.o \
 		shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
-		label_propagation.o perturbation.o
+		label_propagation.o perturbation.o alns.o
 
 main.o: main.cpp read_file.h
 	$(boiler) main.cpp
@@ -74,6 +74,9 @@ local_search_lp.o: metaheuristics/local_search_lp.cpp metaheuristics/local_searc
 
 perturbation.o: operators/perturbation.cpp operators/perturbation.h
 	$(boiler) operators/perturbation.cpp
+
+alns.o: metaheuristics/alns.cpp metaheuristics/alns.h
+	$(boiler) metaheuristics/alns.cpp
 
 clean:
 	del *.o cevs
