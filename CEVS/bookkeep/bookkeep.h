@@ -7,6 +7,7 @@
 #include "b_add_node.h"
 #include "b_split.h"
 #include "b_lp.h"
+#include "b_perturbation.h"
 
 using namespace std;
 
@@ -27,6 +28,7 @@ class Bookkeep {
         BAddNode b_add_node;
         BSplit b_split;
         BLP b_lp;
+        BPerturbation b_perturbation;
 
     Bookkeep(int operations) {
         total_operations = operations;

@@ -195,6 +195,13 @@ class SolutionRepresentation
      */
     int num_splits();
 
+    /**
+     * @brief Returns a hash number for the solution.
+     * 
+     * @return int 
+     */
+    int solution_hash();
+
 };
 
 void hey();
