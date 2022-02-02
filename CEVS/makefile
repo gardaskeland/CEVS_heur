@@ -76,4 +76,4 @@ perturbation.o: operators/perturbation.cpp operators/perturbation.h
 	$(boiler) operators/perturbation.cpp
 
 clean:
-	rm *.o cevs
+	del *.o cevs

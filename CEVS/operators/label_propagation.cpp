@@ -53,6 +53,7 @@ int label_propagation_round(Graph &g, SolutionRepresentation &sol) {
             }
         }
         //put in set by itself
+        //This one may not always give the correct cost...
         //cout << "best_set_cost: " << best_set_cost << "\n";
         if ((best_set_cost > 0 && vertex_cost + g.get_node_weight(u) <= 0) || best_set_add == -1) {
             set<int> to_add;
@@ -61,13 +62,10 @@ int label_propagation_round(Graph &g, SolutionRepresentation &sol) {
             //0 for adding, all cost measured in removal.
             //+1 since we add back a node.
             cost += vertex_cost + g.get_node_weight(u);
-<<<<<<< HEAD
             //if (original_cost + cost - sol.cost_solution(g) != sol_diff) {
             //    sol_diff = original_cost + cost - sol.cost_solution(g);
             //    cout << "change in sol diff when removing " << u << " from " << best_set_remove << " and isolating it\n";
             //}
-=======
->>>>>>> 94e53f59f581795076633c43578d73051952e28b
             continue;
         }
         
