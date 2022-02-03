@@ -9,6 +9,7 @@
 //#include "metaheuristics/local_search.h"
 #include "metaheuristics/simulated_annealing.h"
 #include "metaheuristics/local_search_lp.h"
+#include "metaheuristics/alns.h"
 #include "utility/shallow_solution.h"
 #include "bookkeep/b_merge.h"
 #include <chrono>
@@ -40,7 +41,7 @@ int main() {
     string filename;
     int num_operations = 3000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 3; i < 4; i = i + 2) {
+    for (int i = 1; i < 2; i = i + 2) {
         oss.clear();
         oss.str(string());
         oss << "../../../heur/heur" << integer_to_three_digits(i) << ".gr";
@@ -50,7 +51,7 @@ int main() {
         Graph g = Graph(adj);
         for (int j = 1; j < 2; j++) {
             chrono::steady_clock::time_point begin_ = chrono::steady_clock::now();
-            ShallowSolution sol = simulated_annealing(g, num_operations);
+            ShallowSolution sol = alns(g, num_operations);
             chrono::steady_clock::time_point end_ = chrono::steady_clock::now();
             cout << "Best solution:\n";
             double time_elapsed_ = chrono::duration_cast<chrono::microseconds>(end_ - begin_).count();
