@@ -15,3 +15,17 @@ void ShallowSolution::print_solution() {
     }
     cout << "]\n";
 }
+
+string ShallowSolution::solution_as_string() {
+    ostringstream oss;
+    oss << "[";
+    for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); ++it) {
+        oss << "[" << it->first << ": ";
+        for (int i : it->second) {
+            oss << i << ", ";
+        }
+        oss << "], ";
+    }
+    oss << "]";
+    return oss.str();
+}

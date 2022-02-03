@@ -16,6 +16,7 @@
 #include <optional>
 #include"../operators/label_propagation.h"
 #include "../solution_representation.h"
+#include "../utility/logging_solution.h"
 
 using namespace std;
 
@@ -27,6 +28,6 @@ using namespace std;
  * @param num_operations 
  * @return ShallowSolution 
  */
-ShallowSolution alns(Graph &g, int &num_operations);
+LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations);
 
 #endif

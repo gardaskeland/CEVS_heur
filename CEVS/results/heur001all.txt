@@ -1,0 +1,20 @@
+instance: ../../../heur/heur001.gr
+iterations: 3
+best solution:
+[[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 0, 6, 7, 8, 9, ], ]
+cost of best solution: 7
+average cost of solutions: 7
+all solutions:
+------------------
+iteration 0: [[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 0, 6, 7, 8, 9, ], ]
+cost of solution: 7
+time used on iteration: 0.122521
+------------------
+iteration 1: [[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 0, 6, 7, 8, 9, ], ]
+cost of solution: 7
+time used on iteration: 0.102033
+------------------
+iteration 2: [[0: 0, 6, 7, 8, 9, ], [1: 0, 1, 2, 3, 4, 5, 9, ], ]
+cost of solution: 7
+time used on iteration: 0.085771
+------------------

@@ -1,28 +1,20 @@
 #include "alns.h"
 
-int sum_ar(int ar[], int start, int end) {
-    int result = 0;
-    for (int i = start; i < end; i++) {
-        result += ar[i];
-    }
-    return result;
-}
-
-ShallowSolution alns(Graph &g, int &num_operations) {
+LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     RevertKernel revert;
     WeightedGraph wg = find_critical_clique_graph(g, revert);
     SolutionRepresentation current_solution = SolutionRepresentation(wg.n, num_operations);
     current_solution.initial_solution(wg.n);
     ShallowSolution best_solution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
-    ShallowSolution last_solution;
+    //ShallowSolution last_solution;
     int current_cost = current_solution.cost_solution(wg);
     cout << "cost of initial solution: " << current_cost << "\n";
     int best_cost = current_cost;
 
     const int operations = 6;
     double start_weight = 100 / operations;
-    double weights[operations] = {start_weight, start_weight, start_weight, start_weight, start_weight, start_weight}; //sum to 100.
-    double c_weights[operations] = {0, 0, 0, 0, 0, 0};
+    vector<double> weights(operations, start_weight);
+    vector<double> c_weights(operations, 0);
     for (int i = 0; i < operations; i++) {
         if (i == 0) {
             c_weights[i] = weights[i];
@@ -31,20 +23,23 @@ ShallowSolution alns(Graph &g, int &num_operations) {
         c_weights[i] = c_weights[i - 1] + weights[i];
     }
     int operation_score[operations] = {0, 0, 0, 0, 0, 0};
-    double time_taken[2*operations] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    vector<double> time_taken(operations*2, 0);
     set<int> solution_hashes;
-    int change_weights_after = 500;
+    int change_weights_after = 100;
     int change_weights_count = 0;
     double rate = 0.5;
     int start_score = 20;
 
+    //cost at start of iteration
     vector<int> solution_cost_iteration;
-    //first: num of operator. second: change in cost after executing.
-    vector<pair<int, int>> operator_at_iteration;
+    //num of operator executed at iteration
+    int last_iteration_of_best_solution = 0;
+    vector<vector<double>> weights_over_iteration;
+    weights_over_iteration.push_back(weights);
 
     int choice;
-    Bookkeep book(num_operations);
-    cout << "Starting simulated annealing\n";
+    //Bookkeep book(num_operations);
+    cout << "Starting alns\n";
     int new_cost;
     vector<int> choices;
     int sol_diff = 0;
@@ -53,7 +48,11 @@ ShallowSolution alns(Graph &g, int &num_operations) {
     double alpha = pow(0.01/t_max, 1.0/num_operations);
 
     for (int i = 0; i < num_operations; i++) {
-        last_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
+        //cout << i << "\n";
+        solution_cost_iteration.push_back(best_cost);
+        //cout << "11\n";
+        //last_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
+        //cout << "22\n";
         t *= alpha; //t_max * (1 - ((static_cast<float>(i + 1))/num_operations));
 
         if (change_weights_count >= change_weights_after) {
@@ -84,6 +83,7 @@ ShallowSolution alns(Graph &g, int &num_operations) {
                 operation_score[i] = start_score;
                 cout << i << ": " << weights[i] << "\n";
             }
+            weights_over_iteration.push_back(weights);
             for (int i = 0; i < operations; i++) {
                 if (i == 0) {
                     c_weights[i] = weights[i];
@@ -93,6 +93,7 @@ ShallowSolution alns(Graph &g, int &num_operations) {
             }
         }
         int r = rand() % 100;
+        //cout << "a\n";
         //cout << "r = " << r << "\n";
         optional<int> res0, res1, res2;
         if (r < c_weights[0]) {
@@ -141,13 +142,12 @@ ShallowSolution alns(Graph &g, int &num_operations) {
             chrono::steady_clock::time_point end_5 = chrono::steady_clock::now();
             time_taken[5] += chrono::duration_cast<chrono::microseconds>(end_5 - begin_5).count();
         }
-        //cout << choice << "\n";
+        //cout << "choice: " << choice << "\n";
 
         
         if (new_cost <= current_cost || rand() % 100 < 100 * exp(-(new_cost - current_cost)/t)) {
             if (new_cost < current_cost) operation_score[choice] += 1;
             if (new_cost < best_cost) operation_score[choice] += 1;
-
             if (choice == 0) {
                 chrono::steady_clock::time_point begin_3 = chrono::steady_clock::now();
                 if (res0.has_value()) {
@@ -180,21 +180,25 @@ ShallowSolution alns(Graph &g, int &num_operations) {
                 current_cost = new_cost;
             }
         }
+        //cout << "c\n";
+
         int solution_hash = current_solution.solution_hash();
         if (!(solution_hashes.find(solution_hash) != solution_hashes.end())) {
+            //cout << "cc/\n";
             operation_score[choice] += 1;
             solution_hashes.insert(solution_hash);
         }
-
+        //cout << "ccc\n";
         if (choice > 2) {
             current_cost = new_cost;
         }
         //cout << "Line 71: ";
         //}
 
-
+        //cout << "d\n";
         if (current_cost < best_cost) {
             best_cost = current_cost;
+            last_iteration_of_best_solution = i;
             best_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
         }
         
@@ -208,8 +212,9 @@ ShallowSolution alns(Graph &g, int &num_operations) {
             //cout << "Current cost by cost function " << current_solution.cost_solution(g) << "\n";
             current_solution.print_solution();
         }
+        //cout << "e\n";
         
-        
+        /**
         if (current_cost - current_solution.cost_solution(wg) != sol_diff) {
             sol_diff = current_cost - current_solution.cost_solution(wg);
             cout << "Change in sol_diff after operation " << choice << "\n";
@@ -221,6 +226,7 @@ ShallowSolution alns(Graph &g, int &num_operations) {
             cout << "current solution: \n"; 
             current_solution.print_solution();
         }
+        */
         
         
         
@@ -283,6 +289,24 @@ ShallowSolution alns(Graph &g, int &num_operations) {
     }*/
 
     //cout << "ok\n";
-    return from_cc_sol_to_sol(g, best_solution, revert);
+    ShallowSolution shallow = from_cc_sol_to_sol(g, best_solution, revert);
+    for (map<int, set<int>>::iterator it = shallow.clusters.begin(); it != shallow.clusters.end(); it++) {
+        log_sol.clusters[it->first] = it->second;
+    }
+    for (map<int, set<int>>::iterator it = shallow.node_in_clusters.begin(); it != shallow.node_in_clusters.end(); it++) {
+        log_sol.node_in_clusters[it->first] = it->second;
+    }
+    log_sol.change_weights_after = change_weights_after;
+    log_sol.operator_iteration = choices;
+    //choices.clear();
+    log_sol.solution_cost_iteration = solution_cost_iteration;
+    //solution_cost_iteration.clear();
+    log_sol.last_iteration_of_best_solution = last_iteration_of_best_solution;
+    log_sol.time_taken = time_taken;
+    log_sol.weights_over_iteration = weights_over_iteration;
+    log_sol.num_operations = num_operations;
+    
+    return log_sol;
+
 
 }

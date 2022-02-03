@@ -204,8 +204,8 @@ int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj)
     set<int> nodes_sj = sol.get_set(sj);
     int cost = 0;
     //vector<int> v(nodes_si.size() + nodes_sj.size());
-    set<int> v_clusters;
-    set<int> w_clusters;
+    //set<int> v_clusters;
+    //set<int> w_clusters;
     bool count = true;
 
 
@@ -220,8 +220,8 @@ int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj)
             if (!(nodes_sj.find(w) != nodes_sj.end())) {
                 continue;
             }
-            v_clusters = sol.get_node_to_clusters(v);
-            w_clusters = sol.get_node_to_clusters(w);
+            set<int> v_clusters = sol.get_node_to_clusters(v);
+            set<int> w_clusters = sol.get_node_to_clusters(w);
             count = true;
             //Since both vertices are in the same cluster, it is not deleted.
             for (int c_v : v_clusters) {
@@ -239,8 +239,8 @@ int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj)
         //count the addition
         //cout << "ok2";
         for (int w : nodes_sj) {
-            v_clusters = sol.get_node_to_clusters(v);
-            w_clusters = sol.get_node_to_clusters(w);
+            set<int> v_clusters = sol.get_node_to_clusters(v);
+            set<int> w_clusters = sol.get_node_to_clusters(w);
             count = true;
             //Since both vertices are in the same cluster, it is not deleted.
             for (int c_v : v_clusters) {

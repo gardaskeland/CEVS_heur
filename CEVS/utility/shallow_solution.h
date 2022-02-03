@@ -23,6 +23,8 @@ class ShallowSolution {
 
     }
 
+    string solution_as_string();
+
     map<int, set<int>> get_clusters();
 
     void print_solution();
