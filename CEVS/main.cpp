@@ -18,6 +18,7 @@
 #include "bookkeep/bookkeep.h"
 #include "utility/logging_solution.h"
 #include <cmath>
+#include "utility/plots.h"
 using namespace std;
 
 string integer_to_three_digits(int i) {
@@ -79,7 +80,7 @@ vector<double> print_weights(LoggingSolution &sol, int iteration, string &filena
 int main() {
     int num_operations = 500;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 1; i < 4; i = i + 2) {
+    for (int i = 1; i < 2; i = i + 2) {
         ostringstream oss;
         string filename;
         oss.clear();
@@ -139,6 +140,7 @@ int main() {
             cout << "Number of splitting operations: " << calculate_sol.num_splits() << "\n";
             cout << "\n-----------------------------------------------\n\n";
         }
+        plot_weights(solutions, filename);
         fstream out_file;
         oss.str(string());
         oss << "results/heur" << integer_to_three_digits(i) << "all.txt";

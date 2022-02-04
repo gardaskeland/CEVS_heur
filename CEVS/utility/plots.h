@@ -4,6 +4,7 @@
 #include "matplotlibcpp.h"
 #include "logging_solution.h"
 #include <vector>
+#include <string>
 
 using namespace std;
 namespace plt = matplotlibcpp;
@@ -11,6 +12,6 @@ namespace plt = matplotlibcpp;
 /**
  * Plots the weights and how they change over the algorithm.
  */
-void plot_weights(vector<LoggingSolution> &solutions);
+void plot_weights(vector<LoggingSolution> &solutions, string &filename);
 
 #endif

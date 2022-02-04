@@ -1,4 +1,4 @@
-#include "matplotlibcpp2.h"
+#include "matplotlibcpp.h"
 #include <vector>
 
 using namespace std;
