@@ -236,7 +236,10 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         //Makes the current number of operations executed available in all operations.
         current_solution.book.operation_number += 1;
         choices.push_back(choice);
-        change_weights_count += 1;
+        change_weights_count += 1; 
+        if (i == num_operations - 1) {
+            solution_cost_iteration.push_back(current_cost);
+        }
         //cout << "line 95: ";
         //cout <<"current cost: " << current_cost << "\ncurrent solution: ";
         //current_solution.print_solution();

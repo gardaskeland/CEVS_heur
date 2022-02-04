@@ -35,13 +35,51 @@ string integer_to_three_digits(int i) {
     }
 }
 
+vector<double> find_average_improvement_operations(vector<LoggingSolution> &solutions) {
+    int n = solutions[0].time_taken.size();
+    vector<double> results(n, 0);
+    vector<int> operation_counter(n, 0);
+    for (LoggingSolution sol : solutions) {
+        for (int i = 0; i < sol.num_operations; i++) {
+            results[sol.operator_iteration[i]] += sol.solution_cost_iteration[i+1] - sol.solution_cost_iteration[i];
+            operation_counter[sol.operator_iteration[i]] += 1;   
+        }
+    }
+    for (int i = 0; i < n; i++) {
+        results[i] = results[i] / operation_counter[i];
+    } 
+    return results;
+}
+
+vector<double> find_average_time_operators(vector<LoggingSolution> &solutions) {
+    int n = solutions[0].time_taken.size();
+    vector<double> results(n, 0);
+    vector<int> choices(n, 0);
+    for (LoggingSolution sol : solutions) {
+        for (int choice : sol.operator_iteration) {
+            choices[choice] += 1;
+        }
+        for (int i = 0; i < n; i++) {
+            results[i] += sol.time_taken[i];
+        }
+    }
+    for (int i = 0; i < n; i++) {
+        results[i] = results[i] / choices[i];
+    }
+    return results;
+}
+/**
+vector<double> print_weights(LoggingSolution &sol, int iteration, string &filename) {
+    
+}
+*/
+
 
 //This works now, but very slowly already for 120 vertices.
 int main() {
-    //debug with valgrind?
     int num_operations = 500;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 3; i < 4; i = i + 2) {
+    for (int i = 1; i < 4; i = i + 2) {
         ostringstream oss;
         string filename;
         oss.clear();
@@ -51,10 +89,11 @@ int main() {
         oss.clear();
         cout << "Working on file " << filename << "\n";
         vector<vector<int>> adj = read_gz_file(filename);
-        static Graph g = Graph(adj);
+        Graph g = Graph(adj);
 
         int summed_costs = 0;
         int iterations = 3;
+        int num_operators = 6;
         int best_cost = pow(2, 30);
         ShallowSolution best_solution;
         vector<LoggingSolution> solutions;
@@ -103,23 +142,55 @@ int main() {
         fstream out_file;
         oss.str(string());
         oss << "results/heur" << integer_to_three_digits(i) << "all.txt";
-        string out_all = oss.str();  
+        string out_all = oss.str();
+        int sum_last_iteration = 0;
+        vector<double> average_time_operators = find_average_time_operators(solutions);
+        vector<double> average_improvement_operations = find_average_improvement_operations(solutions);
+        for (int p = 0; p < iterations; p++) {
+            sum_last_iteration += solutions[p].last_iteration_of_best_solution;
+        } 
         out_file.open(out_all); 
         out_file << "instance: " << filename << "\n";
         out_file << "iterations: " << iterations << "\n";
+        out_file << "operations per iteration: " << num_operations << "\n";
         out_file << "best solution:\n";
         out_file << best_solution.solution_as_string() << "\n";
         out_file << "cost of best solution: " << best_cost << "\n";
         out_file << "average cost of solutions: " << summed_costs / (double)iterations << "\n";
+        out_file << "average last operation finding best solution: " << (double)sum_last_iteration / iterations << "\n";
+        out_file << "------------------\n";
+        
+        out_file << "average time of random_choice_add_node: " << average_time_operators[0] / 1000000 << "\n";
+        out_file << "average time of random_choice_split: " << average_time_operators[1] / 1000000 << "\n";
+        out_file << "average time of weighted_random_merge: " << average_time_operators[2] / 1000000 << "\n";
+        out_file << "average time of label_propagation_round " << average_time_operators[3] / 1000000 << "\n";
+        out_file << "average time of remove_nodes_ " << average_time_operators[4] / 1000000 << "\n";
+        out_file << "average time of add_node_to_all " << average_time_operators[5] / 100000 << "\n";
+        out_file << "------------------\n";
+
+        out_file << "average improvement of random_choice_add_node " << average_improvement_operations[0] << "\n";
+        out_file << "per second: " << average_improvement_operations[0] / (average_time_operators[0] / 1000000) << "\n";
+        out_file << "average improvement of random_choice_split " << average_improvement_operations[1] << "\n";
+        out_file << "per second: " << average_improvement_operations[1] / (average_time_operators[1] / 1000000) << "\n";
+        out_file << "average improvement of weighted_random_merge " << average_improvement_operations[2] << "\n";
+        out_file << "per second: " << average_improvement_operations[2] / (average_time_operators[2] / 1000000) << "\n";
+        out_file << "average improvement of label_propagation_round " << average_improvement_operations[3] << "\n";
+        out_file << "per second: " << average_improvement_operations[3] / (average_time_operators[3] / 1000000) << "\n";
+        out_file << "average improvement of remove_nodes_ " << average_improvement_operations[4] << "\n";
+        out_file << "per second: " << average_improvement_operations[4] / (average_time_operators[4] / 1000000) << "\n";
+        out_file << "average improvement of add_node_to_all " << average_improvement_operations[5] << "\n";
+        out_file << "per second: " << average_improvement_operations[5] / (average_time_operators[5] / 1000000) << "\n";
+
         out_file << "all solutions:\n";
         out_file << "------------------\n";
-        for (int i = 0; i < iterations; i++) {
-            out_file << "iteration " << i << ": " << solutions[i].solution_as_string() << "\n";
-            out_file << "cost of solution: " << cost_of_solutions[i] << "\n";
-            out_file << "time used on iteration: " << time_for_iterations[i] / 1000000 << "\n";
+        for (int p = 0; p < iterations; p++) {
+            out_file << "iteration " << p << ": " << solutions[p].solution_as_string() << "\n";
+            out_file << "cost of solution: " << cost_of_solutions[p] << "\n";
+            out_file << "time used on iteration: " << time_for_iterations[p] / 1000000 << "\n";
             out_file << "------------------\n";
         }
         out_file.close();
+        cout << i << "\n";
 
         
 
