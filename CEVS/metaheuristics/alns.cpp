@@ -49,7 +49,7 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
 
     for (int i = 0; i < num_operations; i++) {
         //cout << i << "\n";
-        solution_cost_iteration.push_back(best_cost);
+        solution_cost_iteration.push_back(current_cost);
         //cout << "11\n";
         //last_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
         //cout << "22\n";

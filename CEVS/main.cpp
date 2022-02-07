@@ -69,6 +69,39 @@ vector<double> find_average_time_operators(vector<LoggingSolution> &solutions) {
     }
     return results;
 }
+
+void write_weights_for_iterations(vector<LoggingSolution> &sol, string &filename) {
+    ofstream out_file;
+    out_file.open(filename);
+    out_file << sol.size() << " "; //number of iterations on the input graph
+    out_file << sol[0].num_operations << " ";
+    out_file << sol[0].change_weights_after << " "; //After so many operations weights are changed
+    //The number of different weights values over the run of the algorithm.
+    out_file << sol[0].num_operations / sol[0].change_weights_after << "\n"; 
+    for (LoggingSolution solution : sol) {
+        for (vector<double> v : solution.weights_over_iteration) {
+            for (double w : v) {
+                out_file << w << " ";
+            }
+            out_file << "\n";
+        }
+    }
+    out_file.close();
+}
+
+void write_cost_dev_for_iterations(vector<LoggingSolution> &sol, string &filename) {
+    ofstream out_file;
+    out_file.open(filename);
+    out_file << sol.size() << " "; //number of iterations on the input graph
+    out_file << sol[0].num_operations << "\n";
+    for (LoggingSolution solution : sol) {
+        for (int i = 0; i < solution.num_operations; i++) {
+            out_file << solution.solution_cost_iteration[i] << " " << solution.operator_iteration[i] << "\n";
+        }
+        out_file << solution.solution_cost_iteration[solution.num_operations] << " -1\n";
+    }
+    out_file.close();
+}
 /**
 vector<double> print_weights(LoggingSolution &sol, int iteration, string &filename) {
     
@@ -78,9 +111,9 @@ vector<double> print_weights(LoggingSolution &sol, int iteration, string &filena
 
 //This works now, but very slowly already for 120 vertices.
 int main() {
-    int num_operations = 500;
+    int num_operations = 2000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 1; i < 2; i = i + 2) {
+    for (int i = 1; i < 10; i = i + 2) {
         ostringstream oss;
         string filename;
         oss.clear();
@@ -93,7 +126,7 @@ int main() {
         Graph g = Graph(adj);
 
         int summed_costs = 0;
-        int iterations = 3;
+        int iterations = 5;
         int num_operators = 6;
         int best_cost = pow(2, 30);
         ShallowSolution best_solution;
@@ -140,8 +173,19 @@ int main() {
             cout << "Number of splitting operations: " << calculate_sol.num_splits() << "\n";
             cout << "\n-----------------------------------------------\n\n";
         }
-        plot_weights(solutions, filename);
-        fstream out_file;
+
+        oss.str(string());
+        oss << "results/weights-heur" << integer_to_three_digits(i) << ".txt";
+        string p_file = oss.str();
+        write_weights_for_iterations(solutions, p_file);
+        oss.clear();
+        oss.str(string());
+        oss << "results/cost-heur" << integer_to_three_digits(i) << ".txt";
+        p_file = oss.str();
+        write_cost_dev_for_iterations(solutions, p_file);
+        oss.clear();
+
+        ofstream out_file;
         oss.str(string());
         oss << "results/heur" << integer_to_three_digits(i) << "all.txt";
         string out_all = oss.str();
