@@ -71,7 +71,9 @@ int add_node_to_set_cost(Graph &g, SolutionRepresentation &sol, int si, int v) {
     int edges_to_add = 0;
     bool in_same_cluster = false;
     for (int i : set_nodes) {
-        in_same_cluster = false;
+        //cout << sol.get_co_occurence(i, v) << "\n";
+        if (sol.get_co_occurence(i, v) > 0) continue;
+        /**
         for (int w : sol.get_node_to_clusters(v)) {
             if (w == si) continue;
             set<int> w_cluster = sol.get_set(w);
@@ -80,16 +82,14 @@ int add_node_to_set_cost(Graph &g, SolutionRepresentation &sol, int si, int v) {
                 break;
             }
         }
+        */
         if (g.has_edge(i, v)) {
-            if (!in_same_cluster) {
-                edges_to_delete += g.get_edge_cost(i, v);
-            }
+            edges_to_delete += g.get_edge_cost(i, v);
         }
         
         //g does not have an edge between i and v
         else {
-            if (!in_same_cluster) edges_to_add += g.get_edge_cost(i, v);
-            
+            edges_to_add += g.get_edge_cost(i, v);
         }
     } 
     //+1 since we split the node by adding it
@@ -180,6 +180,8 @@ int removal_cost(Graph &g, SolutionRepresentation &sol, int si, int u) {
     bool in_same_cluster = false;
     for (int i : set_nodes) {
         if (i == u) continue;
+        if (sol.get_co_occurence(i, u) > 0) continue;
+        /**
         in_same_cluster = false;
         for (int w : sol.get_node_to_clusters(u)) {
             if (w == si) continue;
@@ -189,16 +191,14 @@ int removal_cost(Graph &g, SolutionRepresentation &sol, int si, int u) {
                 break;
             }
         }
+        */
         if (g.has_edge(i, u)) {
-            if (!in_same_cluster) {
-                edges_to_delete += g.get_edge_cost(i, u);
-            }
+            edges_to_delete += g.get_edge_cost(i, u);
         }
         
         //g does not have an edge between i and v
         else {
-            if (!in_same_cluster) edges_added += g.get_edge_cost(i, u);
-            
+            edges_added += g.get_edge_cost(i, u);
         }
     }
     //-1 since we split one less

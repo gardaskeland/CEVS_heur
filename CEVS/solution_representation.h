@@ -29,6 +29,7 @@ class SolutionRepresentation
         // the values defining how to execute an operation we how found the cost of executing.
         Bookkeep book;
         vector<int> to_permute;
+        vector<map<int, int>> co_occurence;
     
     SolutionRepresentation() {
         clusters = map<int, set<int>>();
@@ -52,8 +53,10 @@ class SolutionRepresentation
         node_in_clusters = map<int, set<int>>();
         Bookkeep b(operations);
         book = b;
+        co_occurence = vector<map<int,int>>();
         for (int i = 0; i < number_nodes; i++) {
             to_permute.push_back(i);
+            co_occurence.emplace_back(map<int, int>());
         }
     }
 
@@ -141,6 +144,17 @@ class SolutionRepresentation
      * the set that occupies the index.
      */
     void add_set_ind(int si, set<int> s);
+    
+    /**
+     * Returns the number of times the two vertices u and v appear in the same set in the current solution.
+     */
+    int get_co_occurence(int u, int v);
+
+    void increase_co_occurence(int u, int v);
+
+    void decrease_co_occurence(int u, int v);
+
+    void initialise_co_occurence(int u, int v);
 
     /**
      * Remove set si from the solution representation

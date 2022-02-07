@@ -111,9 +111,9 @@ vector<double> print_weights(LoggingSolution &sol, int iteration, string &filena
 
 //This works now, but very slowly already for 120 vertices.
 int main() {
-    int num_operations = 2000;
+    int num_operations = 500;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 1; i < 10; i = i + 2) {
+    for (int i = 1; i < 4; i = i + 2) {
         ostringstream oss;
         string filename;
         oss.clear();

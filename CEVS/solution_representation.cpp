@@ -41,6 +41,21 @@ int get_vertex_degree(Graph &g, int &v, set<int> &marked) {
     return counter;
 }
 
+void SolutionRepresentation::increase_co_occurence(int u, int v) {
+    co_occurence[u][v] += 1;
+    co_occurence[v][u] += 1;
+}
+
+void SolutionRepresentation::decrease_co_occurence(int u, int v) {
+    co_occurence[u][v] -= 1;
+    co_occurence[v][u] -= 1;
+}
+
+void SolutionRepresentation::initialise_co_occurence(int u, int v) {
+    co_occurence[u][v] = 1;
+    co_occurence[v][u] = 1;
+}
+
 void SolutionRepresentation::initial_solution_max_degree(Graph &g) {
     number_nodes = g.n;
     set<int> marked;
@@ -95,6 +110,16 @@ void SolutionRepresentation::changed_set(int si) {
 
 //slow. Change?
 void SolutionRepresentation::add(int node, int si) {
+    for (int v : clusters[si]) {
+        if (v == node) continue;
+        map<int,int> &m = co_occurence[node];
+        if (m.find(v) != m.end()) {
+            increase_co_occurence(node, v);
+        } else {
+            initialise_co_occurence(node, v);
+        }
+    }
+
     set<int> s = clusters[si];
     s.insert(node);
     clusters[si] = s;
@@ -106,6 +131,11 @@ void SolutionRepresentation::add(int node, int si) {
 
 //slow. Change?
 void SolutionRepresentation::remove(int node, int si) {
+    for (int v : clusters[si]) {
+        if (node == v) continue;
+        decrease_co_occurence(node, v);
+    }
+
     changed_set(si);
     set<int> s = clusters[si];
     if (s.size() > 1) {
@@ -129,6 +159,19 @@ void SolutionRepresentation::merge(int si, int sj) {
     }
     set<int> s1 = get_set(si);
     set<int> s2 = get_set(sj);
+    
+    for (int u : s1) {
+        for (int v : s2) {
+            if (s1.find(v) != s1.end()) continue;
+            map<int,int> &m = co_occurence[u];
+            if (m.find(v) != m.end()) {
+                increase_co_occurence(u, v);
+            } else {
+                initialise_co_occurence(u, v);
+            }
+
+        }
+    }
     //cout << "in sp: line 64";
     //print_solution();
     set<int> nodes_to_sets;
@@ -159,6 +202,13 @@ void SolutionRepresentation::merge(int si, int sj) {
 }
 
 void SolutionRepresentation::disjoint_split(int si, set<int> &set_1, set<int> &set_2) {
+    for (int u : set_1) {
+        for (int v : set_2) {
+            if (set_1.find(v) != set_1.end()) continue;
+            decrease_co_occurence(u, v);
+        }
+    }
+
     changed_set(si);
     set<int> to_split = get_set(si);
     set<int> node_to_its_clusters;
@@ -171,6 +221,12 @@ void SolutionRepresentation::disjoint_split(int si, set<int> &set_1, set<int> &s
         node_in_clusters[u] = node_to_its_clusters;
     }
     clusters[si] = to_split;
+}
+
+int SolutionRepresentation::get_co_occurence(int u, int v) {
+    map<int,int> &m = co_occurence[u];
+    if (m.find(v) != m.end()) return m[v];
+    return 0;
 }
 
 //TODO: test
@@ -209,6 +265,18 @@ map<int, set<int>> SolutionRepresentation::get_node_in_clusters() {
 }
 
 void SolutionRepresentation::add_set(set<int> s) {
+    for (int u : s) {
+        for (int v : s) {
+            if (u >= v) continue;
+            map<int,int> &m = co_occurence[u];
+            if (m.find(v) != m.end()) {
+                increase_co_occurence(u, v);
+            } else {
+                initialise_co_occurence(u, v);
+            }
+        }
+    }
+
     if (clusters.size() == 0) {
         clusters[0] = s;
         for (int i : s) {
@@ -227,12 +295,30 @@ void SolutionRepresentation::add_set(set<int> s) {
 
 
 void SolutionRepresentation::add_set_ind(int si, set<int> s) {
+    for (int u : s) {
+        for (int v : s) {
+            if (u >= v) continue;
+            map<int,int> &m = co_occurence[u];
+            if (m.find(v) != m.end()) {
+                increase_co_occurence(u, v);
+            } else {
+                initialise_co_occurence(u, v);
+            }
+        }
+    }
+
     clusters[si] = s;
     changed_set(si);
 }
 
 
 void SolutionRepresentation::remove_set(int si) {
+    for (int u : clusters[si]) {
+        for (int v : clusters[si]) {
+            if (u >= v) continue;
+            decrease_co_occurence(u, v);
+        }
+    }
     set<int> indices;
     for (int i : get_set_indices()) {
         indices.insert(i);

@@ -8,6 +8,7 @@
 #include "b_split.h"
 #include "b_lp.h"
 #include "b_perturbation.h"
+#include "map"
 
 using namespace std;
 
@@ -30,6 +31,9 @@ class Bookkeep {
         BLP b_lp;
         BPerturbation b_perturbation;
 
+    /**
+     * Remember to initialise co-occurence in accordance with initial solution.
+     */
     Bookkeep(int operations) {
         total_operations = operations;
         operation_number = 0;

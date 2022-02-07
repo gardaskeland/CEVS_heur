@@ -1,50 +1,50 @@
 instance: ../../../heur/heur001.gr
 iterations: 5
-operations per iteration: 2000
+operations per iteration: 500
 best solution:
-[[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 0, 6, 7, 8, 9, ], ]
-cost of best solution: 7
-average cost of solutions: 7
-average last operation finding best solution: 45.2
+[[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 0, 3, 6, 7, 8, 9, ], [2: 8, ], ]
+cost of best solution: 10
+average cost of solutions: 13
+average last operation finding best solution: 493.4
 ------------------
-average time of random_choice_add_node: 6.57312e-06
-average time of random_choice_split: 2.86822e-05
-average time of weighted_random_merge: 6.23871e-05
-average time of label_propagation_round 0.000100845
-average time of remove_nodes_ 2.43275e-05
-average time of add_node_to_all 0.000314036
+average time of random_choice_add_node: 2.99482e-06
+average time of random_choice_split: 3.33333e-05
+average time of weighted_random_merge: 5.79116e-05
+average time of label_propagation_round 9.7793e-05
+average time of remove_nodes_ 1.25559e-05
+average time of add_node_to_all 0.000173992
 ------------------
-average improvement of random_choice_add_node -0.00988142
-per second: -1503.31
-average improvement of random_choice_split 0.272593
-per second: 9503.89
-average improvement of weighted_random_merge -0.676048
-per second: -10836.3
-average improvement of label_propagation_round 0.234312
-per second: 2323.48
-average improvement of remove_nodes_ -3.11161
-per second: -127905
-average improvement of add_node_to_all 3.22322
-per second: 102639
+average improvement of random_choice_add_node -0.551813
+per second: -184256
+average improvement of random_choice_split 0.181818
+per second: 5454.55
+average improvement of weighted_random_merge -1.91156
+per second: -33008.3
+average improvement of label_propagation_round -3.19531
+per second: -32674.3
+average improvement of remove_nodes_ -2.4
+per second: -191145
+average improvement of add_node_to_all -0.610998
+per second: -35116.5
 all solutions:
 ------------------
-iteration 0: [[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 0, 6, 7, 8, 9, ], ]
-cost of solution: 7
-time used on iteration: 0.151074
+iteration 0: [[0: 1, 2, 3, 4, 5, 9, ], [1: 0, 6, 7, 8, ], [2: 0, 6, 7, 8, ], ]
+cost of solution: 16
+time used on iteration: 0.079336
 ------------------
-iteration 1: [[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 0, 6, 7, 8, 9, ], ]
-cost of solution: 7
-time used on iteration: 0.115112
+iteration 1: [[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 0, 3, 6, 7, 8, 9, ], [2: 8, ], ]
+cost of solution: 10
+time used on iteration: 0.043377
 ------------------
-iteration 2: [[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 0, 6, 7, 8, 9, ], ]
-cost of solution: 7
-time used on iteration: 0.113243
+iteration 2: [[0: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ], ]
+cost of solution: 14
+time used on iteration: 0.038007
 ------------------
-iteration 3: [[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 0, 6, 7, 8, 9, ], ]
-cost of solution: 7
-time used on iteration: 0.102037
+iteration 3: [[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 6, 7, 8, ], ]
+cost of solution: 11
+time used on iteration: 0.030573
 ------------------
-iteration 4: [[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 0, 6, 7, 8, 9, ], ]
-cost of solution: 7
-time used on iteration: 0.103792
+iteration 4: [[0: 1, 2, 3, 4, 5, 9, ], [1: 0, 6, 7, 8, ], [2: 0, 3, 6, ], [3: 6, ], ]
+cost of solution: 14
+time used on iteration: 0.037581
 ------------------

@@ -109,6 +109,7 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             choice = 1;
             //cout << "choice: " << choice << "\n";
             //current_solution.print_solution();
+            //Look for better random choice!
             res1 = random_choice_split(wg, current_solution);
             new_cost = current_cost + res1.value_or(0);
             current_solution.book.b_split.last_split_operation = i;
