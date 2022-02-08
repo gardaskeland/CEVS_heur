@@ -8,7 +8,7 @@ def integer_to_three_digits(i):
         return "0" + str(i)
     return str(i)
 
-for t in range(1, 4, 2):
+for t in range(3, 4, 2):
     filename = "cost-heur" + integer_to_three_digits(t) + ".txt"
     f = open(filename, 'r')
     num_plots, operations = list(map(int, f.readline().split()))

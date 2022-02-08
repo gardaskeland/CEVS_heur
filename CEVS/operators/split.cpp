@@ -84,11 +84,11 @@ int cost_of_split(Graph &g, SolutionRepresentation &sol, set<int> set_1, set<int
     for (int i : set_1) {
         for (int j : set_2) {
             //Should check whether the edge is in the graph before counting deletion.
-            if (g.has_edge(i, j) && !edge_covered_by_cluster(i, j, g, sol, si)) {
+            if (g.has_edge(i, j) && sol.get_co_occurence(i, j) < 2) {
                 cost_of_cut += g.get_edge_cost(i, j);
             }
             //g does not have the edge, so it have been added and can now be deleted.
-            else if (!edge_covered_by_cluster(i, j, g, sol, si)) {
+            else if (sol.get_co_occurence(i, j) < 2) {
                 cost_of_cut -= g.get_edge_cost(i, j);
             }
         }

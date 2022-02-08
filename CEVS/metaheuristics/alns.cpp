@@ -77,11 +77,11 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                 operation_score[p.first] += p.second;
                 operation_score[max_ind] -= p.second;
             }
-            cout << "recalibrate weights: \n";
+            //cout << "recalibrate weights: \n";
             for (int i = 0; i < operations; i++) {
                 weights[i] = (1 - rate) * weights[i] + rate * 100 * (operation_score[i] / total_score);
                 operation_score[i] = start_score;
-                cout << i << ": " << weights[i] << "\n";
+                //cout << i << ": " << weights[i] << "\n";
             }
             weights_over_iteration.push_back(weights);
             for (int i = 0; i < operations; i++) {
@@ -92,6 +92,7 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                 c_weights[i] = c_weights[i - 1] + weights[i];
             }
         }
+        //current_solution.print_solution();
         int r = rand() % 100;
         //cout << "a\n";
         //cout << "r = " << r << "\n";
@@ -206,13 +207,20 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         //if (i % 10 == 9) {
         //    cout << i << "\n";
         //}
-        
+        /**
+        current_solution.print_solution();
+        if (!current_solution.verify_co_occurence()) {
+            //exit;
+        }
+        current_solution.print_co_occurence();
+        */
 
         if (i % 500 == 499) { 
             cout << "Current cost: " << current_cost << "\n";
             //cout << "Current cost by cost function " << current_solution.cost_solution(g) << "\n";
             current_solution.print_solution();
         }
+        //current_solution.print_solution();
         //cout << "e\n";
         
         /**
@@ -221,13 +229,13 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             cout << "Change in sol_diff after operation " << choice << "\n";
             cout << "Current cost: " << current_cost << "\n";
             cout << "sol_diff: " << sol_diff << "\n";
-            cout << "last operation (v, set): " << current_solution.book.b_add_node.v << ", " << current_solution.book.b_add_node.si << "\n";
+            cout << "last operation (set, set): " << current_solution.book.b_merge.si << ", " << current_solution.book.b_merge.sj << "\n";
             cout << "previous solution: \n";
             last_solution.print_solution();
             cout << "current solution: \n"; 
             current_solution.print_solution();
-        }
-        */
+        }*/
+        
         
         
         
@@ -301,12 +309,12 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         log_sol.node_in_clusters[it->first] = it->second;
     }
     log_sol.change_weights_after = change_weights_after;
-    log_sol.operator_iteration = choices;
+    log_sol.operator_iteration = move(choices);
     //choices.clear();
-    log_sol.solution_cost_iteration = solution_cost_iteration;
+    log_sol.solution_cost_iteration = move(solution_cost_iteration);
     //solution_cost_iteration.clear();
     log_sol.last_iteration_of_best_solution = last_iteration_of_best_solution;
-    log_sol.time_taken = time_taken;
+    log_sol.time_taken = move(time_taken);
     log_sol.weights_over_iteration = weights_over_iteration;
     log_sol.num_operations = num_operations;
     

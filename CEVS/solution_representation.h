@@ -193,6 +193,9 @@ class SolutionRepresentation
      */
     int cost_solution(Graph &g);
 
+    //For debugging
+    bool verify_co_occurence();
+
     /**
      * Creates an exact copy of the solution.
      */
@@ -201,6 +204,8 @@ class SolutionRepresentation
     void print_solution();
 
     void print_node_in_clusters();
+
+    void print_co_occurence();
 
     /**
      * @brief Returns the number of split operations needed to change the graph into the solution represented.

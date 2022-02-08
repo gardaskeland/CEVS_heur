@@ -111,9 +111,9 @@ vector<double> print_weights(LoggingSolution &sol, int iteration, string &filena
 
 //This works now, but very slowly already for 120 vertices.
 int main() {
-    int num_operations = 500;
+    int num_operations = 2000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 1; i < 4; i = i + 2) {
+    for (int i = 3; i < 4; i = i + 2) {
         ostringstream oss;
         string filename;
         oss.clear();
@@ -126,11 +126,12 @@ int main() {
         Graph g = Graph(adj);
 
         int summed_costs = 0;
-        int iterations = 5;
+        int iterations = 2;
         int num_operators = 6;
         int best_cost = pow(2, 30);
         ShallowSolution best_solution;
         vector<LoggingSolution> solutions;
+        vector<tuple<int, int, int>> op_solutions;
         vector<int> cost_of_solutions;
         vector<double> time_for_iterations;
         for (int j = 0; j < iterations; j++) {
@@ -154,8 +155,10 @@ int main() {
                 calculate_sol.add_set(it->second);
             }
             calculate_sol.print_solution();
-
-            int cost = calculate_sol.cost_solution(g);
+            
+            tuple<int, int, int> cost_op = calculate_sol.cost_operations(g);
+            int cost = get<0>(cost_op) + get<1>(cost_op) + get<2>(cost_op);
+            op_solutions.push_back(cost_op);
             cost_of_solutions.push_back(cost);
             summed_costs += cost;
             if (cost < best_cost) {
@@ -231,6 +234,9 @@ int main() {
         out_file << "------------------\n";
         for (int p = 0; p < iterations; p++) {
             out_file << "iteration " << p << ": " << solutions[p].solution_as_string() << "\n";
+            out_file << "edge deletions: " << get<0>(op_solutions[p]) << "\n";
+            out_file << "edge additions: " << get<1>(op_solutions[p]) << "\n";
+            out_file << "vertex splittings: " << get<2>(op_solutions[p]) << "\n";
             out_file << "cost of solution: " << cost_of_solutions[p] << "\n";
             out_file << "time used on iteration: " << time_for_iterations[p] / 1000000 << "\n";
             out_file << "------------------\n";

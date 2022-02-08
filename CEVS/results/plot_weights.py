@@ -8,7 +8,7 @@ def integer_to_three_digits(i):
         return "0" + str(i)
     return str(i)
 
-for t in range(1, 10, 2):
+for t in range(3, 4, 2):
     filename = "weights-heur" + integer_to_three_digits(t) + ".txt"
     f = open(filename, 'r')
     num_plots, operations, weight_change_after, num_weight_changes = list(map(int, f.readline().split()))
@@ -20,6 +20,8 @@ for t in range(1, 10, 2):
     print(Y[2, 3])
 
     fig, axs = plt.subplots(num_plots, 1)
+    manager = plt.get_current_fig_manager()
+    manager.full_screen_toggle()
     x = np.arange(0, operations, weight_change_after)
     for plot in range(num_plots):
         axs[plot].set_title("iteration " + str(plot))

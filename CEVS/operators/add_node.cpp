@@ -180,7 +180,7 @@ int removal_cost(Graph &g, SolutionRepresentation &sol, int si, int u) {
     bool in_same_cluster = false;
     for (int i : set_nodes) {
         if (i == u) continue;
-        if (sol.get_co_occurence(i, u) > 0) continue;
+        if (sol.get_co_occurence(i, u) > 1) continue;
         /**
         in_same_cluster = false;
         for (int w : sol.get_node_to_clusters(u)) {

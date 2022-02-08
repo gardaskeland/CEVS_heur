@@ -200,6 +200,27 @@ map<int, pair<int, int>> find_cost_of_merges(Graph &g, SolutionRepresentation &s
  * TODO: Change so that it uses the weights of edges and vertices.
  */
 int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj) {
+    int cost = 0;
+    set<int> s1 = sol.get_set(si);
+    set<int> s2 = sol.get_set(sj);
+    set<pair<int, int>> seen;
+    pair<int, int> p;
+    pair<int, int> p_r;
+    for (int u : s1) {
+        //split less after merge
+        if (s2.find(u) != s2.end()) cost -= g.get_node_weight(u);
+        for (int v : s2) {
+            //Also captures the case where both u and v is in the same set
+            p = pair<int, int>(u, v);
+            if (seen.find(p) != seen.end() || u == v || sol.get_co_occurence(u, v) > 0) continue;
+            p_r = pair<int, int>(v, u);
+            seen.insert(p);
+            seen.insert(p_r);
+            if (g.has_edge(u, v)) {cost -= g.get_edge_cost(u, v);}
+            else {cost += g.get_edge_cost(u, v);}
+        }
+    }
+     /**
     set<int> nodes_si = sol.get_set(si);
     set<int> nodes_sj = sol.get_set(sj);
     int cost = 0;
@@ -261,6 +282,7 @@ int cost_diff_after_merge(Graph &g, SolutionRepresentation &sol, int si, int sj)
         //cout << "ok4\n";
     }
     //cout << "ok5\n";
+    */
     return cost;
 }
 
@@ -295,10 +317,7 @@ map<int, pair<int, int>> find_cost_of_merges_diff(Graph &g, SolutionRepresentati
         set<int> modified_clusters = sol.book.modified_clusters.query(sol.book.b_merge.last_merge_operation, sol.book.operation_number - 1);
         //for (int i : modified_clusters) cout << i << " ";
         //cout << "\n";
-        set<int> indices;
-        for (int i : sol.get_set_indices()) {
-            indices.insert(i);
-        }
+        set<int> indices = sol.get_set_indices_as_set();
         //cout << "in modified clusters: ";
         for (int c : modified_clusters) {
             //cout << c << ", ";

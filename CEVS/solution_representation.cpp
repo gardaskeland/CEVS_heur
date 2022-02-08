@@ -110,7 +110,10 @@ void SolutionRepresentation::changed_set(int si) {
 
 //slow. Change?
 void SolutionRepresentation::add(int node, int si) {
-    for (int v : clusters[si]) {
+    if (!(clusters.find(si) != clusters.end())) return;
+    set<int> &set_i = clusters[si];
+    if (set_i.find(node) != set_i.end()) return;
+    for (int v : set_i) {
         if (v == node) continue;
         map<int,int> &m = co_occurence[node];
         if (m.find(v) != m.end()) {
@@ -160,30 +163,19 @@ void SolutionRepresentation::merge(int si, int sj) {
     set<int> s1 = get_set(si);
     set<int> s2 = get_set(sj);
     
-    for (int u : s1) {
-        for (int v : s2) {
-            if (s1.find(v) != s1.end()) continue;
-            map<int,int> &m = co_occurence[u];
-            if (m.find(v) != m.end()) {
-                increase_co_occurence(u, v);
-            } else {
-                initialise_co_occurence(u, v);
-            }
-
-        }
-    }
     //cout << "in sp: line 64";
     //print_solution();
     set<int> nodes_to_sets;
     for (set<int>::iterator it = s2.begin(); it != s2.end(); ++it) {
         //cout << *it;
-        s1.insert(*it);
+        if (s1.find(*it) != s1.end()) continue;
+        add(*it, si);
         nodes_to_sets = node_in_clusters[*it];
         nodes_to_sets.erase(sj);
         nodes_to_sets.insert(si);
         node_in_clusters[*it] = nodes_to_sets;
     }
-    clusters[si] = s1;
+    //clusters[si] = s1;
     //cout << "in sp: line 74: ";
     //print_solution();
 
@@ -202,12 +194,12 @@ void SolutionRepresentation::merge(int si, int sj) {
 }
 
 void SolutionRepresentation::disjoint_split(int si, set<int> &set_1, set<int> &set_2) {
-    for (int u : set_1) {
-        for (int v : set_2) {
-            if (set_1.find(v) != set_1.end()) continue;
-            decrease_co_occurence(u, v);
-        }
-    }
+    //for (int u : set_1) {
+    //    for (int v : set_2) {
+    //        if (set_1.find(v) != set_1.end() || u >= v) continue;
+    //        decrease_co_occurence(u, v);
+    //    }
+    //}
 
     changed_set(si);
     set<int> to_split = get_set(si);
@@ -215,12 +207,14 @@ void SolutionRepresentation::disjoint_split(int si, set<int> &set_1, set<int> &s
     add_set(set_2);
     map<int,set<int>>::reverse_iterator it = clusters.rbegin();
     for (int u : set_2) {
-        to_split.erase(u);
+        //print_solution();
+        remove(u, si);
+        //print_solution();
         node_to_its_clusters = node_in_clusters[u];
         node_to_its_clusters.erase(si);
         node_in_clusters[u] = node_to_its_clusters;
     }
-    clusters[si] = to_split;
+    //clusters[si] = to_split;
 }
 
 int SolutionRepresentation::get_co_occurence(int u, int v) {
@@ -313,12 +307,6 @@ void SolutionRepresentation::add_set_ind(int si, set<int> s) {
 
 
 void SolutionRepresentation::remove_set(int si) {
-    for (int u : clusters[si]) {
-        for (int v : clusters[si]) {
-            if (u >= v) continue;
-            decrease_co_occurence(u, v);
-        }
-    }
     set<int> indices;
     for (int i : get_set_indices()) {
         indices.insert(i);
@@ -326,9 +314,15 @@ void SolutionRepresentation::remove_set(int si) {
     if (!(indices.find(si) != indices.end())) {
         return;
     }
+    for (int u : clusters[si]) {
+        for (int v : clusters[si]) {
+            if (u >= v) continue;
+            decrease_co_occurence(u, v);
+        }
+    }
     set<int> s = clusters[si];
     for (int i : s) {
-        set<int> nic = node_in_clusters[i];
+        set<int> &nic = node_in_clusters[i];
         nic.erase(si);
         node_in_clusters[i] = nic;
     }
@@ -480,6 +474,40 @@ SolutionRepresentation SolutionRepresentation::copy_solution() {
     return new_sol;
 }
 
+bool SolutionRepresentation::verify_co_occurence() {
+    vector<map<int, int>> in_solution;
+    for (int i = 0; i < co_occurence.size(); i++) {
+        in_solution.emplace_back(map<int, int>());
+    }
+    for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
+        for (int u : it->second) {
+            for (int v : it->second) {
+                if (u >= v) continue;
+                map<int,int> &m = in_solution[u];
+                if (m.find(v) != m.end()) {
+                    m[v] += 1;
+                } else {
+                    m[v] = 1;
+                }
+            }
+        }
+    }
+    for (int i = 0; i < co_occurence.size(); i++) {
+        map<int, int> m_i = in_solution[i];
+        map<int, int> m_j = co_occurence[i];
+        for (map<int, int>::iterator it = m_i.begin(); it != m_i.end(); it++) {
+            if (!(m_j.find(it->first) != m_j.end())) {
+                cout << "ERROR: " << i << " and " << it->first << " are not counted in co_occurence";
+            }
+            if (m_j[it->first] != it->second) {
+                cout << "ERROR: " << "the value of co-occurence between " << i << " and " << it->first << " is wrong: " \
+                    "should be " << it->second << ", but is " << m_j[it->first] << "\n";
+            }
+        }
+    }
+    return true;
+}
+
 
 void SolutionRepresentation::print_solution() {
     cout << "[";
@@ -505,6 +533,17 @@ void SolutionRepresentation::print_node_in_clusters() {
         cout << "], ";
     }
     cout << "]\n";
+}
+
+void SolutionRepresentation::print_co_occurence() {
+    for (int i = 0; i < co_occurence.size(); i++) {
+        cout << i << ": ";
+        map<int,int> &m = co_occurence[i];
+        for (map<int,int>::iterator it = m.begin(); it != m.end(); it++) {
+            cout << "[" << it->first << ": " << it->second << "], ";
+        }
+        cout << "]\n";
+    }
 }
 
 int SolutionRepresentation::num_splits() {
