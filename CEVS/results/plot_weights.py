@@ -8,7 +8,7 @@ def integer_to_three_digits(i):
         return "0" + str(i)
     return str(i)
 
-for t in range(3, 4, 2):
+for t in range(1, 10, 2):
     filename = "weights-heur" + integer_to_three_digits(t) + ".txt"
     f = open(filename, 'r')
     num_plots, operations, weight_change_after, num_weight_changes = list(map(int, f.readline().split()))
@@ -31,7 +31,9 @@ for t in range(3, 4, 2):
                 print(j)
                 axs[plot].plot(x, Y[i:i+num_weight_changes,j])
     fig.tight_layout(pad=0.6)
-    axs[num_plots // 2].legend([0, 1, 2, 3, 4, 5], loc="left")
+    axs[num_plots // 2].legend(["random choice add", "random choice split", "weighted random merge", 
+                                "label propagation round", "remove nodes", "add node to all"], loc="left")
+    plt.suptitle("Weights over " + str(operations) + " operations for 5 iterations on problem " + integer_to_three_digits(t))
     #ttl = plt.suptitle("Weights change for operations 0-6 of alns on heur" + integer_to_three_digits(t))
     #ttl.set_position([20, 20])
     plt.xlabel("operations")
