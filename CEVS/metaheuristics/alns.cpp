@@ -11,7 +11,7 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     cout << "cost of initial solution: " << current_cost << "\n";
     int best_cost = current_cost;
 
-    const int operations = 6;
+    const int operations = 5;
     double start_weight = 100 / operations;
     vector<double> weights(operations, start_weight);
     vector<double> c_weights(operations, 0);
@@ -22,13 +22,17 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         }
         c_weights[i] = c_weights[i - 1] + weights[i];
     }
-    int operation_score[operations] = {0, 0, 0, 0, 0, 0};
+    int operation_score[operations] = {0, 0, 0, 0, 0};
     vector<double> time_taken(operations*2, 0);
     set<int> solution_hashes;
     int change_weights_after = 100;
     int change_weights_count = 0;
     double rate = 0.5;
     int start_score = 20;
+
+    //set to 0 when reaching escape threshold or new best solution is found. +1 each iteration.
+    int escape_counter = 0;
+    int escape_threshold = 5;
 
     //cost at start of iteration
     vector<int> solution_cost_iteration;
@@ -46,8 +50,13 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     double t_max = 50;
     double t = t_max;
     double alpha = pow(0.01/t_max, 1.0/num_operations);
+    int start_index = 0;
+    if (current_solution.num_sets() == 0) {
+        start_index = num_operations;
+        cout << "Solved by kernel, expext irregular behaviour.\n";
+    }
 
-    for (int i = 0; i < num_operations; i++) {
+    for (int i = start_index; i < num_operations; i++) {
         //cout << i << "\n";
         solution_cost_iteration.push_back(current_cost);
         //cout << "11\n";
@@ -92,12 +101,21 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                 c_weights[i] = c_weights[i - 1] + weights[i];
             }
         }
+        
         //current_solution.print_solution();
         int r = rand() % 100;
         //cout << "a\n";
         //cout << "r = " << r << "\n";
         optional<int> res0, res1, res2;
-        if (r < c_weights[0]) {
+        if (escape_counter >= escape_threshold) {
+            escape_counter = 0;
+            chrono::steady_clock::time_point begin_5 = chrono::steady_clock::now();
+            choice = 5;
+            new_cost = current_cost + add_node_to_all(wg, current_solution);
+            chrono::steady_clock::time_point end_5 = chrono::steady_clock::now();
+            time_taken[5] += chrono::duration_cast<chrono::microseconds>(end_5 - begin_5).count();
+        }
+        else if (r < c_weights[0]) {
             chrono::steady_clock::time_point begin_0 = chrono::steady_clock::now();
             choice = 0;
             res0 = random_choice_add_node(wg, current_solution);
@@ -131,19 +149,21 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             new_cost = current_cost + label_propagation_round(wg, current_solution);
             chrono::steady_clock::time_point end_3 = chrono::steady_clock::now();
             time_taken[3] += chrono::duration_cast<chrono::microseconds>(end_3 - begin_3).count();
-        } else if (r < c_weights[4]) {
+        } else {//if (r < c_weights[4]) {
             chrono::steady_clock::time_point begin_4 = chrono::steady_clock::now();
             choice = 4;
             new_cost = current_cost + remove_nodes_(wg, current_solution);
             chrono::steady_clock::time_point end_4 = chrono::steady_clock::now();
             time_taken[4] += chrono::duration_cast<chrono::microseconds>(end_4 - begin_4).count();
-        } else {
+        }/**
+        else {
             chrono::steady_clock::time_point begin_5 = chrono::steady_clock::now();
             choice = 5;
-            new_cost = current_cost + add_node_to_all(wg, current_solution);
+            new_cost = current_cost + add_node_to_all(wg, current_solution);//add_node_to_percent(wg, current_solution, min(5*(t/t_max)*100, 100.0));
             chrono::steady_clock::time_point end_5 = chrono::steady_clock::now();
             time_taken[5] += chrono::duration_cast<chrono::microseconds>(end_5 - begin_5).count();
         }
+        */
         //cout << "choice: " << choice << "\n";
 
         
@@ -202,6 +222,7 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             best_cost = current_cost;
             last_iteration_of_best_solution = i;
             best_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
+            escape_counter = 0;
         }
         
         //if (i % 10 == 9) {
@@ -245,7 +266,8 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         //Makes the current number of operations executed available in all operations.
         current_solution.book.operation_number += 1;
         choices.push_back(choice);
-        change_weights_count += 1; 
+        change_weights_count += 1;
+        escape_counter += 1;
         if (i == num_operations - 1) {
             solution_cost_iteration.push_back(current_cost);
         }

@@ -111,14 +111,14 @@ vector<double> print_weights(LoggingSolution &sol, int iteration, string &filena
 
 //TODO: Write nodes and edges in all.txt files.
 int main() {
-    int num_operations = 500;
+    int num_operations = 2000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 1; i < 10; i = i + 2) {
+    for (int i = 3; i < 4; i = i + 1) {
         ostringstream oss;
         string filename;
         oss.clear();
         oss.str(string());
-        oss << "../../../heur/heur" << integer_to_three_digits(i) << ".gr";
+        oss << "exact/gexc" << i << ".txt";//"../../../heur/heur" << integer_to_three_digits(i) << ".gr";
         filename = oss.str(); // "../CEVStest/test_graphs/g8.txt";
         oss.clear();
         cout << "Working on file " << filename << "\n";
@@ -126,15 +126,16 @@ int main() {
         Graph g = Graph(adj);
 
         int summed_costs = 0;
-        int iterations = 2;
+        int runs = 5;
         int num_operators = 6;
         int best_cost = pow(2, 30);
         ShallowSolution best_solution;
         vector<LoggingSolution> solutions;
         vector<tuple<int, int, int>> op_solutions;
         vector<int> cost_of_solutions;
-        vector<double> time_for_iterations;
-        for (int j = 0; j < iterations; j++) {
+        vector<double> time_for_runs;
+        double total_time_for_runs = 0;
+        for (int j = 0; j < runs; j++) {
 
             chrono::steady_clock::time_point begin_ = chrono::steady_clock::now();
             LoggingSolution sol;
@@ -144,7 +145,8 @@ int main() {
             solutions.push_back(sol);
             cout << "Best solution:\n";
             double time_elapsed_ = chrono::duration_cast<chrono::microseconds>(end_ - begin_).count();
-            time_for_iterations.push_back(time_elapsed_);
+            time_for_runs.push_back(time_elapsed_);
+            total_time_for_runs += time_elapsed_;
             cout << "time used in seconds for graph " << filename << ": " << time_elapsed_ / 1000000 << "\n";
 
             SolutionRepresentation calculate_sol = SolutionRepresentation(g.n, num_operations);
@@ -195,18 +197,19 @@ int main() {
         int sum_last_iteration = 0;
         vector<double> average_time_operators = find_average_time_operators(solutions);
         vector<double> average_improvement_operations = find_average_improvement_operations(solutions);
-        for (int p = 0; p < iterations; p++) {
+        for (int p = 0; p < runs; p++) {
             sum_last_iteration += solutions[p].last_iteration_of_best_solution;
         } 
         out_file.open(out_all); 
         out_file << "instance: " << filename << "\n";
-        out_file << "iterations: " << iterations << "\n";
+        out_file << "iterations: " << runs << "\n";
         out_file << "operations per iteration: " << num_operations << "\n";
         out_file << "best solution:\n";
         out_file << best_solution.solution_as_string() << "\n";
         out_file << "cost of best solution: " << best_cost << "\n";
-        out_file << "average cost of solutions: " << summed_costs / (double)iterations << "\n";
-        out_file << "average last operation finding best solution: " << (double)sum_last_iteration / iterations << "\n";
+        out_file << "average cost of solutions: " << summed_costs / (double)runs << "\n";
+        out_file << "average last operation finding best solution: " << (double)sum_last_iteration / runs << "\n";
+        out_file << "average running time: " << total_time_for_runs / runs << "\n";
         out_file << "------------------\n";
         
         out_file << "average time of random_choice_add_node: " << average_time_operators[0] / 1000000 << "\n";
@@ -232,13 +235,14 @@ int main() {
 
         out_file << "all solutions:\n";
         out_file << "------------------\n";
-        for (int p = 0; p < iterations; p++) {
+        for (int p = 0; p < runs; p++) {
             out_file << "iteration " << p << ": " << solutions[p].solution_as_string() << "\n";
             out_file << "edge deletions: " << get<0>(op_solutions[p]) << "\n";
             out_file << "edge additions: " << get<1>(op_solutions[p]) << "\n";
             out_file << "vertex splittings: " << get<2>(op_solutions[p]) << "\n";
             out_file << "cost of solution: " << cost_of_solutions[p] << "\n";
-            out_file << "time used on iteration: " << time_for_iterations[p] / 1000000 << "\n";
+            out_file << "last iteration of solution: " << solutions[p].last_iteration_of_best_solution << "\n";
+            out_file << "time used on iteration: " << time_for_runs[p] / 1000000 << "\n";
             out_file << "------------------\n";
         }
         out_file.close();

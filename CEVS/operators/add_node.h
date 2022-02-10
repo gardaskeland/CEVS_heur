@@ -87,6 +87,12 @@ optional<int> random_choice_add_node(Graph &g, SolutionRepresentation &sol);
 int add_node_to_all(Graph &g, SolutionRepresentation &sol);
 
 /**
+ * Goes through a percentage of the sets and adds the neighbour that given the most cost reduction to each
+ * set. Returns cost of adding this node. Give percentage between 0 and 100.
+ */
+int add_node_to_percent(Graph &g, SolutionRepresentation &sol, double percentage);
+
+/**
  * Chooses a set with high relative out-degree and finds neighbour node of the set.
  * Returns the cost of adding the node to the set.
  */

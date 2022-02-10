@@ -129,6 +129,7 @@ void do_revert_add_node(SolutionRepresentation &sol, Bookkeep &book) {
 
 optional<int> random_choice_add_node(Graph &g, SolutionRepresentation &sol) {
     vector<int> set_indices = sol.get_set_indices();
+    //cout << "size set indices: " << set_indices.size() << "\n";
     int si = set_indices[rand() % set_indices.size()];
     vector<pair<int, int>> best_nodes = best_nodes_to_add(g, sol, si);
     if (best_nodes.size() == 0) {
@@ -149,12 +150,57 @@ int add_node_to_all(Graph &g, SolutionRepresentation &sol) {
             //sol.book.b_add_node.v = -1;
             continue;
         }
+        //if (best_nodes[0].first < 0) continue;
         //sol.book.b_add_node.v = best_nodes[0].second;
         //sol.book.b_add_node.si = si;
         sol.add(best_nodes[0].second, si);
         cost += best_nodes[0].first;
     }
     return cost;
+}
+
+int add_node_to_percent(Graph &g, SolutionRepresentation &sol, double percentage) {
+    //cout << "enter\n";
+    //cout << percentage << "\n";
+    set<int> to_skip_choose;
+    int n = sol.num_sets();
+    //percent we skip
+    double threshold = (100 - percentage) / 100;
+    if (threshold <= 0.5) {
+        //We choose which ones to skip
+        while(to_skip_choose.size() < floor(threshold * n)) {
+            to_skip_choose.insert(rand() % n);
+        }
+    } else {
+        //We choose which ones to pick
+        while (to_skip_choose.size() < (1 - threshold) * n) {
+            to_skip_choose.insert(rand() % n);
+        }
+    }
+    vector<int> set_indices = sol.get_set_indices();
+    int counter = 0;
+    int cost = 0;
+    //int add_counter = 0;
+    for (int si : set_indices) {
+        //we skip these
+        if (threshold <= 0.5 && to_skip_choose.find(counter) != to_skip_choose.end()) {counter += 1; continue;}
+        //we pick these
+        else if (threshold > 0.5 && !(to_skip_choose.find(counter) != to_skip_choose.end())) {counter += 1; continue;};
+        counter += 1;
+        vector<pair<int, int>> best_nodes = best_nodes_to_add(g, sol, si);
+        //add_counter += 1;
+        if (best_nodes.size() == 0) {
+            //sol.book.b_add_node.v = -1;
+            continue;
+        }
+        //sol.book.b_add_node.v = best_nodes[0].second;
+        //sol.book.b_add_node.si = si;
+        sol.add(best_nodes[0].second, si);
+        cost += best_nodes[0].first;
+    }
+    //cout << "Added " << add_counter/(double)counter << " of vertices\n";
+    return cost;
+
 }
 
 
