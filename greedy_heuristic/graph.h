@@ -20,6 +20,9 @@ class Graph {
         //Stores the paths of vertices being split, each vertex pointing to itself if it is an
         //original vertex or the vertex it is split from if not
         vector<int> parents;
+        //To sort random
+        vector<int> vertices;
+        vector<int> split_vertices;
 
         /**
          * Return true if graph has edge.
@@ -50,14 +53,18 @@ class Graph {
 
         vector<int>& get_adj();
 
+        int find_origin(int u);
+
         Graph(int n_) {
             n = n_;
             for (int i = 0; i < n; i++) {
                 adj.emplace_back(vector<int>());
                 forbid_permanent.emplace_back(vector<int>(n, 0));
                 parents.emplace_back(i);
+                vertices.emplace_back(i);
 
             }
+            split_vertices = vector<int>();
         }
 
         void print_graph();

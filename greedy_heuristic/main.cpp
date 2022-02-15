@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <chrono>
 
 using namespace std;
 
@@ -48,15 +49,45 @@ vector<vector<int>> read_gz_file(string s) {
     return adj;
 }
 
+string integer_to_three_digits(int i) {
+    ostringstream oss;
+    if (i >= 100) {
+        oss << i;
+        return oss.str();
+    }
+    else if (i >= 10) {
+        oss << 0 << i;
+        return oss.str();
+    } else {
+        oss << 0 << 0 << i;
+        return oss.str();
+    }
+}
+
 int main() {
-    vector<vector<int>> adj_lst = read_gz_file("../CEVS/exact/g2.txt");
-    Graph g = Graph(adj_lst.size());
-    g.adj = adj_lst;
-    g.print_graph();
-    int cost = greedy_heuristic(g);
-    cout << "After heuristic: \n";
-    g.print_graph();
-    cout << "Cost: " << cost << "\n";
+    ostringstream oss;
+    string filename;
+    vector<vector<int>> adj_lst;
+    int cost;
+    for (int i = 1; i < 10; i = i + 2) {
+        oss.clear();
+        oss.str(string());
+        oss << "../../../heur/heur" << integer_to_three_digits(i) << ".gr";
+        filename = oss.str();
+        cout << "Working on file " << filename << "\n";
+        adj_lst = read_gz_file(filename);
+        Graph g = Graph(adj_lst.size());
+        g.adj = adj_lst;
+        //g.print_graph();
+        chrono::steady_clock::time_point begin = chrono::steady_clock::now();
+        cost = greedy_heuristic(g);
+        chrono::steady_clock::time_point end = chrono::steady_clock::now();
+        cout << "After heuristic: \n";
+        //g.print_graph();
+        cout << "Cost: " << cost << "\n";
+        double time_elapsed = chrono::duration_cast<chrono::microseconds>(end - begin).count();
+        cout << "time taken: " << time_elapsed / 1000000 << "\n";
+    }
 }
 
 void test() {

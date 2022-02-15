@@ -13,14 +13,14 @@ void Graph::add_edge(int u, int v) {
 void Graph::remove_edge(int u, int v) {
     vector<int> &adjref = adj[u];
     optional<int> pos = binary_search(adjref, v);
-    cout << "pos has value: " << pos.has_value() << "\n";
-    if (pos.has_value()) cout << "the value is " << pos.value() << "\n";
+    //cout << "pos has value: " << pos.has_value() << "\n";
+    //if (pos.has_value()) cout << "the value is " << pos.value() << "\n";
     if (pos.has_value()) {
         adjref.erase(adjref.begin() + pos.value());
         vector<int> &adj_v = adj[v];
         pos = binary_search(adj_v, u);
-        cout << "pos has value: " << pos.has_value() << "\n";
-        if (pos.has_value()) cout << "the value is " << pos.value() << "\n";
+        //cout << "pos has value: " << pos.has_value() << "\n";
+        //if (pos.has_value()) cout << "the value is " << pos.value() << "\n";
         adj_v.erase(adj_v.begin() + pos.value());
     }
 }
@@ -69,8 +69,9 @@ void Graph::split_vertex_(int u, int v, int w) {
     v1_set.push_back(best);
     sort(v1_set.begin(), v1_set.end());
     adj.push_back(v1_set);
-    forbid_permanent.emplace_back(vector<int>());
+    forbid_permanent.emplace_back(vector<int>(n+1, 0));
     parents.emplace_back(n);
+    vertices.emplace_back(n);
     int v1 = n;
     n = n+1;
 
@@ -81,10 +82,17 @@ void Graph::split_vertex_(int u, int v, int w) {
     }
     sort(v2_set.begin(), v2_set.end());
     adj.push_back(v2_set);
-    forbid_permanent.emplace_back(vector<int>());
+    forbid_permanent.emplace_back(vector<int>(n+1, 0));
     parents.emplace_back(n);
+    vertices.emplace_back(n);
     int v2 = n;
     n = n+1;
+
+    for (vector<int> &vec : forbid_permanent) {
+        while (vec.size() < n) {
+            vec.push_back(0);
+        }
+    }
     /**
     //Delete edges from N(v1) to N(v2)
     optional<int> pos;
@@ -117,11 +125,19 @@ void Graph::split_vertex_(int u, int v, int w) {
 
     //Delete references from v to other vertices.
     adj[v].clear();
+    binary_insert(split_vertices, v);
 }
 
 void Graph::split_vertex(optional<tuple<int, int, int>> t) {
     tuple<int, int, int> v = t.value();
     split_vertex_(get<0>(v), get<1>(v), get<2>(v));
+}
+
+int Graph::find_origin(int u) {
+    while (u != parents[u]) {
+        u = parents[u];
+    }
+    return u;
 }
 
 void Graph::print_graph() {

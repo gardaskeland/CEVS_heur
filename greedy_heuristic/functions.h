@@ -6,6 +6,9 @@
 #include <optional>
 #include <queue>
 #include "binary_search.h"
+#include <algorithm>
+#include <random>
+#include <set>
 
 using namespace std;
 
