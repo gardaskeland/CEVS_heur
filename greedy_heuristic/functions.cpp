@@ -1,7 +1,7 @@
 #include "functions.h"
 
 //Not clear what they mean, use this
-int cost_adding_edge(Graph &g, int u, int v) {
+int cost_adding_edge(Graph_ &g, int u, int v) {
     int cost = 0;
     for (int w : g.adj[u]) {
         if (binary_search(g.adj[v], w).has_value()) continue;
@@ -27,7 +27,7 @@ int cost_adding_edge(Graph &g, int u, int v) {
 }
 
 //
-int cost_removing_edge(Graph &g, int u, int v) {
+int cost_removing_edge(Graph_ &g, int u, int v) {
     vector<int> common_neighbours;
     vector<int> other_elements;
     int cost = 0;
@@ -48,30 +48,44 @@ int cost_removing_edge(Graph &g, int u, int v) {
     return cost;
 }
 
-void make_permanent_or_forbidden(double pth, double fth, Graph &g, int u, int v) {
+int make_permanent_or_forbidden(double pth, double fth, Graph_ &g, int u, int v) {
     //u and v
-    int common_neighbourhood = 1;
+    int cost = 0;
+    int common_neighbourhood = 2;
     //Either fix the vector or just use a vector of sets as the data structure for forbid-permanent instead.
     //Actually, this works quite nicely with the binary search vector methods we use.
     if (v >= g.forbid_permanent[u].size()) cout << "ERROR\n";
-    if (g.forbid_permanent[u][v] == 1) return;
+    if (g.forbid_permanent[u][v] == 1) return 0;
     for (int i : g.adj[u]) {
         if (binary_search(g.adj[v], i).has_value()) common_neighbourhood += 1;
     }
 
-    if (g.has_edge(u, v) && ((double)common_neighbourhood / (double)g.adj[u].size() >= pth || (double)common_neighbourhood / (double)g.adj[v].size() >= pth)) {
+    double relative_to_u = (double)common_neighbourhood / (double)g.adj[u].size();
+    double relative_to_v = (double)common_neighbourhood / (double)g.adj[v].size();
+    //cout << "u: " << relative_to_u << ", v: " << relative_to_v << "\n";
+
+    if (g.has_edge(u, v) && (relative_to_u >= pth ||  relative_to_v >= pth)) {
         //cout << "n: " << g.n << "\n";
         //cout << "forbid " << u << " " << v << "\n";
+        if (!g.has_edge(u, v)) {
+            g.add_edge(u, v);
+            cost += 1;
+        } 
         g.set_forbid_permanent(u, v);
     }
-    else if (!g.has_edge(u, v) && (double)common_neighbourhood / (double)g.adj[u].size() <= fth || (double)common_neighbourhood / (double)g.adj[v].size() <= fth) {
+    else if (!g.has_edge(u, v) && (relative_to_u <= fth || relative_to_v <= fth)) {
         //cout << "n: " << g.n << "\n";
         //cout << "forbid " << u << " " << v << "\n";
+        if (g.has_edge(u, v)) {
+            g.remove_edge(u, v);
+            cost += 1;
+        }
         g.set_forbid_permanent(u, v);
     }
+    return cost;
 }
 
-optional<tuple<int, int, int>> bfs(Graph &g, int u) {
+optional<tuple<int, int, int>> bfs(Graph_ &g, int u) {
     int next;
     deque<int> q;
     q.push_back(u);
@@ -99,7 +113,7 @@ optional<tuple<int, int, int>> bfs(Graph &g, int u) {
     return optional<tuple<int, int, int>>();
 }
 
-optional<tuple<int, int, int>> find_conflict_triple(Graph &g) {
+optional<tuple<int, int, int>> find_conflict_triple(Graph_ &g) {
     optional<tuple<int, int, int>> result;
     /**
     vector<int> to_shuffle;
@@ -116,7 +130,7 @@ optional<tuple<int, int, int>> find_conflict_triple(Graph &g) {
     return result;
 }
 
-bool allows_splitting(Graph &g, tuple<int, int, int> split) {
+bool allows_splitting(Graph_ &g, tuple<int, int, int> &split) {
     if (g.forbid_permanent[get<0>(split)][get<1>(split)] == 1 && g.forbid_permanent[get<0>(split)][get<2>(split)] == 1 \
         && g.forbid_permanent[get<1>(split)][get<2>(split)] == 1) {
             return true;
@@ -124,7 +138,7 @@ bool allows_splitting(Graph &g, tuple<int, int, int> split) {
     return false;
 }
 
-void bfs_cc(Graph &g, set<int> &marked, int u) {
+void bfs_cc(Graph_ &g, set<int> &marked, int u) {
     int next;
     deque<int> q;
     q.push_back(u);
@@ -141,7 +155,7 @@ void bfs_cc(Graph &g, set<int> &marked, int u) {
     }
 }
 
-int count_components(Graph &g) {
+int count_components(Graph_ &g) {
     int components = 0;
     set<int> marked;
     marked.insert(-1);
@@ -154,18 +168,20 @@ int count_components(Graph &g) {
     return components;
 }
 
-int greedy_heuristic(Graph &g) {
+vector<set<int>> greedy_heuristic(Graph_ &g) {
     optional<tuple<int, int, int>> conflict_triple;
     int cost_add;
     int cost_delete_1;
     int cost_delete_2;
+    int max_split = 100;
     tuple<int, int, int> uvw;
     int u, v, w;
     //May not be totally accurate...
     int cost = 0;
-    double pth = 0.95;
-    double fth = 0.1;
+    double pth = 0.75;
+    double fth = 0.25;
     int splits = 0;
+    //not counting additions and deletions in make_permanent_or_forbidden
     int deletions = 0;
     int additions = 0;
     while (true) {
@@ -182,10 +198,10 @@ int greedy_heuristic(Graph &g) {
         
         //Make sure that we don't add an edge between vertices of the same origin
         if (g.find_origin(u) == g.find_origin(w)) {
-            g.forbid_permanent[u][w];
+            g.forbid_permanent[u][w] = 1;
         }
 
-        if (allows_splitting(g, conflict_triple.value())) {
+        if (allows_splitting(g, conflict_triple.value()) && splits < max_split) {
             //cout << "We split \n";
             cost += 1;
             splits += 1;
@@ -195,7 +211,7 @@ int greedy_heuristic(Graph &g) {
             if (g.forbid_permanent[u][w] < 1 && cost_add <= cost_delete_1 && cost_add <= cost_delete_2) {
                 //cout << "We add\n";
                 g.add_edge(u, w);
-                g.set_forbid_permanent(u, w);
+                //g.set_forbid_permanent(u, w);
                 additions += 1;
                 cost += 1;
             }
@@ -205,7 +221,6 @@ int greedy_heuristic(Graph &g) {
                 g.set_forbid_permanent(u, v);
                 deletions += 1;
                 cost += 1;
-            //We know g.forbid_permanent[v][w] == 0 since else we would have split.
             } else {
                 //cout << "We delete 2\n";
                 g.remove_edge(v, w);
@@ -219,7 +234,7 @@ int greedy_heuristic(Graph &g) {
             if (g.adj[i].size() == 0) continue;
             for (int j = i+1; j < g.n; j++) {
                 if (g.adj[j].size() == 0) continue;
-                make_permanent_or_forbidden(pth, fth, g, i, j);
+                cost += make_permanent_or_forbidden(pth, fth, g, i, j);
             }
         }
 
@@ -227,6 +242,16 @@ int greedy_heuristic(Graph &g) {
     cout << "Number of vertices created: " << g.n << "\n";
     cout << "Number of components: " << count_components(g) << "\n";
     cout << "additions, deletions, splits: " << additions << ", " << deletions << ", " << splits << "\n";
+    /**
+    cout << "parents: ";
+    for (int p = 0; p < g.parents.size(); p++) {
+        cout << "parent of " << p << " is " << g.parents[p] << "\n";
+    }
+    //exit(0);
+    */
+   cout << "Cost: " << cost << "\n";
+    vector<set<int>> components = g.components();
+
     //g.print_graph();
-    return cost;
+    return components;
 }

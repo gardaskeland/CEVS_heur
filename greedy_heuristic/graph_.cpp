@@ -1,16 +1,16 @@
-#include "graph.h"
+#include "graph_.h"
 #include <optional>
 
-bool Graph::has_edge(int u, int v) {
+bool Graph_::has_edge(int u, int v) {
     return binary_search(adj[u], v).has_value();
 }
 
-void Graph::add_edge(int u, int v) {
+void Graph_::add_edge(int u, int v) {
     binary_insert(adj[u], v);
     binary_insert(adj[v], u);
 }
 
-void Graph::remove_edge(int u, int v) {
+void Graph_::remove_edge(int u, int v) {
     vector<int> &adjref = adj[u];
     optional<int> pos = binary_search(adjref, v);
     //cout << "pos has value: " << pos.has_value() << "\n";
@@ -25,12 +25,12 @@ void Graph::remove_edge(int u, int v) {
     }
 }
 
-void Graph::set_forbid_permanent(int u, int v) {
+void Graph_::set_forbid_permanent(int u, int v) {
     forbid_permanent[u][v] = 1;
     forbid_permanent[v][u] = 1;
 }
 
-void Graph::split_vertex_(int u, int v, int w) {
+void Graph_::split_vertex_(int u, int v, int w) {
     optional<int> j;
     int counter_u = 0; int counter_w = 0;
     vector<int> uv_set;
@@ -70,7 +70,7 @@ void Graph::split_vertex_(int u, int v, int w) {
     sort(v1_set.begin(), v1_set.end());
     adj.push_back(v1_set);
     forbid_permanent.emplace_back(vector<int>(n+1, 0));
-    parents.emplace_back(n);
+    parents.emplace_back(v);
     vertices.emplace_back(n);
     int v1 = n;
     n = n+1;
@@ -83,7 +83,7 @@ void Graph::split_vertex_(int u, int v, int w) {
     sort(v2_set.begin(), v2_set.end());
     adj.push_back(v2_set);
     forbid_permanent.emplace_back(vector<int>(n+1, 0));
-    parents.emplace_back(n);
+    parents.emplace_back(v);
     vertices.emplace_back(n);
     int v2 = n;
     n = n+1;
@@ -128,19 +128,22 @@ void Graph::split_vertex_(int u, int v, int w) {
     binary_insert(split_vertices, v);
 }
 
-void Graph::split_vertex(optional<tuple<int, int, int>> t) {
+void Graph_::split_vertex(optional<tuple<int, int, int>> t) {
     tuple<int, int, int> v = t.value();
     split_vertex_(get<0>(v), get<1>(v), get<2>(v));
 }
 
-int Graph::find_origin(int u) {
-    while (u != parents[u]) {
-        u = parents[u];
+int Graph_::find_origin(int u) {
+    int temp = u;
+    while (temp != parents[temp]) {
+        //cout << temp << "\n";
+        temp = parents[temp];
     }
-    return u;
+    //cout << "end\n";
+    return temp;
 }
 
-void Graph::print_graph() {
+void Graph_::print_graph() {
     cout << "Printing graph: \n";
     for (int i = 0; i < n; i++) {
         cout << i << ": ";
@@ -150,5 +153,39 @@ void Graph::print_graph() {
         cout << "\n";
     }
     cout << "\n";
+}
+
+set<int> Graph_::bfs(set<int> &marked, int u) {
+    set<int> s;
+    int org;
+    int v;
+    deque<int> q;
+    q.push_back(u);
+    org = find_origin(u);
+    marked.insert(org);
+    s.insert(org);
+    while(!q.empty()) {
+        v = q.front();
+        q.pop_front();
+        for (int w : adj[v]) {
+            org = find_origin(w);
+            if (marked.find(org) != marked.end()) continue;
+            q.push_back(w);
+            marked.insert(org);
+            s.insert(org);
+        }
+    }
+    return s;
+}
+
+vector<set<int>> Graph_::components() {
+    vector<set<int>> result;
+    set<int> marked;
+    for (int u = 0; u < n; u++) {
+        if (marked.find(find_origin(u)) != marked.end()) continue;
+        if (binary_search(split_vertices, u).has_value()) continue;
+        result.emplace_back(bfs(marked, u));
+    }
+    return result;
 }
 

@@ -1,17 +1,19 @@
-#ifndef GRAPH_H
-#define GRAPH_H
+#ifndef GRAPH_H_
+#define GRAPH_H_
 
 #include <vector>
 #include <utility>
 #include <algorithm>
 #include <iostream>
 #include "binary_search.h"
+#include <set>
+#include <queue>
 
 //#define pair pair<int, int>;
 
 using namespace std;
 
-class Graph {
+class Graph_ {
     public:
         int n; //May be smaller than length of adj because of splits.
         //splits vertices remain with empty adjacencylist
@@ -55,7 +57,7 @@ class Graph {
 
         int find_origin(int u);
 
-        Graph(int n_) {
+        Graph_(int n_) {
             n = n_;
             for (int i = 0; i < n; i++) {
                 adj.emplace_back(vector<int>());
@@ -68,6 +70,14 @@ class Graph {
         }
 
         void print_graph();
+
+        //Returns the components of the graph with vertices labeled as the ancestor that was a node
+        //in the input graph.
+        vector<set<int>> components();
+
+    private:
+
+        set<int> bfs(set<int> &marked, int u);
 
 
 };

@@ -1,4 +1,4 @@
-#include "graph.h"
+#include "graph_.h"
 #include "functions.h"
 #include <vector>
 #include <iostream>
@@ -7,6 +7,8 @@
 #include <sstream>
 #include <vector>
 #include <chrono>
+#include "../CEVS/graph.h"
+#include "../CEVS/solution_representation.h"
 
 using namespace std;
 
@@ -69,20 +71,33 @@ int main() {
     string filename;
     vector<vector<int>> adj_lst;
     int cost;
-    for (int i = 1; i < 10; i = i + 2) {
+    vector<set<int>> components;
+    for (int i = 3; i < 4; i = i + 2) {
         oss.clear();
         oss.str(string());
         oss << "../../../heur/heur" << integer_to_three_digits(i) << ".gr";
         filename = oss.str();
         cout << "Working on file " << filename << "\n";
         adj_lst = read_gz_file(filename);
-        Graph g = Graph(adj_lst.size());
+        Graph_ g = Graph_(adj_lst.size());
+        Graph g_initial = Graph(adj_lst);
         g.adj = adj_lst;
+        g_initial.adj = adj_lst;
         //g.print_graph();
+
         chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-        cost = greedy_heuristic(g);
-        chrono::steady_clock::time_point end = chrono::steady_clock::now();
+        components = greedy_heuristic(g);
         cout << "After heuristic: \n";
+        SolutionRepresentation sol = SolutionRepresentation(g_initial.n, 1);
+
+        for (set<int> s : components) {
+            sol.add_set(s);
+        }
+
+        cost = sol.cost_solution(g_initial);
+        cout << "Solution: \n";
+        sol.print_solution();
+        chrono::steady_clock::time_point end = chrono::steady_clock::now();
         //g.print_graph();
         cout << "Cost: " << cost << "\n";
         double time_elapsed = chrono::duration_cast<chrono::microseconds>(end - begin).count();
@@ -91,7 +106,7 @@ int main() {
 }
 
 void test() {
-    Graph g_ = Graph(5);
+    Graph_ g_ = Graph_(5);
     g_.add_edge(0, 1);
     g_.print_graph();
     g_.add_edge(2, 3);
@@ -108,14 +123,14 @@ void test() {
     g_.print_graph();
 
     vector<vector<int>> adj_lst = read_gz_file("../CEVS/exact/g2.txt");
-    Graph g = Graph(adj_lst.size());
+    Graph_ g = Graph_(adj_lst.size());
     g.adj = adj_lst;
     g.print_graph();
     g.split_vertex_(0, 4, 3);
     g.print_graph();
 
     adj_lst = read_gz_file("../CEVS/exact/g9.txt");
-    g = Graph(adj_lst.size());
+    g = Graph_(adj_lst.size());
     g.adj = adj_lst;
     g.print_graph();
     g.split_vertex_(2, 3, 7);
