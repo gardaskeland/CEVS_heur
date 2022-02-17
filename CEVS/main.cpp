@@ -114,11 +114,12 @@ int main() {
     int num_operations = 500;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
     for (int i = 1; i < 10; i = i + 2) {
+        for (int k = i; k < 10; k++) {
         ostringstream oss;
         string filename;
         oss.clear();
         oss.str(string());
-        oss << "../../../heur/heur" << integer_to_three_digits(i) << ".gr";
+        oss << "../../../bipartite_graphs/bgraph3" << "." << i << "." << k << ".txt";
         filename = oss.str(); // "../CEVStest/test_graphs/g8.txt";
         oss.clear();
         cout << "Working on file " << filename << "\n";
@@ -248,7 +249,7 @@ int main() {
 
 
 
-
+        }
     }
     chrono::steady_clock::time_point end = chrono::steady_clock::now();
     double time_elapsed = chrono::duration_cast<chrono::microseconds>(end - begin).count();

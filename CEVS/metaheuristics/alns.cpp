@@ -1,13 +1,13 @@
 #include "alns.h"
 
 LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
-    RevertKernel revert;
-    WeightedGraph wg = find_critical_clique_graph(g, revert);
-    SolutionRepresentation current_solution = SolutionRepresentation(wg.n, num_operations);
-    current_solution.initial_solution(wg.n);
+    //RevertKernel revert;
+    //WeightedGraph g = find_critical_clique_graph(g, revert);
+    SolutionRepresentation current_solution = SolutionRepresentation(g.n, num_operations);
+    current_solution.initial_solution(g.n);
     ShallowSolution best_solution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
     //ShallowSolution last_solution;
-    int current_cost = current_solution.cost_solution(wg);
+    int current_cost = current_solution.cost_solution(g);
     cout << "cost of initial solution: " << current_cost << "\n";
     int best_cost = current_cost;
 
@@ -100,7 +100,7 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         if (r < c_weights[0]) {
             chrono::steady_clock::time_point begin_0 = chrono::steady_clock::now();
             choice = 0;
-            res0 = random_choice_add_node(wg, current_solution);
+            res0 = random_choice_add_node(g, current_solution);
             new_cost = current_cost + res0.value_or(0);
             current_solution.book.b_add_node.last_add_operation = i;
             chrono::steady_clock::time_point end_0 = chrono::steady_clock::now();
@@ -111,7 +111,7 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             //cout << "choice: " << choice << "\n";
             //current_solution.print_solution();
             //Look for better random choice!
-            res1 = random_choice_split(wg, current_solution);
+            res1 = random_choice_split(g, current_solution);
             new_cost = current_cost + res1.value_or(0);
             current_solution.book.b_split.last_split_operation = i;
             chrono::steady_clock::time_point end_1 = chrono::steady_clock::now();
@@ -120,7 +120,7 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         } else if (r < c_weights[2]) {
             chrono::steady_clock::time_point begin_2 = chrono::steady_clock::now();
             choice = 2;
-            res2 = weighted_random_merge(wg, current_solution);
+            res2 = weighted_random_merge(g, current_solution);
             new_cost = current_cost + res2.value_or(0);
             current_solution.book.b_merge.last_merge_operation = i;
             chrono::steady_clock::time_point end_2 = chrono::steady_clock::now();
@@ -128,19 +128,19 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         } else if ( r < c_weights[3]) {
             chrono::steady_clock::time_point begin_3 = chrono::steady_clock::now();
             choice = 3;
-            new_cost = current_cost + label_propagation_round(wg, current_solution);
+            new_cost = current_cost + label_propagation_round(g, current_solution);
             chrono::steady_clock::time_point end_3 = chrono::steady_clock::now();
             time_taken[3] += chrono::duration_cast<chrono::microseconds>(end_3 - begin_3).count();
         } else if (r < c_weights[4]) {
             chrono::steady_clock::time_point begin_4 = chrono::steady_clock::now();
             choice = 4;
-            new_cost = current_cost + remove_nodes_(wg, current_solution);
+            new_cost = current_cost + remove_nodes_(g, current_solution);
             chrono::steady_clock::time_point end_4 = chrono::steady_clock::now();
             time_taken[4] += chrono::duration_cast<chrono::microseconds>(end_4 - begin_4).count();
         } else {
             chrono::steady_clock::time_point begin_5 = chrono::steady_clock::now();
             choice = 5;
-            new_cost = current_cost + add_node_to_all(wg, current_solution);
+            new_cost = current_cost + add_node_to_all(g, current_solution);
             chrono::steady_clock::time_point end_5 = chrono::steady_clock::now();
             time_taken[5] += chrono::duration_cast<chrono::microseconds>(end_5 - begin_5).count();
         }
@@ -224,8 +224,8 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         //cout << "e\n";
         
         /**
-        if (current_cost - current_solution.cost_solution(wg) != sol_diff) {
-            sol_diff = current_cost - current_solution.cost_solution(wg);
+        if (current_cost - current_solution.cost_solution(g) != sol_diff) {
+            sol_diff = current_cost - current_solution.cost_solution(g);
             cout << "Change in sol_diff after operation " << choice << "\n";
             cout << "Current cost: " << current_cost << "\n";
             cout << "sol_diff: " << sol_diff << "\n";
@@ -276,17 +276,17 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     cout << "Average time spent on add_node_to_all: " << (time_taken[5] / count_choices[5]) / 1000000 << "\n";
     /**
     cout << "edges:\n";
-    for (int i = 0; i < wg.n; i++) {
-        for (int j : wg.adj[i]) {
-            cout << i << " " << j << " with weight " << wg.get_edge_cost(i, j) << "\n";
+    for (int i = 0; i < g.n; i++) {
+        for (int j : g.adj[i]) {
+            cout << i << " " << j << " with weight " << g.get_edge_cost(i, j) << "\n";
         }
     }
-    for (int i = 0; i < wg.n; i++) {
-        cout << "node weight of " << i << ": " << wg.get_node_weight(i) << "\n";
+    for (int i = 0; i < g.n; i++) {
+        cout << "node weight of " << i << ": " << g.get_node_weight(i) << "\n";
     }
     */
 
-    //cout << "final cost: " << current_solution.cost_solution(wg) << "\n";
+    //cout << "final cost: " << current_solution.cost_solution(g) << "\n";
 
     //print out other_cc
     /*
@@ -301,7 +301,7 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     }*/
 
     //cout << "ok\n";
-    ShallowSolution shallow = from_cc_sol_to_sol(g, best_solution, revert);
+    ShallowSolution shallow = best_solution;//from_cc_sol_to_sol(g, best_solution, revert);
     for (map<int, set<int>>::iterator it = shallow.clusters.begin(); it != shallow.clusters.end(); it++) {
         log_sol.clusters[it->first] = it->second;
     }
