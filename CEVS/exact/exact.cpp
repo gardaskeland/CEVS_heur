@@ -59,7 +59,7 @@ int main() {
     string filename;
     oss.clear();
     oss.str(string());
-    oss << "gexc3.txt"; //"../../../../heur/heur" << integer_to_three_digits(1) << ".gr";
+    oss << "g2.txt"; //"../../../../heur/heur" << integer_to_three_digits(1) << ".gr";
     filename = oss.str(); // "../CEVStest/test_graphs/g8.txt";
     oss.clear();
     cout << "Working on file " << filename << "\n";
