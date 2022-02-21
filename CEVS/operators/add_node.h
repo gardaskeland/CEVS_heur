@@ -110,6 +110,22 @@ int weighted_random_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &bo
 int remove_nodes_(Graph &g, SolutionRepresentation &sol);
 
 /**
+ * @brief Adds u to all its neighbours if it results in cost reduction.
+ * 
+ * @param g 
+ * @param sol 
+ * @param u 
+ * @return int 
+ */
+int add_node_to_neighbours(Graph &g, SolutionRepresentation &sol, int u);
+
+/**
+ * @brief Uses add_node_to_neighbours on all nodes.
+ * 
+ */
+int add_all_nodes_to_neighbours(Graph &g, SolutionRepresentation &sol);
+
+/**
  * @brief Apply the latest add-operation to sol.
  * 
  * @param sol 

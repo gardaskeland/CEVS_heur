@@ -18,7 +18,7 @@
 #include "bookkeep/bookkeep.h"
 #include "utility/logging_solution.h"
 #include <cmath>
-#include "utility/plots.h"
+//#include "utility/plots.h"
 using namespace std;
 
 string integer_to_three_digits(int i) {
@@ -111,9 +111,9 @@ vector<double> print_weights(LoggingSolution &sol, int iteration, string &filena
 
 //TODO: Write nodes and edges in all.txt files.
 int main() {
-    int num_operations = 500;
+    int num_operations = 3000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 1; i < 10; i = i + 2) {
+    for (int i = 1; i < 4; i = i + 2) {
         ostringstream oss;
         string filename;
         oss.clear();
@@ -126,7 +126,7 @@ int main() {
         Graph g = Graph(adj);
 
         int summed_costs = 0;
-        int iterations = 2;
+        int iterations = 5;
         int num_operators = 6;
         int best_cost = pow(2, 30);
         ShallowSolution best_solution;
@@ -169,7 +169,7 @@ int main() {
             cout << "Cost of solution: " << cost << "\n";
             cout << "Number of splitting operations: " << calculate_sol.num_splits() << "\n";
             remove_nodes_(g, calculate_sol);
-            cout << "After using remove nodes: " << "\n";
+            cout << "Aft cer using remove nodes: " << "\n";
             calculate_sol.print_solution();
             cout << "Solution feasible: " << calculate_sol.simple_feasibility_check() << "\n";
             cout << "Cost of solution: " << calculate_sol.cost_solution(g) << "\n";
@@ -209,7 +209,7 @@ int main() {
         out_file << "average last operation finding best solution: " << (double)sum_last_iteration / iterations << "\n";
         out_file << "------------------\n";
         
-        out_file << "average time of random_choice_add_node: " << average_time_operators[0] / 1000000 << "\n";
+        out_file << "average time of add_all_nodes_to_neighbours: " << average_time_operators[0] / 1000000 << "\n";
         out_file << "average time of random_choice_split: " << average_time_operators[1] / 1000000 << "\n";
         out_file << "average time of weighted_random_merge: " << average_time_operators[2] / 1000000 << "\n";
         out_file << "average time of label_propagation_round " << average_time_operators[3] / 1000000 << "\n";
@@ -217,7 +217,7 @@ int main() {
         out_file << "average time of add_node_to_all " << average_time_operators[5] / 100000 << "\n";
         out_file << "------------------\n";
 
-        out_file << "average improvement of random_choice_add_node " << average_improvement_operations[0] << "\n";
+        out_file << "average improvement of add_all_nodes_to_neighbours " << average_improvement_operations[0] << "\n";
         out_file << "per second: " << average_improvement_operations[0] / (average_time_operators[0] / 1000000) << "\n";
         out_file << "average improvement of random_choice_split " << average_improvement_operations[1] << "\n";
         out_file << "per second: " << average_improvement_operations[1] / (average_time_operators[1] / 1000000) << "\n";
@@ -239,6 +239,7 @@ int main() {
             out_file << "vertex splittings: " << get<2>(op_solutions[p]) << "\n";
             out_file << "cost of solution: " << cost_of_solutions[p] << "\n";
             out_file << "time used on iteration: " << time_for_iterations[p] / 1000000 << "\n";
+            out_file << "best solution found at iteration " << solutions[p].last_iteration_of_best_solution << "\n";
             out_file << "------------------\n";
         }
         out_file.close();

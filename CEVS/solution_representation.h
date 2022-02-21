@@ -9,6 +9,7 @@
 #include "graph.h"
 #include "bookkeep/bookkeep.h"
 #include "utility/segment_tree.h"
+#include "utility/shallow_solution.h"
 #include <map>
 #include <set>
 #include <vector>
@@ -59,6 +60,13 @@ class SolutionRepresentation
             co_occurence.emplace_back(map<int, int>());
         }
     }
+
+    /**
+     * @brief Makes a normal solution rep of the shallow solution.
+     * 
+     * @param shallow 
+     */
+    void initiate_shallow(ShallowSolution &shallow);
 
     /*
      *Sets the state to initial solution given number of nodes n in graph.

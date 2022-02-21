@@ -157,6 +157,39 @@ int add_node_to_all(Graph &g, SolutionRepresentation &sol) {
     return cost;
 }
 
+int add_node_to_neighbours(Graph &g, SolutionRepresentation &sol, int u) {
+    int cost = 0;
+    int add_cost;
+
+    set<int> neighbours;
+    set<int> current;
+    for (int v : g.adj[u]) {
+        for (int s : sol.get_node_to_clusters(v)) {
+            current = sol.get_set(s);
+            if (current.find(u) != current.end()) continue;
+            neighbours.insert(s);
+        }
+    }
+
+    for (int s : neighbours) {
+        add_cost = add_node_to_set_cost(g, sol, s, u);
+        if (add_cost <= 0) {
+            sol.add(u, s);
+            cost += add_cost;
+        }
+    }
+
+    return cost;
+}
+
+int add_all_nodes_to_neighbours(Graph &g, SolutionRepresentation &sol) {
+    int cost = 0;
+    for (int u = 0; u < g.n; u++) {
+        cost += add_node_to_neighbours(g, sol, u);
+    }
+    return cost;
+}
+
 
 int add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
     int si = highest_relative_out_degree(g, sol);

@@ -2,6 +2,10 @@
 
 using namespace std;
 
+void SolutionRepresentation::initiate_shallow(ShallowSolution &sol) {
+    clusters = sol.clusters;
+    node_in_clusters = sol.node_in_clusters;
+}
 
 void SolutionRepresentation::initial_solution(int n)
 {
