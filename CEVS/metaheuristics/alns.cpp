@@ -11,7 +11,7 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     cout << "cost of initial solution: " << current_cost << "\n";
     int best_cost = current_cost;
 
-    const int operations = 5;
+    const int operations = 6;
     double start_weight = 100 / operations;
     vector<double> weights(operations, start_weight);
     vector<double> c_weights(operations, 0);
@@ -22,7 +22,7 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         }
         c_weights[i] = c_weights[i - 1] + weights[i];
     }
-    int operation_score[operations] = {0, 0, 0, 0, 0};
+    int operation_score[operations] = {0, 0, 0, 0, 0, 0};
     vector<double> time_taken(operations*2, 0);
     set<int> solution_hashes;
     int change_weights_after = 100;
@@ -131,19 +131,19 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             new_cost = current_cost + label_propagation_round(wg, current_solution);
             chrono::steady_clock::time_point end_3 = chrono::steady_clock::now();
             time_taken[3] += chrono::duration_cast<chrono::microseconds>(end_3 - begin_3).count();
-        } else {//if (r < c_weights[4]) {
+        } else if (r < c_weights[4]) {
             chrono::steady_clock::time_point begin_4 = chrono::steady_clock::now();
             choice = 4;
             new_cost = current_cost + remove_nodes_(wg, current_solution);
             chrono::steady_clock::time_point end_4 = chrono::steady_clock::now();
             time_taken[4] += chrono::duration_cast<chrono::microseconds>(end_4 - begin_4).count();
-        } /**else {
+        } else {
             chrono::steady_clock::time_point begin_5 = chrono::steady_clock::now();
             choice = 5;
             new_cost = current_cost + add_node_to_all(wg, current_solution);
             chrono::steady_clock::time_point end_5 = chrono::steady_clock::now();
             time_taken[5] += chrono::duration_cast<chrono::microseconds>(end_5 - begin_5).count();
-        }*/
+        }
         //cout << "choice: " << choice << "\n";
 
         
@@ -263,7 +263,7 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         
 
     }
-    int count_choices[6] = {0, 0, 0, 0, 0};
+    int count_choices[6] = {0, 0, 0, 0, 0, 0};
     for (int x : choices) count_choices[x] += 1;
     cout << "Average time spent on add_node: " << (time_taken[0] / count_choices[0]) / 1000000 << "\n";
     cout << "Average time spent on adding: " << (time_taken[operations + 1] / count_choices[0]) / 1000000 << "\n";
