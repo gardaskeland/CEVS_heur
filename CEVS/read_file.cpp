@@ -2,7 +2,7 @@
 #include "read_file.h"
 
 
-vector<vector<int>> read_gz_file(string s) {
+vector<vector<int>> read_gz_file(string &s) {
     ifstream myfile(s);
     string line;
     getline(myfile, line);
@@ -36,4 +36,51 @@ vector<vector<int>> read_gz_file(string s) {
     }
     */
     return adj;
+}
+
+vector<vector<int>> read_csv_graph(string &filename) {
+    vector<int> row;
+    string line, word;
+    vector<vector<int>> adj_list(34, vector<int>());
+
+    fstream file(filename, ios::in);
+    getline(file, line);
+    while(getline(file, line)) {
+        row.clear();
+
+        stringstream str(line);
+
+        while(getline(str, word, ','))
+            row.push_back(stoi(word));
+        adj_list[row[0]].push_back(row[1]);
+        adj_list[row[1]].push_back(row[0]);
+    }
+
+    file.close();
+
+    return adj_list;
+}
+
+map<int, set<int>> read_csv_groups_karate(string &filename) {
+    string line, word;
+    vector<string> row;
+    map<int, set<int>> to_return;
+    to_return[0] = set<int>();
+    to_return[1] = set<int>();
+    fstream file(filename, ios::in);
+    getline(file, line);
+    while(getline(file, line)) {
+        row.clear();
+
+        stringstream str(line);
+
+        while(getline(str, word, ','))
+            row.push_back(word);
+        to_return[stoi(row[2]) - 1].insert(stoi(row[0]));
+        
+    }
+
+    file.close();
+
+    return to_return;
 }

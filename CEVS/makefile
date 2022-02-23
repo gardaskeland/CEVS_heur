@@ -1,22 +1,25 @@
 
-boiler=g++ -std=c++17 -c -Og
+boiler=g++ -std=c++17 -c -Og -g
 
 cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o \
 		b_merge.o shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
-		label_propagation.o perturbation.o alns.o logging_solution.o
+		label_propagation.o perturbation.o alns.o logging_solution.o inout.o
 	g++ -std=c++17 -g -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o b_merge.o \
 		shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
-		label_propagation.o perturbation.o alns.o logging_solution.o
+		label_propagation.o perturbation.o alns.o logging_solution.o inout.o
 
-main.o: main.cpp read_file.h
+main.o: main.cpp
 	$(boiler) main.cpp
 
 read_file.o: read_file.cpp read_file.h
 	$(boiler) read_file.cpp
+
+inout.o: inout.cpp inout.h
+	$(boiler) inout.cpp
 
 graph.o: graph.cpp graph.h
 	$(boiler) graph.cpp
