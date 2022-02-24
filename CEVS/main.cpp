@@ -7,5 +7,5 @@
 using namespace std;
 
 int main() {
-    run_on_karate_graph();
+    run_on_football_graph();
 }

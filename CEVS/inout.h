@@ -29,5 +29,7 @@ void run_alns_on_heur_instances();
 
 void run_on_karate_graph();
 
+void run_on_football_graph();
+
 
 #endif

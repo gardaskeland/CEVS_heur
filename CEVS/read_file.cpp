@@ -38,10 +38,10 @@ vector<vector<int>> read_gz_file(string &s) {
     return adj;
 }
 
-vector<vector<int>> read_csv_graph(string &filename) {
+vector<vector<int>> read_csv_graph(string &filename, int num_nodes) {
     vector<int> row;
     string line, word;
-    vector<vector<int>> adj_list(34, vector<int>());
+    vector<vector<int>> adj_list(num_nodes, vector<int>());
 
     fstream file(filename, ios::in);
     getline(file, line);
@@ -77,6 +77,28 @@ map<int, set<int>> read_csv_groups_karate(string &filename) {
         while(getline(str, word, ','))
             row.push_back(word);
         to_return[stoi(row[2]) - 1].insert(stoi(row[0]));
+        
+    }
+
+    file.close();
+
+    return to_return;
+}
+
+map<int, set<int>> read_csv_groups_football(string &filename) {
+    string line, word;
+    vector<string> row;
+    map<int, set<int>> to_return;
+    fstream file(filename, ios::in);
+    getline(file, line);
+    while(getline(file, line)) {
+        row.clear();
+
+        stringstream str(line);
+
+        while(getline(str, word, ','))
+            row.push_back(word);
+        to_return[stoi(row[2])].insert(stoi(row[0]));
         
     }
 

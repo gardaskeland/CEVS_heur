@@ -287,7 +287,7 @@ pair<double, double> find_majority_accuracy(Graph &g, SolutionRepresentation &so
 void run_on_karate_graph() {
     cout << "adjacency: \n";
     string filename = "../../../karate78.csv/edges.csv";
-    vector<vector<int>> adj = read_csv_graph(filename);
+    vector<vector<int>> adj = read_csv_graph(filename, 37);
     for (vector<int> vec : adj) {
         for (int i : vec) {
             cout << i << " ";
@@ -355,4 +355,71 @@ void run_on_karate_graph() {
     //all vertices are classified correctly. If it is not, we see how many vertices are in the majority set and
     //say that they have been classified correctly. In the end we sum up the number of vertices that are
     //classified correctly.
+}
+
+void run_on_football_graph() {
+    string filename = "../../../football.csv/edges.csv";
+    vector<vector<int>> adj = read_csv_graph(filename, 115);
+    for (vector<int> vec : adj) {
+        for (int i : vec) {
+            cout << i << " ";
+        }
+        cout << "\n";
+    }
+    ofstream original_clusters_football;
+    original_clusters_football.open("utility/Overlapping-NMI-master/original_clusters_football.txt");
+    cout << "Ground thruth: \n";
+    filename = "../../../football.csv/nodes.csv";
+    map<int, set<int>> ground_truth = read_csv_groups_football(filename);
+    for (auto it = ground_truth.begin(); it != ground_truth.end(); it++) {
+        for (int i : it->second) {
+            cout << i << " ";
+            original_clusters_football << i << " ";
+        }
+        cout << "\n";
+        original_clusters_football << "\n";
+    }
+    original_clusters_football.close();
+
+    for (int i = 0; i < 5; i++) {
+
+    Graph g(adj);
+    LoggingSolution sol;
+    int operations = 3000;
+
+    alns(g, sol, operations);
+
+    ofstream alns_solution;
+    alns_solution.open("utility/Overlapping-NMI-master/alns_solution_football.txt");
+    cout << "Solution given by alns: \n";
+    for (auto it = sol.clusters.begin(); it != sol.clusters.end(); it++) {
+        for (int i : it-> second) {
+            cout << i << " ";
+            alns_solution << i << " ";
+        }
+        cout << "\n";
+        alns_solution << "\n";
+    }
+    alns_solution.close();
+
+    SolutionRepresentation calculate_sol(g.n, operations);
+    map<int, set<int>> clusters = sol.clusters;
+            //cout << "a";
+    for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
+                //cout << "b";
+        calculate_sol.add_set(it->second);
+    }
+
+    tuple<int, int, int> cost_operations = calculate_sol.cost_operations(g);
+    cout << "deletions, additions, splits: " << get<0>(cost_operations) << " " << get<1>(cost_operations) << \
+        " " << get<2>(cost_operations) << "\n";
+    cout << "cost of solution: " << get<0>(cost_operations) + get<1>(cost_operations) + get<2>(cost_operations) << "\n";
+
+    pair<double, double> p = find_majority_accuracy(g, calculate_sol, ground_truth);
+    cout << "Majority accuracy: " << p.first << "\n";
+    cout << "Majority inaccuracy: " << p.second << "\n";
+    cout << "\n------------------\n";
+
+    }
+
 }
