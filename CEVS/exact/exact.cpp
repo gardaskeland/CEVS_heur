@@ -2,6 +2,7 @@
 #include "../graph.h"
 #include "../read_file.h"
 #include <cmath>
+#include <vector>
 
 string integer_to_three_digits(int i) {
     ostringstream oss;
@@ -59,13 +60,13 @@ int main() {
     string filename;
     oss.clear();
     oss.str(string());
-    oss << "g2.txt"; //"../../../../heur/heur" << integer_to_three_digits(1) << ".gr";
+    oss << "../../../../heur/heur" << integer_to_three_digits(1) << ".gr";
     filename = oss.str(); // "../CEVStest/test_graphs/g8.txt";
     oss.clear();
     cout << "Working on file " << filename << "\n";
     vector<vector<int>> adj = read_gz_file(filename);
     Graph g = Graph(adj);
-    SolutionRepresentation sol; //g.n, 1
+    SolutionRepresentation sol;  //g.n, 1
     vector<int> best_cost;
     int best_cost_p;
     SolutionRepresentation best_solution_p;
@@ -88,7 +89,12 @@ int main() {
             best_cost_overall = best_cost_p;
             best_solution = best_solution_p;
         } else {
-            
+            cout << "Best solution with size " << p << ":\n";
+            cout << "Larger than last one, so terminate by convex conjecture\n";
+            best_solution_p.print_solution();
+            cout << "Cost of solution: " << best_cost_p << "\n";
+            cout <<"\n------\n";
+            break;
         }
         cout << "Best solution with size " << p << ":\n";
         best_solution_p.print_solution();

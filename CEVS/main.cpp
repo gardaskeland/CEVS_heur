@@ -113,7 +113,7 @@ vector<double> print_weights(LoggingSolution &sol, int iteration, string &filena
 int main() {
     int num_operations = 3000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 1; i < 4; i = i + 2) {
+    for (int i = 7; i < 10; i = i + 2) {
         ostringstream oss;
         string filename;
         oss.clear();

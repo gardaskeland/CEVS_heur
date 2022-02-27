@@ -62,4 +62,14 @@ set<int> neighbour_clusters(Graph &g, SolutionRepresentation &sol, int u);
  */
 int label_propagation_round(Graph &g, SolutionRepresentation &sol);
 
+/**
+ * @brief Label propagation round, but instead of moving a vertex only when cost reduces, it may also
+ * move by cooling function.
+ * 
+ * @param g 
+ * @param t 
+ * @return int 
+ */
+int label_propagation_round_cool(Graph &g, SolutionRepresentation &sol, double t);
+
 #endif

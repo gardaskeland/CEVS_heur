@@ -157,6 +157,26 @@ int add_node_to_all(Graph &g, SolutionRepresentation &sol) {
     return cost;
 }
 
+int add_node_to_all_cool(Graph &g, SolutionRepresentation &sol, double t) {
+    int cost = 0;
+    vector<int> set_indices = sol.get_set_indices();
+    for (int si : set_indices) {
+        vector<pair<int, int>> best_nodes = best_nodes_to_add(g, sol, si);
+        //If the change costs to much, we don't do it.
+        if (best_nodes.size() == 0) {
+            //sol.book.b_add_node.v = -1;
+            continue;
+        }
+        if (rand() % 100 < 100 * exp(-(best_nodes[0].first)/t)) {
+            //sol.book.b_add_node.v = best_nodes[0].second;
+            //sol.book.b_add_node.si = si;
+            sol.add(best_nodes[0].second, si);
+            cost += best_nodes[0].first;
+        }
+    }
+    return cost;
+}
+
 int add_node_to_neighbours(Graph &g, SolutionRepresentation &sol, int u) {
     int cost = 0;
     int add_cost;
@@ -182,10 +202,44 @@ int add_node_to_neighbours(Graph &g, SolutionRepresentation &sol, int u) {
     return cost;
 }
 
+int add_node_to_neighbours_cool(Graph &g, SolutionRepresentation &sol, int u, double t) {
+    int cost = 0;
+    int add_cost;
+
+    set<int> neighbours;
+    set<int> current;
+    for (int v : g.adj[u]) {
+        for (int s : sol.get_node_to_clusters(v)) {
+            current = sol.get_set(s);
+            if (current.find(u) != current.end()) continue;
+            neighbours.insert(s);
+        }
+    }
+
+    for (int s : neighbours) {
+        add_cost = add_node_to_set_cost(g, sol, s, u);
+        //cooling function
+        if (add_cost <= 0 || rand() % 100 < 100 * exp(-(add_cost)/t)) {
+            sol.add(u, s);
+            cost += add_cost;
+        }
+    }
+
+    return cost;
+}
+
 int add_all_nodes_to_neighbours(Graph &g, SolutionRepresentation &sol) {
     int cost = 0;
     for (int u = 0; u < g.n; u++) {
         cost += add_node_to_neighbours(g, sol, u);
+    }
+    return cost;
+}
+
+int add_all_nodes_to_neighbours_cool(Graph &g, SolutionRepresentation &sol, double t) {
+    int cost = 0;
+    for (int u = 0; u < g.n; u++) {
+        cost += add_node_to_neighbours_cool(g, sol, u, t);
     }
     return cost;
 }

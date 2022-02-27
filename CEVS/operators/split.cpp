@@ -196,6 +196,25 @@ optional<int> random_choice_split(Graph &g, SolutionRepresentation &sol) {
     return optional(cost_of_cut);
 }
 
+int cool_split(Graph &g, SolutionRepresentation &sol, double t) {
+    vector<int> set_indices = sol.get_set_indices();
+    int cost = 0;
+    int cost_of_cut;
+    for (int si : set_indices) {
+        if (sol.get_set(si).size() <= 1 || !is_connected_component(g, sol, si)) {
+            continue;
+        }
+        pair<int, pair<set<int>, set<int>>> min_cut = find_min_cut(g, sol, si);
+        cost_of_cut = cost_of_split(g, sol, min_cut.second.first, min_cut.second.second, si);
+        if (cost_of_cut <= 0 || rand() % 100 < 100 * exp(-(cost_of_cut)/t)) {
+            sol.book.b_split.cut = min_cut.second;
+            do_split(sol);
+            cost += cost_of_cut;
+        }
+    }
+    return cost;
+}
+
 int greedy_split(Graph &g, SolutionRepresentation &sol, string f) {
     //chrono::steady_clock::time_point begin = chrono::steady_clock::now();
     //cout <<" 1\n";

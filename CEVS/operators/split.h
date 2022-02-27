@@ -38,6 +38,17 @@ int compute_inner_cost(Graph &g, SolutionRepresentation &sol, int si);
 optional<int> random_choice_split(Graph &g, SolutionRepresentation &sol);
 
 /**
+ * @brief Finds the best split for every set and executes it according to
+ * cooling function.
+ * 
+ * @param g 
+ * @param sol 
+ * @param t 
+ * @return int 
+ */
+int cool_split(Graph &g, SolutionRepresentation &sol, double t);
+
+/**
 * Stores info about a split that may be executed in sol.book.b_split and returns
 * the cost of executing this split. It splits a set with as low inner cost as
 * possible and uses Karger's algorithm to find an optimal way to split it (default).

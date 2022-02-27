@@ -87,6 +87,17 @@ optional<int> random_choice_add_node(Graph &g, SolutionRepresentation &sol);
 int add_node_to_all(Graph &g, SolutionRepresentation &sol);
 
 /**
+ * @brief Like add_node_to_all, but only adds a node if the cost change is less than what is allowed
+ * by the cooling function.
+ * 
+ * @param g 
+ * @param sol 
+ * @param t 
+ * @return int 
+ */
+int add_node_to_all_cool(Graph &g, SolutionRepresentation &sol, double t);
+
+/**
  * Chooses a set with high relative out-degree and finds neighbour node of the set.
  * Returns the cost of adding the node to the set.
  */
@@ -120,10 +131,32 @@ int remove_nodes_(Graph &g, SolutionRepresentation &sol);
 int add_node_to_neighbours(Graph &g, SolutionRepresentation &sol, int u);
 
 /**
+ * @brief Like above, with cooling function for each instance of the node to be added.
+ * 
+ * @param g 
+ * @param sol 
+ * @param u 
+ * @param t 
+ * @return int 
+ */
+int add_node_to_neighbours_cool(Graph &g, SolutionRepresentation &sol, int u, double t);
+
+/**
  * @brief Uses add_node_to_neighbours on all nodes.
  * 
  */
 int add_all_nodes_to_neighbours(Graph &g, SolutionRepresentation &sol);
+
+
+/**
+ * @brief Like above, but call the cooling version.
+ * 
+ * @param g 
+ * @param sol 
+ * @param t 
+ * @return int 
+ */
+int add_all_nodes_to_neighbours_cool(Graph &g, SolutionRepresentation &sol, double t);
 
 /**
  * @brief Apply the latest add-operation to sol.
