@@ -46,6 +46,10 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     double t_max = 50;
     double t = t_max;
     double alpha = pow(0.01/t_max, 1.0/num_operations);
+    int positive_delta_counter = 0;
+    int sum_delta = 0;
+    int end_warmup = 200;
+
 
     for (int i = 0; i < num_operations; i++) {
         //cout << i << "\n";
@@ -54,6 +58,12 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         //last_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
         //cout << "22\n";
         t *= alpha; //t_max * (1 - ((static_cast<float>(i + 1))/num_operations));
+
+        if (i == end_warmup && positive_delta_counter > 0) {
+            t = -((double)sum_delta / (double)positive_delta_counter)* (1/log(0.7));
+            alpha = pow(0.01/t, 1.0/(num_operations-end_warmup));
+            cout << "t set to " << t << "\n";
+        }
 
         if (change_weights_count >= change_weights_after) {
             change_weights_count = 0;
@@ -154,6 +164,10 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                 chrono::steady_clock::time_point begin_3 = chrono::steady_clock::now();
                 if (res0.has_value()) {
                     do_add(current_solution);
+                    if (new_cost > current_cost) {
+                        sum_delta += new_cost - current_cost;
+                        positive_delta_counter += 1;
+                    }
                     current_cost = new_cost;
                 }
                 chrono::steady_clock::time_point end_3 = chrono::steady_clock::now();
@@ -163,6 +177,10 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                 set<int> indices = current_solution.get_set_indices_as_set();
                 if (res1.has_value()) {
                     do_split(current_solution);
+                    if (new_cost > current_cost) {
+                        sum_delta += new_cost - current_cost;
+                        positive_delta_counter += 1;
+                    }
                     current_cost = new_cost;
                 }
                 chrono::steady_clock::time_point end_4 = chrono::steady_clock::now();

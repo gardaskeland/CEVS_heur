@@ -7,5 +7,5 @@
 using namespace std;
 
 int main() {
-    run_on_football_graph();
+    run_alns_on_heur_instances();
 }
