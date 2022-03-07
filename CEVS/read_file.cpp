@@ -61,6 +61,61 @@ vector<vector<int>> read_csv_graph(string &filename, int num_nodes) {
     return adj_list;
 }
 
+vector<vector<int>> read_gml(string &filename) {
+    vector<vector<int>> adj;
+    string line, word;
+    fstream file(filename, ios::in);
+    stringstream str("a");
+    int src, target;
+    while (true) {
+        getline(file, line);
+        //cout << "line: " << line << "\n";
+        if (line.empty()) break;
+        str.clear();
+        str = stringstream(line);
+        getline(str, word, ' ');
+        while(word.empty()) getline(str, word, ' ');
+        //cout << "s:" << word << ":e\n";
+        if (word.compare("graph") == 0) continue;
+        if (word.compare("node") == 0) {
+            //cout << "read node \n";
+            getline(file, line);
+            getline(file, line);
+            getline(file, line);
+            getline(file, line);
+            adj.emplace_back(vector<int>());
+            continue;
+        }
+        else if (word.compare("edge") == 0) {
+            //cout << "read edge\n";
+            getline(file, line);
+            //cout << "line: :" << line << ":\n";
+            str.clear();
+            str = stringstream(line);
+            getline(str, word, ' ');
+            while(word.empty()) getline(str, word, ' ');
+            getline(str, word, ' ');
+            //cout << "word: :" << word << ":\n";
+            src = stoi(word);
+
+            getline(file, line);
+            str.clear();
+            str = stringstream(line);
+            getline(str, word, ' ');
+            while(word.empty()) getline(str, word, ' ');
+            getline(str, word, ' ');
+            target = stoi(word);
+            getline(file, line);
+            getline(file, line);
+            getline(file, line);
+
+            adj[src].push_back(target);
+            adj[target].push_back(src);
+        }
+    }
+    return adj;
+}
+
 map<int, set<int>> read_csv_groups_karate(string &filename) {
     string line, word;
     vector<string> row;

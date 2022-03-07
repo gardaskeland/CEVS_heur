@@ -1,0 +1,73 @@
+instance: ../../../FARZgraphs/FARZ1.gml
+nodes: 10
+edges: 4
+runs: 5
+operations per iteration: 3000
+best solution:
+[[0: 2, 4, ], [1: 9, ], [2: 7, 8, ], [3: 0, ], [4: 1, ], [5: 3, ], [6: 5, ], [7: 6, ], ]
+cost of best solution: 2
+average cost of solutions: 2
+average last operation finding best solution: 11.2
+average runtime: 0.0854278
+------------------
+average time of add_all_nodes_to_neighbours: 6.08307e-06
+average time of random_choice_split: 4.03333e-06
+average time of weighted_random_merge: 2.28975e-05
+average time of label_propagation_round 3.76136e-05
+average time of remove_nodes_ 1.30145e-05
+average time of add_node_to_all 1.52276e-05
+------------------
+average improvement of add_all_nodes_to_neighbours 0
+per second: 0
+average improvement of random_choice_split -0.0979167
+per second: -24276.9
+average improvement of weighted_random_merge -0.683039
+per second: -29830.2
+average improvement of label_propagation_round -0.615296
+per second: -16358.3
+average improvement of remove_nodes_ -3.53587
+per second: -271687
+average improvement of add_node_to_all 5.06636
+per second: 332708
+all solutions:
+------------------
+iteration 0: [[0: 2, 4, ], [1: 9, ], [2: 7, 8, ], [3: 0, ], [4: 1, ], [5: 3, ], [6: 5, ], [7: 6, ], ]
+edge deletions: 2
+edge additions: 0
+vertex splittings: 0
+cost of solution: 2
+time used on iteration: 0.105629
+best solution found at iteration 1
+------------------
+iteration 1: [[0: 2, 4, ], [1: 9, ], [2: 7, 8, ], [3: 0, ], [4: 1, ], [5: 3, ], [6: 5, ], [7: 6, ], ]
+edge deletions: 2
+edge additions: 0
+vertex splittings: 0
+cost of solution: 2
+time used on iteration: 0.081592
+best solution found at iteration 4
+------------------
+iteration 2: [[0: 2, 7, ], [1: 4, 9, ], [2: 8, ], [3: 0, ], [4: 1, ], [5: 3, ], [6: 5, ], [7: 6, ], ]
+edge deletions: 2
+edge additions: 0
+vertex splittings: 0
+cost of solution: 2
+time used on iteration: 0.078451
+best solution found at iteration 2
+------------------
+iteration 3: [[0: 2, 4, ], [1: 9, ], [2: 7, 8, ], [3: 0, ], [4: 1, ], [5: 3, ], [6: 5, ], [7: 6, ], ]
+edge deletions: 2
+edge additions: 0
+vertex splittings: 0
+cost of solution: 2
+time used on iteration: 0.081203
+best solution found at iteration 25
+------------------
+iteration 4: [[0: 2, 7, 8, ], [1: 4, 9, ], [2: 0, ], [3: 1, ], [4: 3, ], [5: 5, ], [6: 6, ], ]
+edge deletions: 1
+edge additions: 1
+vertex splittings: 0
+cost of solution: 2
+time used on iteration: 0.080264
+best solution found at iteration 24
+------------------

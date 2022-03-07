@@ -226,6 +226,148 @@ void run_alns_on_heur_instances() {
     cout << "time used in seconds: " << time_elapsed / 1000000 << "\n";
 }
 
+/**
+ * Removes the path from/a path to a file, returning only the filename
+ */
+string get_filename_after_path(string &filename) {
+    string next, prev;
+    stringstream str(filename);
+    while(getline(str, next, '/')) {
+        continue;
+    }
+    return next;
+}
+
+void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_operations) {
+    ostringstream oss;
+    cout << "Working on file " << filename << "\n";
+    string filename_without_path = get_filename_after_path(filename);
+
+    int summed_costs = 0;
+    int num_operators = 6;
+    int best_cost = pow(2, 30);
+    ShallowSolution best_solution;
+    vector<LoggingSolution> solutions;
+    vector<tuple<int, int, int>> op_solutions;
+    vector<int> cost_of_solutions;
+    vector<double> time_for_iterations;
+    for (int j = 0; j < runs; j++) {
+
+        chrono::steady_clock::time_point begin_ = chrono::steady_clock::now();
+        LoggingSolution sol;
+        alns(g, sol, num_operations);
+        chrono::steady_clock::time_point end_ = chrono::steady_clock::now();
+
+        solutions.push_back(sol);
+        cout << "Best solution:\n";
+        double time_elapsed_ = chrono::duration_cast<chrono::microseconds>(end_ - begin_).count();
+        time_for_iterations.push_back(time_elapsed_);
+        cout << "time used in seconds for graph " << filename << ": " << time_elapsed_ / 1000000 << "\n";
+
+        SolutionRepresentation calculate_sol = SolutionRepresentation(g.n, num_operations);
+        map<int, set<int>> clusters = sol.clusters;
+        //cout << "a";
+        for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
+            //cout << "b";
+            calculate_sol.add_set(it->second);
+        }
+        calculate_sol.print_solution();
+        
+        tuple<int, int, int> cost_op = calculate_sol.cost_operations(g);
+        int cost = get<0>(cost_op) + get<1>(cost_op) + get<2>(cost_op);
+        op_solutions.push_back(cost_op);
+        cost_of_solutions.push_back(cost);
+        summed_costs += cost;
+        if (cost < best_cost) {
+            best_cost = cost;
+            best_solution = sol;
+        }
+        cout << "Solution feasible: " << calculate_sol.simple_feasibility_check() << "\n";
+        cout << "Cost of solution: " << cost << "\n";
+        cout << "Number of splitting operations: " << calculate_sol.num_splits() << "\n";
+        remove_nodes_(g, calculate_sol);
+        cout << "Aft cer using remove nodes: " << "\n";
+        calculate_sol.print_solution();
+        cout << "Solution feasible: " << calculate_sol.simple_feasibility_check() << "\n";
+        cout << "Cost of solution: " << calculate_sol.cost_solution(g) << "\n";
+        cout << "Number of splitting operations: " << calculate_sol.num_splits() << "\n";
+        cout << "\n-----------------------------------------------\n\n";
+    }
+
+    oss.str(string());
+    oss << "results/weights-" << filename_without_path << ".txt";
+    string p_file = oss.str();
+    write_weights_for_iterations(solutions, p_file);
+    oss.clear();
+    oss.str(string());
+    oss << "results/cost-" << filename_without_path << ".txt";
+    p_file = oss.str();
+    write_cost_dev_for_iterations(solutions, p_file);
+    oss.clear();
+
+    ofstream out_file;
+    oss.str(string());
+    oss << "results/all -" << filename_without_path << ".txt";
+    string out_all = oss.str();
+    int sum_last_iteration = 0;
+    vector<double> average_time_operators = find_average_time_operators(solutions);
+    vector<double> average_improvement_operations = find_average_improvement_operations(solutions);
+    double average_runtime = 0;
+    for (int p = 0; p < runs; p++) {
+        sum_last_iteration += solutions[p].last_iteration_of_best_solution;
+        average_runtime += time_for_iterations[p];
+    }
+    average_runtime = average_runtime / (double)runs;
+    out_file.open(out_all); 
+    out_file << "instance: " << filename << "\n";
+    out_file << "nodes: " << g.adj.size() << "\n";
+    out_file << "edges: " << g.num_edges << "\n";
+    out_file << "runs: " << runs << "\n";
+    out_file << "operations per iteration: " << num_operations << "\n";
+    out_file << "best solution:\n";
+    out_file << best_solution.solution_as_string() << "\n";
+    out_file << "cost of best solution: " << best_cost << "\n";
+    out_file << "average cost of solutions: " << summed_costs / (double)runs << "\n";
+    out_file << "average last operation finding best solution: " << (double)sum_last_iteration / runs << "\n";
+    out_file << "average runtime: " << average_runtime / 1000000 << "\n";
+    out_file << "------------------\n";
+    
+    out_file << "average time of add_all_nodes_to_neighbours: " << average_time_operators[0] / 1000000 << "\n";
+    out_file << "average time of random_choice_split: " << average_time_operators[1] / 1000000 << "\n";
+    out_file << "average time of weighted_random_merge: " << average_time_operators[2] / 1000000 << "\n";
+    out_file << "average time of label_propagation_round " << average_time_operators[3] / 1000000 << "\n";
+    out_file << "average time of remove_nodes_ " << average_time_operators[4] / 1000000 << "\n";
+    out_file << "average time of add_node_to_all " << average_time_operators[5] / 1000000 << "\n";
+    out_file << "------------------\n";
+
+    out_file << "average improvement of add_all_nodes_to_neighbours " << average_improvement_operations[0] << "\n";
+    out_file << "per second: " << average_improvement_operations[0] / (average_time_operators[0] / 1000000) << "\n";
+    out_file << "average improvement of random_choice_split " << average_improvement_operations[1] << "\n";
+    out_file << "per second: " << average_improvement_operations[1] / (average_time_operators[1] / 1000000) << "\n";
+    out_file << "average improvement of weighted_random_merge " << average_improvement_operations[2] << "\n";
+    out_file << "per second: " << average_improvement_operations[2] / (average_time_operators[2] / 1000000) << "\n";
+    out_file << "average improvement of label_propagation_round " << average_improvement_operations[3] << "\n";
+    out_file << "per second: " << average_improvement_operations[3] / (average_time_operators[3] / 1000000) << "\n";
+    out_file << "average improvement of remove_nodes_ " << average_improvement_operations[4] << "\n";
+    out_file << "per second: " << average_improvement_operations[4] / (average_time_operators[4] / 1000000) << "\n";
+    out_file << "average improvement of add_node_to_all " << average_improvement_operations[5] << "\n";
+    out_file << "per second: " << average_improvement_operations[5] / (average_time_operators[5] / 1000000) << "\n";
+
+    out_file << "all solutions:\n";
+    out_file << "------------------\n";
+    for (int p = 0; p < runs; p++) {
+        out_file << "iteration " << p << ": " << solutions[p].solution_as_string() << "\n";
+        out_file << "edge deletions: " << get<0>(op_solutions[p]) << "\n";
+        out_file << "edge additions: " << get<1>(op_solutions[p]) << "\n";
+        out_file << "vertex splittings: " << get<2>(op_solutions[p]) << "\n";
+        out_file << "cost of solution: " << cost_of_solutions[p] << "\n";
+        out_file << "time used on iteration: " << time_for_iterations[p] / 1000000 << "\n";
+        out_file << "best solution found at iteration " << solutions[p].last_iteration_of_best_solution << "\n";
+        out_file << "------------------\n";
+    }
+    out_file.close();
+}
+
 //If two elements have the same max_index: return nothing
 optional<int> max_element_index(vector<int> &vec) {
     int max_val = vec[0];
@@ -424,6 +566,38 @@ void run_on_football_graph() {
     cout << "Majority inaccuracy: " << p.second << "\n";
     cout << "\n------------------\n";
 
+    }
+}
+
+SolutionRepresentation calculate_and_print_sol(LoggingSolution &sol, Graph &g, int operations) {
+    SolutionRepresentation calculate_sol(g.n, operations);
+    map<int, set<int>> clusters = sol.clusters;
+            //cout << "a";
+    for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
+                //cout << "b";
+        calculate_sol.add_set(it->second);
+    }
+
+    tuple<int, int, int> cost_operations = calculate_sol.cost_operations(g);
+    cout << "deletions, additions, splits: " << get<0>(cost_operations) << " " << get<1>(cost_operations) << \
+        " " << get<2>(cost_operations) << "\n";
+    cout << "cost of solution: " << get<0>(cost_operations) + get<1>(cost_operations) + get<2>(cost_operations) << "\n";
+    calculate_sol.print_solution();
+
+    return calculate_sol;
+}
+
+void run_alns_on_gml() {
+    ostringstream str;
+    for (int i = 10; i < 11; i++) {
+        str.clear();
+        str.str(string());
+        str << "../../../FARZgraphs/FARZ" << i << ".gml";
+        string filename = str.str();
+        vector<vector<int>> adj = read_gml(filename);
+
+        Graph g(adj);
+        run_alns_on_single_instance(filename, g, 5, 1000);
     }
 
 }

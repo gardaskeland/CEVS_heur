@@ -27,9 +27,18 @@ using namespace std;
 
 void run_alns_on_heur_instances();
 
+/**
+ * Runs alns runs times on a single instance and prints the results in the results folder.
+ * Each iteration uses num_operations operations. Graph is the graph of the instance (as read
+ * by functions in read_file.cpp)
+ */
+void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_operations);
+
 void run_on_karate_graph();
 
 void run_on_football_graph();
+
+void run_alns_on_gml();
 
 
 #endif

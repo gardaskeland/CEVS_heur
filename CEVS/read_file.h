@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <string.h>
 #include <sstream>
 #include <vector>
 #include <map>
@@ -21,10 +22,16 @@ vector<vector<int>> read_gz_file(string &filename);
 vector<vector<int>> read_csv_graph(string &filename, int num_nodes);
 
 /**
+ * Reads a file in the graph modelling language and returns an adjacency list of the graph.
+ */
+vector<vector<int>> read_gml(string &filename);
+
+/**
  * Read csv file of the karate graph.
  */
 map<int, set<int>> read_csv_groups_karate(string &filename);
 
 map<int, set<int>> read_csv_groups_football(string &filename);
+
 
 #endif

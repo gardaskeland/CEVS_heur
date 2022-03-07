@@ -60,7 +60,7 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         t *= alpha; //t_max * (1 - ((static_cast<float>(i + 1))/num_operations));
 
         if (i == end_warmup && positive_delta_counter > 0) {
-            t = -((double)sum_delta / (double)positive_delta_counter)* (1/log(0.7));
+            t = -((double)sum_delta / (double)positive_delta_counter)* (1/log(0.8));
             alpha = pow(0.01/t, 1.0/(num_operations-end_warmup));
             cout << "t set to " << t << "\n";
         }
