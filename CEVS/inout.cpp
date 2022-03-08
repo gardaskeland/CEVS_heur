@@ -307,7 +307,7 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
 
     ofstream out_file;
     oss.str(string());
-    oss << "results/all -" << filename_without_path << ".txt";
+    oss << "results/all-" << filename_without_path << ".txt";
     string out_all = oss.str();
     int sum_last_iteration = 0;
     vector<double> average_time_operators = find_average_time_operators(solutions);
@@ -589,7 +589,8 @@ SolutionRepresentation calculate_and_print_sol(LoggingSolution &sol, Graph &g, i
 
 void run_alns_on_gml() {
     ostringstream str;
-    for (int i = 10; i < 11; i++) {
+    vector<int> v = {2, 5, 10, 20, 30, 40, 50, 60, 70, 80};
+    for (int i = 2; i < 3; i++) {
         str.clear();
         str.str(string());
         str << "../../../FARZgraphs/FARZ" << i << ".gml";
@@ -597,7 +598,7 @@ void run_alns_on_gml() {
         vector<vector<int>> adj = read_gml(filename);
 
         Graph g(adj);
-        run_alns_on_single_instance(filename, g, 5, 1000);
+        run_alns_on_single_instance(filename, g, 5, 2000);
     }
 
 }

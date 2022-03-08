@@ -46,6 +46,7 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     double t_max = 50;
     double t = t_max;
     double alpha = pow(0.01/t_max, 1.0/num_operations);
+    double find_prob_of_acceptance;
     int positive_delta_counter = 0;
     int sum_delta = 0;
     int end_warmup = 200;
@@ -156,8 +157,12 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         }
         //cout << "choice: " << choice << "\n";
 
-        
-        if (new_cost <= current_cost || rand() % 100 < 100 * exp(-(new_cost - current_cost)/t)) {
+        if (i >= end_warmup) {
+            find_prob_of_acceptance = 100 * exp(-(new_cost - current_cost)/t);
+        } else {
+            find_prob_of_acceptance = 80;
+        }
+        if (new_cost <= current_cost || rand() % 100 < find_prob_of_acceptance) {
             if (new_cost < current_cost) operation_score[choice] += 1;
             if (new_cost < best_cost) operation_score[choice] += 1;
             if (false || choice == 0) {
