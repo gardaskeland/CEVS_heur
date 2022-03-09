@@ -9,6 +9,7 @@
 #include "b_lp.h"
 #include "b_perturbation.h"
 #include "map"
+#include <queue>
 
 using namespace std;
 

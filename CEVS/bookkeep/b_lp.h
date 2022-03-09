@@ -45,7 +45,19 @@ class BLP {
             v = -1;
             s0 = 0;
             s1 = 0;
-    }
+
+        }
+        //maps from least cost of move to vertex to move.
+        vector<pair<int, int>> best_label_prop;
+
+        int label_prop_counter = 0;
+
+        /**
+         * @brief Stores the next move of label_propagation_accept. The first is the vertex to move
+         * the second is the set to move from and the third is the set to move to.
+         * 
+         */
+        tuple<int, int, int> next_move;
 };
 
 #endif

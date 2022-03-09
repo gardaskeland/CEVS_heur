@@ -13,6 +13,7 @@
 #include "metaheuristics/simulated_annealing.h"
 #include "metaheuristics/local_search_lp.h"
 #include "metaheuristics/alns.h"
+#include "metaheuristics/alns2.h"
 #include "utility/shallow_solution.h"
 #include "bookkeep/b_merge.h"
 #include <chrono>

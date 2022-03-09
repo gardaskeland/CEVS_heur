@@ -95,6 +95,145 @@ int label_propagation_round(Graph &g, SolutionRepresentation &sol) {
     return cost;
 }
 
+int cost_of_move(Graph &g, SolutionRepresentation &sol, int u, int si, int sj) {
+    int cost = 0;
+    set<int> si_nodes = sol.get_set(si);
+    set<int> sj_nodes = sol.get_set(sj);
+
+    for (int v : si_nodes) {
+        if (sol.get_co_occurence(u, v) >= 2 || sj_nodes.find(v) != sj_nodes.end()) continue;
+
+        if (g.has_edge(u, v)) cost += g.get_edge_cost(u, v);
+        else cost -= g.get_edge_cost(u, v);
+    }
+
+    for (int v : sj_nodes) {
+        //If u and v is in si, co_occurence > 0.
+        if (sol.get_co_occurence(u, v) > 0) continue;
+
+        if (g.has_edge(u, v)) cost -= g.get_edge_cost(u, v);
+        else cost += g.get_edge_cost(u, v);
+    }
+    return cost;
+}
+
+optional<tri> find_best_move(Graph &g, SolutionRepresentation &sol, int u) {
+    set<int> neighbour_sets = neighbour_clusters(g, sol, u);
+    if (neighbour_sets.size() == 0) return optional<tri>();
+
+    int cost;
+    int best_cost = pow(2, 16) - 1;
+    tri best_move = tri(-1, -1, 0);
+
+    for (int si: sol.get_node_to_clusters(u)) {
+        for (int sj : neighbour_sets) {
+            cost = cost_of_move(g, sol, u, si, sj);
+            if (cost < best_cost) {
+                best_cost = cost;
+                best_move = tri(si, sj, cost);
+            }
+        }
+        cost = removal_cost(g, sol, si, u) + g.get_node_weight(u);
+        if (cost < best_cost) {
+            best_cost = cost;
+            best_move = tri(si, -1, cost);
+        }
+    }
+
+    if (get<0>(best_move) == -1) {
+        return optional<tri>();
+    } else {
+        return best_move;
+    }
+
+    /**
+
+    int best_from_cost = pow(2, 16) - 1;
+    int best_from_set = -1;
+    for (int s : sol.get_node_to_clusters(u)) {
+        cost = removal_cost(g, sol, s, u);
+        if (cost < best_from_cost) {
+            best_from_cost = cost;
+            best_from_set = s;
+        }
+    }
+    if (best_from_set == -1) {
+        cout << "error in find_best_move in lp.\n";
+        return optional<tri>();
+    }
+
+    int best_to_cost = pow(2, 16) - 1;
+    int best_to_set = -1;
+    for (int s : neighbour_sets) {
+        cost = best_from_cost + add_node_to_set_cost(g, sol, s, u);
+        if (cost < best_to_cost) {
+            best_to_cost = cost;
+            best_to_set = s;
+        }
+    }
+    //Cost of adding vertex to set by itself;
+    cost = best_from_cost + g.get_node_weight(u);
+    if (cost < best_to_cost) {
+        best_to_cost = cost;
+        //move to set by itself.
+        best_to_set = -1;
+    }
+
+    return optional<tri>(tri(best_from_set, best_to_set, best_to_cost));
+    */
+}
+
+struct cmp_greater_pair {
+    bool operator() (pair<int, int> &left, pair<int, int> &right) {
+        return left.first < right.first;
+    }
+};
+
+optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol) {
+    if (sol.num_sets() < 2) {
+        return optional<int>();
+    }
+    else if (sol.book.b_lp.label_prop_counter == 0 || sol.book.b_lp.best_label_prop.size() == 0) {
+        sol.book.b_lp.best_label_prop.clear();
+        //set to move from and to, cost
+        optional<tri> temp;
+        int best_cost = pow(2, 16) - 1;
+        int best_move_vertex = -1;
+        int best_move_set_from = -1;
+        int best_move_set_to;
+        for (int v = 0; v < g.n; v++) {
+            temp = find_best_move(g, sol, v);
+            if (!temp.has_value()) {
+                continue;
+            }
+            if (get<2>(temp.value()) < best_cost) {
+                best_cost = get<2>(temp.value());
+                best_move_vertex = v;
+                best_move_set_from = get<0>(temp.value());
+                best_move_set_to = get<1>(temp.value());
+            }
+            sol.book.b_lp.best_label_prop.emplace_back(pair<int, int>(get<2>(temp.value()), v));
+        }
+        if (best_move_vertex == -1) {
+            return optional<int>();
+        }
+        sort(sol.book.b_lp.best_label_prop.begin(), sol.book.b_lp.best_label_prop.end(), cmp_greater_pair());
+        sol.book.b_lp.best_label_prop.pop_back();
+        sol.book.b_lp.next_move = tri(best_move_vertex, best_move_set_from, best_move_set_to);
+        sol.book.b_lp.label_prop_counter = g.n / 10;
+        return optional<int>(best_cost);
+    } else {
+        sol.book.b_lp.label_prop_counter--;
+        pair<int, int> best = sol.book.b_lp.best_label_prop.back();
+        sol.book.b_lp.best_label_prop.pop_back();
+        //set to move to, cost
+        optional<tri> best_move = find_best_move(g, sol, best.second);
+        if (!best_move.has_value()) return optional<int>();
+        sol.book.b_lp.next_move = tri(best.second, get<0>(best_move.value()), get<1>(best_move.value()));
+        return optional<int>(get<2>(best_move.value()));
+    }
+}
+
 /**
 void precompute_b_lp(Graph &g, SolutionRepresentation &sol) {
     //initialise cooccurence-map.
@@ -170,9 +309,9 @@ void precompute_b_lp(Graph &g, SolutionRepresentation &sol) {
                 for (pair<int, int> e : edges_added) {
                     op_cost += g.get_edge_cost(e.first, e.second);
                 }
-                tuple<int, int, int> move(s0, v, si);
+                tri move(s0, v, si);
                 sol.book.b_lp.move_cost[move] = op_cost;
-                sol.book.b_lp.pq_move_cost.push(pair<int, tuple<int, int, int>>(op_cost, move));
+                sol.book.b_lp.pq_move_cost.push(pair<int, tri>(op_cost, move));
             }
         }
     }
@@ -181,9 +320,9 @@ void precompute_b_lp(Graph &g, SolutionRepresentation &sol) {
 
 
 void update_cost(int s0, int v, int si, int edge_cost, SolutionRepresentation &sol) {
-    tuple<int, int, int> move(s0, v, si);
+    tri move(s0, v, si);
     int new_cost = sol.book.b_lp.move_cost[move] + edge_cost;
-    sol.book.b_lp.after_move_change.push_back(pair<tuple<int, int, int>, int>(move, new_cost));
+    sol.book.b_lp.after_move_change.push_back(pair<tri, int>(move, new_cost));
 }
 
 
@@ -309,7 +448,7 @@ optional<int> find_cost_changes(Graph &g, SolutionRepresentation &sol, int s0, i
 
 optional<int> best_vertex_move(Graph &g, SolutionRepresentation &sol) {
     if (sol.book.b_lp.pq_move_cost.size() == 0) precompute_b_lp(g, sol);
-    pair<int, tuple<int, int, int>> next;
+    pair<int, tri> next;
     while (true) {
         if (sol.book.b_lp.pq_move_cost.size() == 0) return {};
         next = sol.book.b_lp.pq_move_cost.top();

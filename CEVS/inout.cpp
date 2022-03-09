@@ -83,9 +83,9 @@ void write_cost_dev_for_iterations(vector<LoggingSolution> &sol, string &filenam
 }
 
 void run_alns_on_heur_instances() {
-    int num_operations = 2000;
+    int num_operations = 30;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 1; i < 10; i = i + 2) {
+    for (int i = 1; i < 2; i = i + 2) {
         ostringstream oss;
         string filename;
         oss.clear();
@@ -110,7 +110,7 @@ void run_alns_on_heur_instances() {
 
             chrono::steady_clock::time_point begin_ = chrono::steady_clock::now();
             LoggingSolution sol;
-            alns(g, sol, num_operations);
+            alns2(g, sol, num_operations);
             chrono::steady_clock::time_point end_ = chrono::steady_clock::now();
 
             solutions.push_back(sol);

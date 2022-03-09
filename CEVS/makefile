@@ -1,16 +1,16 @@
 
-boiler=g++ -std=c++17 -c -O3
+boiler=g++ -std=c++17 -c -O -g
 
 cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o \
 		b_merge.o shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
-		label_propagation.o perturbation.o alns.o logging_solution.o inout.o
+		label_propagation.o perturbation.o alns.o logging_solution.o inout.o alns2.o
 	g++ -std=c++17 -g -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o b_merge.o \
 		shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
-		label_propagation.o perturbation.o alns.o logging_solution.o inout.o
+		label_propagation.o perturbation.o alns.o logging_solution.o inout.o alns2.o
 
 main.o: main.cpp
 	$(boiler) main.cpp
@@ -80,6 +80,9 @@ perturbation.o: operators/perturbation.cpp operators/perturbation.h
 
 alns.o: metaheuristics/alns.cpp metaheuristics/alns.h
 	$(boiler) metaheuristics/alns.cpp
+
+alns2.o: metaheuristics/alns2.cpp metaheuristics/alns2.h
+	$(boiler) metaheuristics/alns2.cpp
 
 logging_solution.o: utility/logging_solution.cpp utility/logging_solution.h
 	$(boiler) utility/logging_solution.cpp

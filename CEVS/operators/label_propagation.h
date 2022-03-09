@@ -15,6 +15,8 @@
 #include <iostream>
 #include <tuple>
 
+# define tri tuple<int, int, int>
+
 using namespace std;
 
 /**
@@ -61,5 +63,30 @@ set<int> neighbour_clusters(Graph &g, SolutionRepresentation &sol, int u);
  * @return int 
  */
 int label_propagation_round(Graph &g, SolutionRepresentation &sol);
+
+
+/**
+ * @brief Returns the best way to move vertex u. The returing triple contains
+ * set to move from, set to move to and cost.
+ * 
+ * @param g 
+ * @param sol 
+ * @param u 
+ * @return optional<tri> 
+ */
+optional<tri> find_best_move(Graph &g, SolutionRepresentation &sol, int u);
+
+/**
+ * @brief If label_prop_counter int sol.bookkeep is 0: Go through every vertex and find the cost of
+ * moving one according to label propagation, then store all these in pq_label_prop in sol.book, sorted
+ * by cost. Set the label_prop_counter to n/10 and try to execute the cheapest operation. Else, pick the cheapest
+ * operation (as found previously), calculate the cheapest way to move it now and store this in sol.book.b_lp.
+ * -1 as the set to move to means that the set to move to should be a new set in the solution.
+ * 
+ * @param g 
+ * @param sol 
+ * @return optional<int> 
+ */
+optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol);
 
 #endif
