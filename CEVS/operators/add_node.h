@@ -5,8 +5,8 @@
 #include "../bookkeep/bookkeep.h"
 #include "../utility/weighted_random.h"
 #include <set>
-#include <vector>
 #include <utility>
+#include <vector>
 #include <iostream>
 #include <limits>
 #include <optional>
@@ -55,8 +55,8 @@ int add_node_to_set_cost(Graph &g, SolutionRepresentation &sol, int si, int v);
 int removal_cost(Graph &g, SolutionRepresentation &sol, int si, int u);
 
 /**
- * Returns a sorted vector of pairs (key, value). The keys are the value of S/N(v) - N(v)US, the estimated cost of adding v to S. The values
- * are the nodes v. The key-value pair that appears first is the best node to add to S.
+ * Returns a sorted vector of PAIRs (key, value). The keys are the value of S/N(v) - N(v)US, the estimated cost of adding v to S. The values
+ * are the nodes v. The key-value PAIR that appears first is the best node to add to S.
  */
 vector<pair<int, int>> best_nodes_to_add(Graph &g, SolutionRepresentation &sol, int si);
 
@@ -124,6 +124,18 @@ int add_node_to_neighbours(Graph &g, SolutionRepresentation &sol, int u);
  * 
  */
 int add_all_nodes_to_neighbours(Graph &g, SolutionRepresentation &sol);
+
+/**
+ * @brief Finds a way to add a node to all the neighbour set so that the total cost of the solution
+ * decreases. Stores this operation in b_add_node.v and b_add_node.sets_to_add_v_to. Calculates
+ * for all nodes only every n/10 times it's called, else it pulls a vertex from sol.book.b_add_node.
+ * vertices_to_add and finds what the cost of adding this vertec now is.
+ * 
+ * @param g 
+ * @param sol 
+ * @return optional<int> 
+ */
+optional<int> add_node_to_neighbours_accept(Graph &g, SolutionRepresentation &sol);
 
 /**
  * @brief Apply the latest add-operation to sol.

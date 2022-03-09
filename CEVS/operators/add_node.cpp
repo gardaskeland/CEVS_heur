@@ -96,6 +96,52 @@ int add_node_to_set_cost(Graph &g, SolutionRepresentation &sol, int si, int v) {
     return edges_to_add - edges_to_delete + g.get_node_weight(v);
 }
 
+/**
+ * @brief Modified to take a set seen which works a co-occurence for node v and some other node.
+ * Specifically, if a node u is in seen, we calculate with u and v being in the same set. Useful
+ * for when we want to add the same node to several sets.
+ * 
+ * @param g 
+ * @param sol 
+ * @param si 
+ * @param v 
+ * @param seen 
+ * @return int 
+ */
+int add_node_to_set_cost_seen(Graph &g, SolutionRepresentation &sol, int si, int v, set<int> seen) {
+    set<int> set_nodes = sol.get_set(si);
+    if (set_nodes.find(v) != set_nodes.end()) return 0;
+    //edges between v and i deleted before adding the node (these edges are in G)
+    int edges_to_delete = 0;
+    //edges we must add after adding the node (these edges are not in G)
+    int edges_to_add = 0;
+    bool in_same_cluster = false;
+    for (int i : set_nodes) {
+        //cout << sol.get_co_occurence(i, v) << "\n";
+        if (sol.get_co_occurence(i, v) > 0 || seen.find(i) != seen.end()) continue;
+        /**
+        for (int w : sol.get_node_to_clusters(v)) {
+            if (w == si) continue;
+            set<int> w_cluster = sol.get_set(w);
+            if (w_cluster.find(i) != w_cluster.end()) {
+                in_same_cluster = true;
+                break;
+            }
+        }
+        */
+        if (g.has_edge(i, v)) {
+            edges_to_delete += g.get_edge_cost(i, v);
+        }
+        
+        //g does not have an edge between i and v
+        else {
+            edges_to_add += g.get_edge_cost(i, v);
+        }
+    } 
+    //+1 since we split the node by adding it
+    return edges_to_add - edges_to_delete + g.get_node_weight(v);
+}
+
 
 vector<pair<int, int>> best_nodes_to_add(Graph &g, SolutionRepresentation &sol, int si) {
     vector<pair<int, int>> results;
@@ -140,6 +186,12 @@ optional<int> random_choice_add_node(Graph &g, SolutionRepresentation &sol) {
     return optional(best_nodes[0].first);
 }
 
+struct cmp_descending {
+    bool operator() (pair<int, int> &left, pair<int, int> &right) {
+        return left.first < right.first;
+    }
+};
+
 int add_node_to_all(Graph &g, SolutionRepresentation &sol) {
     int cost = 0;
     vector<int> set_indices = sol.get_set_indices();
@@ -157,12 +209,9 @@ int add_node_to_all(Graph &g, SolutionRepresentation &sol) {
     return cost;
 }
 
-int add_node_to_neighbours(Graph &g, SolutionRepresentation &sol, int u) {
-    int cost = 0;
-    int add_cost;
-
-    set<int> neighbours;
+set<int> get_neighbour_set_of_u(Graph &g, SolutionRepresentation &sol, int u) {
     set<int> current;
+    set<int> neighbours;
     for (int v : g.adj[u]) {
         for (int s : sol.get_node_to_clusters(v)) {
             current = sol.get_set(s);
@@ -170,7 +219,15 @@ int add_node_to_neighbours(Graph &g, SolutionRepresentation &sol, int u) {
             neighbours.insert(s);
         }
     }
+    return neighbours;
+}
 
+int add_node_to_neighbours(Graph &g, SolutionRepresentation &sol, int u) {
+    int cost = 0;
+    int add_cost;
+
+    set<int> neighbours = get_neighbour_set_of_u(g, sol, u);
+    
     for (int s : neighbours) {
         add_cost = add_node_to_set_cost(g, sol, s, u);
         if (add_cost <= 0) {
@@ -180,6 +237,67 @@ int add_node_to_neighbours(Graph &g, SolutionRepresentation &sol, int u) {
     }
 
     return cost;
+}
+
+tuple<int, vector<int>> add_node_to_all_neighbours_accept(Graph &g, SolutionRepresentation &sol, int u) {
+    int cost = 0;
+    int add_cost;
+    vector<int> to_add_to;
+    set<int> neighbour_sets = get_neighbour_set_of_u(g, sol, u);
+    set<int> seen;
+    for (int s : neighbour_sets) {
+        add_cost = add_node_to_set_cost_seen(g, sol, s, u, seen);
+        if (add_cost <= 0) {
+            cost += add_cost;
+            to_add_to.push_back(s);
+            for (int i : sol.get_set(s)) {
+                seen.insert(i);
+            }
+        }
+    }
+    return tuple<int, vector<int>>(cost, to_add_to);
+}
+
+optional<int> add_node_to_neighbours_accept(Graph &g, SolutionRepresentation &sol) {
+    if (sol.num_sets() == 1) {
+        return optional<int>();
+    }
+    if (sol.book.b_add_node.add_node_counter == 0 || sol.book.b_add_node.best_vertices_to_add.empty()) {
+        int best_node = -1;
+        int best_cost = pow(2, 16) - 1;
+        vector<int> sets_to_add_to;
+        tuple<int, vector<int>> result;
+        for (int u = 0; u < g.n; u++) {
+            result = add_node_to_all_neighbours_accept(g, sol, u);
+            if (get<1>(result).size() == 0) continue;
+            if (get<0>(result) < best_cost) {
+                best_cost = get<0>(result);
+                best_node = u;
+                sets_to_add_to = get<1>(result);
+            }
+            sol.book.b_add_node.best_vertices_to_add.emplace_back(pair<int, int>(get<0>(result), u));
+        }
+        if (best_node == -1) return optional<int>();
+
+        sort(sol.book.b_add_node.best_vertices_to_add.begin(), 
+            sol.book.b_add_node.best_vertices_to_add.end(), cmp_descending());
+        sol.book.b_add_node.best_vertices_to_add.pop_back();
+
+        sol.book.b_add_node.add_node_counter = g.n / 10;
+        sol.book.b_add_node.v = best_node;
+        sol.book.b_add_node.sets_to_add_v_to = sets_to_add_to;
+
+        return optional<int>(best_cost);
+    }
+    else {
+        sol.book.b_add_node.add_node_counter--;
+        pair<int, int> best = sol.book.b_add_node.best_vertices_to_add.back();
+        sol.book.b_add_node.best_vertices_to_add.pop_back();
+        tuple<int, vector<int>> result = add_node_to_all_neighbours_accept(g, sol, best.second);
+        sol.book.b_add_node.v = best.second;
+        sol.book.b_add_node.sets_to_add_v_to = get<1>(result);
+        return optional<int>(get<0>(result)); 
+    }
 }
 
 int add_all_nodes_to_neighbours(Graph &g, SolutionRepresentation &sol) {

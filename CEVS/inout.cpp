@@ -83,9 +83,9 @@ void write_cost_dev_for_iterations(vector<LoggingSolution> &sol, string &filenam
 }
 
 void run_alns_on_heur_instances() {
-    int num_operations = 30;
+    int num_operations = 10000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 1; i < 2; i = i + 2) {
+    for (int i = 5; i < 6; i = i + 2) {
         ostringstream oss;
         string filename;
         oss.clear();
@@ -600,5 +600,26 @@ void run_alns_on_gml() {
         Graph g(adj);
         run_alns_on_single_instance(filename, g, 5, 2000);
     }
+}
 
+void run_operation() {
+    string filename = "../../../heur/heur003.gr";
+    vector<vector<int>> adj = read_gz_file(filename);
+    Graph g(adj);
+    LoggingSolution log_sol;
+    int num_operations = 500;
+    test_label_propagation(g, log_sol, num_operations);
+
+    SolutionRepresentation calculate_sol(g.n, num_operations);
+    map<int, set<int>> clusters = log_sol.clusters;
+            //cout << "a";
+    for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
+                //cout << "b";
+        calculate_sol.add_set(it->second);
+    }
+    cout << "Final cost: " << calculate_sol.cost_solution(g) << "\n";
+    cout << "Solution: \n";
+    calculate_sol.print_solution();
+
+    return;
 }

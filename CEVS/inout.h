@@ -41,5 +41,7 @@ void run_on_football_graph();
 
 void run_alns_on_gml();
 
+void run_operation();
+
 
 #endif

@@ -101,6 +101,7 @@ int cost_of_move(Graph &g, SolutionRepresentation &sol, int u, int si, int sj) {
     set<int> sj_nodes = sol.get_set(sj);
 
     for (int v : si_nodes) {
+        if (u == v) continue;
         if (sol.get_co_occurence(u, v) >= 2 || sj_nodes.find(v) != sj_nodes.end()) continue;
 
         if (g.has_edge(u, v)) cost += g.get_edge_cost(u, v);
@@ -138,12 +139,13 @@ optional<tri> find_best_move(Graph &g, SolutionRepresentation &sol, int u) {
             best_cost = cost;
             best_move = tri(si, -1, cost);
         }
+        //cout << "best to move " << u << " from set " << si << " to set " << get<1>(best_move) << " with cost " << get<2>(best_move) << "\n"; 
     }
 
     if (get<0>(best_move) == -1) {
         return optional<tri>();
     } else {
-        return best_move;
+        return optional<tri>(best_move);
     }
 
     /**

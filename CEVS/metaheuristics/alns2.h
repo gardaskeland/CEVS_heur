@@ -32,4 +32,6 @@ using namespace std;
  */
 LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations);
 
+LoggingSolution test_label_propagation(Graph &g, LoggingSolution &log_sol, int &num_operations);
+
 #endif
