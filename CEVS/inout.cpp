@@ -590,10 +590,10 @@ SolutionRepresentation calculate_and_print_sol(LoggingSolution &sol, Graph &g, i
 void run_alns_on_gml() {
     ostringstream str;
     vector<int> v = {2, 5, 10, 20, 30, 40, 50, 60, 70, 80};
-    for (int i = 2; i < 3; i++) {
+    for (int i = 20; i < 221; i += 40) {
         str.clear();
         str.str(string());
-        str << "../../../FARZgraphs/FARZ" << i << ".gml";
+        str << "../../../FARZgraphs/FARZ_scale_" << i << ".gml";
         string filename = str.str();
         vector<vector<int>> adj = read_gml(filename);
 
