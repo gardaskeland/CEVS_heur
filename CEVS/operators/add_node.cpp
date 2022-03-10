@@ -188,13 +188,13 @@ optional<int> random_choice_add_node(Graph &g, SolutionRepresentation &sol) {
 
 struct cmp_descending {
     bool operator() (pair<int, int> &left, pair<int, int> &right) {
-        return left.first < right.first;
+        return left.first > right.first;
     }
 };
 
 struct cmp_tri_descending {
     bool operator() (tri &left, tri &right) {
-        return get<0>(left) < get<0>(right);
+        return get<0>(left) > get<0>(right);
     }
 };
 
@@ -217,12 +217,10 @@ int add_node_to_all(Graph &g, SolutionRepresentation &sol) {
 
 optional<int> add_node_to_set(Graph &g, SolutionRepresentation &sol) {
     BAddNode &b = sol.book.b_add_node;
+    bool updated = false;
     if (sol.num_sets() == 0) return optional<int>();
     else if (b.add_node_to_set_counter == 0 || b.best_nodes_to_add_to_set.empty()) {
         b.best_nodes_to_add_to_set.clear(); //remember to do this for other ops as well.
-        int best_node = -1;
-        int best_set = -1;
-        int best_cost = pow(2, 16) - 1;
         int cost;
         set<int> sets = sol.get_set_indices_as_set();
         set<int> neighbours;
@@ -238,38 +236,37 @@ optional<int> add_node_to_set(Graph &g, SolutionRepresentation &sol) {
             }
             for (int v : neighbours) {
                 cost = add_node_to_set_cost(g, sol, si, v);
-                if (cost < best_cost) {
-                    best_cost = cost;
-                    best_set = si;
-                    best_node = v;
-                }
                 b.best_nodes_to_add_to_set.emplace_back(tri(cost, v, si));
             }
         }
+        if (b.best_nodes_to_add_to_set.empty()) return optional<int>();
+
         sort(b.best_nodes_to_add_to_set.begin(), b.best_nodes_to_add_to_set.end(), cmp_tri_descending());
-        b.best_nodes_to_add_to_set.pop_back();
-        if (best_node == -1) return optional<int>();
+
         b.add_node_to_set_counter = g.n / 10;
-        b.v = best_node;
-        b.si = best_set;
-        return optional<int>(best_cost);
+        updated = true;
     } else {
         //cost, node, set
         b.add_node_to_set_counter--;
-        tri best = b.best_nodes_to_add_to_set.back();
-        b.best_nodes_to_add_to_set.pop_back();
-
-        set<int> sets = sol.get_set_indices_as_set();
-        if (sets.find(get<2>(best)) != sets.end()) return add_node_to_set(g, sol);
-        
-        set<int> si_nodes = sol.get_set(get<2>(best));
-        if (si_nodes.find(get<1>(best)) != si_nodes.end()) return add_node_to_set(g, sol);
-        
-        int cost = add_node_to_set_cost(g, sol, get<2>(best), get<1>(best));
-        b.v = get<1>(best);
-        b.si = get<2>(best);
-        return optional<int>(cost);
     }
+    int sz = b.best_nodes_to_add_to_set.size();
+    int ind = sz - weighted_random_index(20, sz, 1.7) - 1;
+    tri op = b.best_nodes_to_add_to_set[ind];
+    b.best_nodes_to_add_to_set.erase(b.best_nodes_to_add_to_set.begin() + ind);
+    
+    //The solution may have changed so that we no longer have the set, or the set contains the node.
+    if (!updated) {
+        set<int> sets = sol.get_set_indices_as_set();
+        if (!(sets.find(get<2>(op)) != sets.end())) return add_node_to_set(g, sol);
+    
+        set<int> si_nodes = sol.get_set(get<2>(op));
+        if (si_nodes.find(get<1>(op)) != si_nodes.end()) return add_node_to_set(g, sol);
+    }
+
+    int cost = add_node_to_set_cost(g, sol, get<2>(op), get<1>(op));
+    b.v = get<1>(op);
+    b.si = get<2>(op);
+    return optional<int>(cost);
 }
 
 set<int> get_neighbour_set_of_u(Graph &g, SolutionRepresentation &sol, int u) {
@@ -322,46 +319,38 @@ tuple<int, vector<int>> add_node_to_all_neighbours_accept(Graph &g, SolutionRepr
 }
 
 optional<int> add_node_to_neighbours_accept(Graph &g, SolutionRepresentation &sol) {
+    BAddNode &b = sol.book.b_add_node;
     if (sol.num_sets() == 1) {
         return optional<int>();
     }
     if (sol.book.b_add_node.add_node_counter == 0 || sol.book.b_add_node.best_vertices_to_add.empty()) {
         sol.book.b_add_node.best_vertices_to_add.clear();
-        int best_node = -1;
-        int best_cost = pow(2, 16) - 1;
-        vector<int> sets_to_add_to;
         tuple<int, vector<int>> result;
         for (int u = 0; u < g.n; u++) {
             result = add_node_to_all_neighbours_accept(g, sol, u);
             if (get<1>(result).size() == 0) continue;
-            if (get<0>(result) < best_cost) {
-                best_cost = get<0>(result);
-                best_node = u;
-                sets_to_add_to = get<1>(result);
-            }
             sol.book.b_add_node.best_vertices_to_add.emplace_back(pair<int, int>(get<0>(result), u));
         }
-        if (best_node == -1) return optional<int>();
+        if (b.best_vertices_to_add.empty()) return optional<int>();
 
         sort(sol.book.b_add_node.best_vertices_to_add.begin(), 
             sol.book.b_add_node.best_vertices_to_add.end(), cmp_descending());
-        sol.book.b_add_node.best_vertices_to_add.pop_back();
 
         sol.book.b_add_node.add_node_counter = g.n / 10;
-        sol.book.b_add_node.v = best_node;
-        sol.book.b_add_node.sets_to_change = sets_to_add_to;
-
-        return optional<int>(best_cost);
     }
     else {
         sol.book.b_add_node.add_node_counter--;
-        pair<int, int> best = sol.book.b_add_node.best_vertices_to_add.back();
-        sol.book.b_add_node.best_vertices_to_add.pop_back();
-        tuple<int, vector<int>> result = add_node_to_all_neighbours_accept(g, sol, best.second);
-        sol.book.b_add_node.v = best.second;
-        sol.book.b_add_node.sets_to_change = get<1>(result);
-        return optional<int>(get<0>(result)); 
     }
+    int sz = b.best_vertices_to_add.size();
+    int ind = sz - weighted_random_index(20, sz, 1.4);
+    int u = b.best_vertices_to_add[ind].second;
+    b.best_vertices_to_add.erase(b.best_vertices_to_add.begin() + ind);
+
+    tuple<int, vector<int>> result = add_node_to_all_neighbours_accept(g, sol, u);
+    sol.book.b_add_node.v = u;
+    sol.book.b_add_node.sets_to_change = get<1>(result);
+    return optional<int>(get<0>(result));
+
 }
 
 int add_all_nodes_to_neighbours(Graph &g, SolutionRepresentation &sol) {
@@ -483,7 +472,7 @@ int remove_nodes_(Graph &g, SolutionRepresentation &sol) {
     return cost;
 }
 
-//returns cost and vertices to remove
+//returns cost and sets to remove nodes from
 pair<int, vector<int>> cost_of_remove_node(Graph &g, SolutionRepresentation &sol, int u) {
     int total_cost = 0;
     int cost;
@@ -508,41 +497,36 @@ pair<int, vector<int>> cost_of_remove_node(Graph &g, SolutionRepresentation &sol
 optional<int> remove_node_accept(Graph &g, SolutionRepresentation &sol) {
     BAddNode &b = sol.book.b_add_node;
     if (sol.num_sets() == 1) return optional<int>();
-    if (b.remove_node_counter == 0 || b.best_nodes_to_remove.empty()) {
+
+    else if (b.remove_node_counter == 0 || b.best_nodes_to_remove.empty()) {
         b.best_nodes_to_remove.clear();
-        int best_node = -1;
-        vector<int> sets_to_remove_from;
-        int best_cost = pow(2, 16) - 1;
         pair<int, vector<int>> result;
         for (int u = 0; u < g.n; u++) {
             result = cost_of_remove_node(g, sol, u);
             if (result.second.empty()) continue;
-            if (result.first < best_cost) {
-                best_cost = result.first;
-                sets_to_remove_from = result.second;
-                best_node = u;
-            }
             b.best_nodes_to_remove.emplace_back(make_pair(result.first, u));
         }
-        if (best_node == -1) return optional<int>();
+        if (b.best_nodes_to_remove.empty()) return optional<int>();
         sort(b.best_nodes_to_remove.begin(), b.best_nodes_to_remove.end(), cmp_descending());
-        b.best_nodes_to_remove.pop_back();
+
         b.remove_node_counter = g.n / 10;
-        b.sets_to_change = sets_to_remove_from;
-        b.v = best_node;
-        return optional<int>(best_cost);
     }
     else {
         b.remove_node_counter--;
-        int u = b.best_nodes_to_remove.back().second;
-        b.best_nodes_to_remove.pop_back();
-        pair<int, vector<int>> result = cost_of_remove_node(g, sol, u);
-        if (result.second.empty()) return optional<int>();
-        b.remove_node_counter = g.n / 10;
-        b.sets_to_change = result.second;
-        b.v = u;
-        return optional<int>(result.first);
     }
+    int sz = b.best_nodes_to_remove.size();
+    int ind = sz - weighted_random_index(20, sz, 1.4);
+    int u = b.best_nodes_to_remove[ind].second;
+    b.best_nodes_to_remove.erase(b.best_nodes_to_remove.begin() + ind);
+
+    pair<int, vector<int>> result = cost_of_remove_node(g, sol, u);
+    if (result.second.empty()) return optional<int>();
+    b.sets_to_change = result.second;
+    b.v = u;
+
+    return optional<int>(result.first);
+
+
         
 
 

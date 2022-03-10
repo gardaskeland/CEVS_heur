@@ -67,7 +67,18 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             cout << "t set to " << t << "\n";
         }
 
+        if (i % 500 == 499) {
+            for (int j = 0; j < 3; j++) {current_cost += label_propagation_round(wg, current_solution);}
+            current_cost += remove_nodes_(wg, current_solution);
+            if (current_cost < best_cost) {
+                best_cost = current_cost;
+                last_iteration_of_best_solution = i;
+                best_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
+            }
+        }
+
         if (change_weights_count >= change_weights_after) {
+            
 
             change_weights_count = 0;
             int max_score = 0;
@@ -487,6 +498,10 @@ LoggingSolution test_label_propagation(Graph &g, LoggingSolution &log_sol, int &
             cout << "t set to " << t << "\n";
         }
 
+        if (i % 100 == 99) {
+            current_cost += remove_nodes_(wg, current_solution);
+        }
+
         //current_solution.print_solution();
         //cout << "a\n";
         //cout << "r = " << r << "\n";
@@ -597,6 +612,7 @@ LoggingSolution test_label_propagation(Graph &g, LoggingSolution &log_sol, int &
             } else if (choice == 5) {
                 if (res.has_value()) {
                     current_solution.add(current_solution.book.b_add_node.v, current_solution.book.b_add_node.si);
+                    //cout << "add node to set with cost: " << res.value() << "\n";
                 if (new_cost > current_cost) {
                         sum_delta += new_cost - current_cost;
                         positive_delta_counter += 1;

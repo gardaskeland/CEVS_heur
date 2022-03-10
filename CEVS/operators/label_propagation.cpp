@@ -187,10 +187,51 @@ optional<tri> find_best_move(Graph &g, SolutionRepresentation &sol, int u) {
 
 struct cmp_greater_pair {
     bool operator() (pair<int, int> &left, pair<int, int> &right) {
-        return left.first < right.first;
+        return left.first > right.first;
     }
 };
 
+optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol) {
+    optional<tri> temp;
+    if (sol.num_sets() < 2) {
+        return optional<int>();
+    }
+    else if (sol.book.b_lp.label_prop_counter == 0 || sol.book.b_lp.best_label_prop.empty()) {
+        sol.book.b_lp.best_label_prop.clear();
+        //set to move from and to, cost
+        
+        for (int v = 0; v < g.n; v++) {
+            temp = find_best_move(g, sol, v);
+            if (!temp.has_value()) {
+                continue;
+            }
+            //cout << "get 2 of temp: :" << get<2>(temp.value()) << ":\n";
+            sol.book.b_lp.best_label_prop.emplace_back(pair<int, int>(get<2>(temp.value()), v));
+        }
+        if (sol.book.b_lp.best_label_prop.empty()) {
+            return optional<int>();
+        }
+        sort(sol.book.b_lp.best_label_prop.begin(), sol.book.b_lp.best_label_prop.end(), cmp_greater_pair());
+
+        //sol.book.b_lp.best_label_prop.pop_back();
+        sol.book.b_lp.label_prop_counter = g.n / 10;
+    } else {
+        sol.book.b_lp.label_prop_counter--;
+    }
+
+    int sz = sol.book.b_lp.best_label_prop.size();
+    int ind = sz - weighted_random_index(20, sz, 1.5) - 1; 
+    pair<int, int> op = sol.book.b_lp.best_label_prop[ind];
+    sol.book.b_lp.best_label_prop.erase(sol.book.b_lp.best_label_prop.begin() + ind);
+
+    temp = find_best_move(g, sol, op.second);
+    if (!temp.has_value()) return optional<int>();
+    sol.book.b_lp.next_move = tri(op.second, get<0>(temp.value()), get<1>(temp.value()));
+    //cout << "next move for label prop: " << best_move_vertex << " " << best_move_set_from << " " << best_move_set_to << "\n";
+    return optional<int>(get<2>(temp.value()));
+}
+
+/**
 optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol) {
     if (sol.num_sets() < 2) {
         return optional<int>();
@@ -249,6 +290,7 @@ optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol) {
         return optional<int>(get<2>(best_move.value()));
     }
 }
+*/
 
 /**
 void precompute_b_lp(Graph &g, SolutionRepresentation &sol) {

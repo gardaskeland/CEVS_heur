@@ -98,7 +98,7 @@ void run_alns_on_heur_instances() {
         Graph g = Graph(adj);
 
         int summed_costs = 0;
-        int iterations = 5;
+        int iterations = 2;
         int num_operators = 6;
         int best_cost = pow(2, 30);
         ShallowSolution best_solution;
@@ -603,11 +603,11 @@ void run_alns_on_gml() {
 }
 
 void run_operation() {
-    string filename = "../../../heur/heur001.gr";
+    string filename = "../../../heur/heur003.gr";
     vector<vector<int>> adj = read_gz_file(filename);
     Graph g(adj);
     LoggingSolution log_sol;
-    int num_operations = 500;
+    int num_operations = 10000;
     test_label_propagation(g, log_sol, num_operations);
 
     SolutionRepresentation calculate_sol(g.n, num_operations);
