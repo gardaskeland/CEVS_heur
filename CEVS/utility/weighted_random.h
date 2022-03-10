@@ -14,4 +14,8 @@ using namespace std;
  * where length is the length of the datastructure for which we need an index to query.
  */
 int weighted_random_index(int max_index, int length, double log_base);
+
+template<typename T>
+T remove_k_last(vector<T> vec, int k);
+
 #endif

@@ -14,6 +14,7 @@
 #include <iterator>
 #include <iostream>
 #include <tuple>
+#include "../utility/weighted_random.h"
 
 # define tri tuple<int, int, int>
 

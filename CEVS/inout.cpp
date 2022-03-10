@@ -85,7 +85,7 @@ void write_cost_dev_for_iterations(vector<LoggingSolution> &sol, string &filenam
 void run_alns_on_heur_instances() {
     int num_operations = 10000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 5; i < 6; i = i + 2) {
+    for (int i = 3; i < 4; i = i + 2) {
         ostringstream oss;
         string filename;
         oss.clear();
@@ -603,7 +603,7 @@ void run_alns_on_gml() {
 }
 
 void run_operation() {
-    string filename = "../../../heur/heur003.gr";
+    string filename = "../../../heur/heur001.gr";
     vector<vector<int>> adj = read_gz_file(filename);
     Graph g(adj);
     LoggingSolution log_sol;

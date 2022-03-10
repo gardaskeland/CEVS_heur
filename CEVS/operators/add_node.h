@@ -12,6 +12,8 @@
 #include <optional>
 #include "../solution_representation.h"
 
+#define tri tuple<int, int, int>
+
 using namespace std;
 
 /**
@@ -87,6 +89,14 @@ optional<int> random_choice_add_node(Graph &g, SolutionRepresentation &sol);
 int add_node_to_all(Graph &g, SolutionRepresentation &sol);
 
 /**
+ * Finds a node v to add to set si. Returns the cost of this operation that may
+ * be executed. If add_node_to_set_counter == 0, find the cost of adding all nodes
+ * and update best_node_to_add_to_single_set. Else, pick the back tuple from this
+ * array and add this node to the set.
+ */
+optional<int> add_node_to_set(Graph &g, SolutionRepresentation &sol);
+
+/**
  * Chooses a set with high relative out-degree and finds neighbour node of the set.
  * Returns the cost of adding the node to the set.
  */
@@ -108,6 +118,15 @@ int weighted_random_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &bo
  * @return int 
  */
 int remove_nodes_(Graph &g, SolutionRepresentation &sol);
+
+/**
+ * If remove_node_counter > 0, pick the last node from the best_nodes_to_remove vector
+ * and which sets we want to remove it from in order to decrease cost. Else,
+ * find the cost of removing all vertices so that the solution improves and
+ * remove the best vertex. Store the results of the rest in best_node_to_remove
+ * and sort it in descendgin order.
+ */
+optional<int> remove_node_accept(Graph &g, SolutionRepresentation &sol);
 
 /**
  * @brief Adds u to all its neighbours if it results in cost reduction.

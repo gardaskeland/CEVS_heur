@@ -149,13 +149,15 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         } else if (r < c_weights[4]) {
             chrono::steady_clock::time_point begin_4 = chrono::steady_clock::now();
             choice = 4;
-            new_cost = current_cost;// remove_nodes_(wg, current_solution);
+            res = remove_node_accept(wg, current_solution);
+            new_cost = current_cost + res.value_or(0);
             chrono::steady_clock::time_point end_4 = chrono::steady_clock::now();
             time_taken[4] += chrono::duration_cast<chrono::microseconds>(end_4 - begin_4).count();
         } else {
             chrono::steady_clock::time_point begin_5 = chrono::steady_clock::now();
             choice = 5;
-            new_cost = current_cost; //+ add_node_to_all(wg, current_solution);
+            res = add_node_to_set(wg, current_solution);
+            new_cost = current_cost + res.value_or(0);
             chrono::steady_clock::time_point end_5 = chrono::steady_clock::now();
             time_taken[5] += chrono::duration_cast<chrono::microseconds>(end_5 - begin_5).count();
         }
@@ -172,7 +174,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             if (choice == 0) {
                 chrono::steady_clock::time_point begin_3 = chrono::steady_clock::now();
                 if (res.has_value()) {
-                    for (int s : current_solution.book.b_add_node.sets_to_add_v_to) {
+                    for (int s : current_solution.book.b_add_node.sets_to_change) {
                         current_solution.add(current_solution.book.b_add_node.v, s);
                     }
                     if (new_cost > current_cost) {
@@ -226,7 +228,28 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                     }
                     current_cost = new_cost;
                 }   
-            } else {
+            } else if (choice == 4) {
+                if (res.has_value()) {
+                    for (int si : current_solution.book.b_add_node.sets_to_change) {
+                        current_solution.remove(current_solution.book.b_add_node.v, si);
+                    }
+                    if (new_cost > current_cost) {
+                        sum_delta += new_cost - current_cost;
+                        positive_delta_counter += 1;
+                    }
+                    current_cost = new_cost;
+                }
+            } else if (choice == 5) {
+                if (res.has_value()) {
+                    current_solution.add(current_solution.book.b_add_node.v, current_solution.book.b_add_node.si);
+                    if (new_cost > current_cost) {
+                        sum_delta += new_cost - current_cost;
+                        positive_delta_counter += 1;
+                    }
+                    current_cost = new_cost;  
+                }
+            }
+             else {
                 current_cost = new_cost;
             }
         }
@@ -239,9 +262,9 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             solution_hashes.insert(solution_hash);
         }
         //cout << "ccc\n";
-        if (choice > 3) {
-            current_cost = new_cost;
-        }
+        //if (choice > 5) {
+        //    current_cost = new_cost;
+        //}
         //cout << "Line 71: ";
         //}
 
@@ -469,16 +492,24 @@ LoggingSolution test_label_propagation(Graph &g, LoggingSolution &log_sol, int &
         //cout << "r = " << r << "\n";
 
 
-        if (i % 2 == 0) {
+        if (i % 4 == 0) {
             chrono::steady_clock::time_point begin_3 = chrono::steady_clock::now();
             choice = 3;
             res = label_propagation_accept(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
             chrono::steady_clock::time_point end_3 = chrono::steady_clock::now();
+        } else if (i % 4 == 1) {
+            choice = 4;
+            res = remove_node_accept(wg, current_solution);
+            new_cost = current_cost + res.value_or(0);
         }
-        else {
+        else if (i % 4 == 2) {
             choice = 0;
             res = add_node_to_neighbours_accept(wg, current_solution);
+            new_cost = current_cost + res.value_or(0);
+        } else {
+            choice = 5;
+            res = add_node_to_set(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
         }
         //time_taken[3] += chrono::duration_cast<chrono::microseconds>(end_3 - begin_3).count();
@@ -497,7 +528,7 @@ LoggingSolution test_label_propagation(Graph &g, LoggingSolution &log_sol, int &
             if (choice == 0) {
                 chrono::steady_clock::time_point begin_3 = chrono::steady_clock::now();
                 if (res.has_value()) {
-                    for (int s : current_solution.book.b_add_node.sets_to_add_v_to) {
+                    for (int s : current_solution.book.b_add_node.sets_to_change) {
                         current_solution.add(current_solution.book.b_add_node.v, s);
                     }
                     if (new_cost > current_cost) {
@@ -552,6 +583,26 @@ LoggingSolution test_label_propagation(Graph &g, LoggingSolution &log_sol, int &
                     }
                     current_cost = new_cost;
                 }   
+            } else if (choice == 4) {
+                if (res.has_value()) {
+                    for (int si : current_solution.book.b_add_node.sets_to_change) {
+                        current_solution.remove(current_solution.book.b_add_node.v, si);
+                    }
+                    if (new_cost > current_cost) {
+                        sum_delta += new_cost - current_cost;
+                        positive_delta_counter += 1;
+                    }
+                    current_cost = new_cost;
+                }
+            } else if (choice == 5) {
+                if (res.has_value()) {
+                    current_solution.add(current_solution.book.b_add_node.v, current_solution.book.b_add_node.si);
+                if (new_cost > current_cost) {
+                        sum_delta += new_cost - current_cost;
+                        positive_delta_counter += 1;
+                    }
+                    current_cost = new_cost;  
+                }
             } else {
                 current_cost = new_cost;
             }
@@ -579,9 +630,10 @@ LoggingSolution test_label_propagation(Graph &g, LoggingSolution &log_sol, int &
             best_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
         }
         
-        //if (i % 10 == 9) {
-        //    cout << i << "\n";
-        //}
+        if (i % 500 == 499) {
+            cout << "current cost: " << current_cost << "\n";
+        }
+        
         /**
         current_solution.print_solution();
         if (!current_solution.verify_co_occurence()) {
@@ -591,7 +643,7 @@ LoggingSolution test_label_propagation(Graph &g, LoggingSolution &log_sol, int &
         */
 
         //if (i % 500 == 499) { 
-            cout << "Current cost: " << current_cost << "\n";
+            //cout << "Current cost: " << current_cost << "\n";
             //cout << "Current cost by cost function " << current_solution.cost_solution(g) << "\n";
             //current_solution.print_solution();
         //}
@@ -607,6 +659,12 @@ LoggingSolution test_label_propagation(Graph &g, LoggingSolution &log_sol, int &
             cout << "sol_diff: " << sol_diff << "\n";
             tuple<int, int, int> next_move = current_solution.book.b_lp.next_move;
             cout << "last operation (node, set, set): " << get<0>(next_move) << ", " << get<1>(next_move) << ", " << get<2>(next_move) << "\n";
+            cout << "node to remove: " << current_solution.book.b_add_node.v << "\n";
+            cout << "sets to remove from: \n";
+            for (int s: current_solution.book.b_add_node.sets_to_change) {
+                cout << s << " ";
+            }
+            cout << "\n";
             cout << "previous solution: \n";
             last_solution.print_solution();
             cout << "current solution: \n"; 

@@ -195,7 +195,7 @@ optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol) {
     if (sol.num_sets() < 2) {
         return optional<int>();
     }
-    else if (sol.book.b_lp.label_prop_counter == 0 || sol.book.b_lp.best_label_prop.size() == 0) {
+    else if (sol.book.b_lp.label_prop_counter == 0 || sol.book.b_lp.best_label_prop.empty()) {
         sol.book.b_lp.best_label_prop.clear();
         //set to move from and to, cost
         optional<tri> temp;
@@ -214,24 +214,38 @@ optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol) {
                 best_move_set_from = get<0>(temp.value());
                 best_move_set_to = get<1>(temp.value());
             }
+            //cout << "get 2 of temp: :" << get<2>(temp.value()) << ":\n";
             sol.book.b_lp.best_label_prop.emplace_back(pair<int, int>(get<2>(temp.value()), v));
         }
         if (best_move_vertex == -1) {
             return optional<int>();
         }
         sort(sol.book.b_lp.best_label_prop.begin(), sol.book.b_lp.best_label_prop.end(), cmp_greater_pair());
-        sol.book.b_lp.best_label_prop.pop_back();
-        sol.book.b_lp.next_move = tri(best_move_vertex, best_move_set_from, best_move_set_to);
+        //sol.book.b_lp.best_label_prop.pop_back();
+
+        int sz = sol.book.b_lp.best_label_prop.size();
+        int ind = sz - weighted_random_index(20, sz, 1.8) - 1; 
+        pair<int, int> op = sol.book.b_lp.best_label_prop[ind];
+        sol.book.b_lp.best_label_prop.erase(sol.book.b_lp.best_label_prop.begin() + ind);
+
+        temp = find_best_move(g, sol, op.second);
+        if (!temp.has_value()) return optional<int>();
+        sol.book.b_lp.next_move = tri(op.second, get<0>(temp.value()), get<1>(temp.value()));
         sol.book.b_lp.label_prop_counter = g.n / 10;
-        return optional<int>(best_cost);
+        //cout << "next move for label prop: " << best_move_vertex << " " << best_move_set_from << " " << best_move_set_to << "\n";
+        return optional<int>(get<2>(temp.value()));
     } else {
         sol.book.b_lp.label_prop_counter--;
-        pair<int, int> best = sol.book.b_lp.best_label_prop.back();
-        sol.book.b_lp.best_label_prop.pop_back();
+
+        int sz = sol.book.b_lp.best_label_prop.size();
+        int ind = sz - weighted_random_index(20, sz, 1.8) - 1; 
+        pair<int, int> op = sol.book.b_lp.best_label_prop[ind];
+        sol.book.b_lp.best_label_prop.erase(sol.book.b_lp.best_label_prop.begin() + ind);
         //set to move to, cost
-        optional<tri> best_move = find_best_move(g, sol, best.second);
+        optional<tri> best_move = find_best_move(g, sol, op.second);
         if (!best_move.has_value()) return optional<int>();
-        sol.book.b_lp.next_move = tri(best.second, get<0>(best_move.value()), get<1>(best_move.value()));
+        sol.book.b_lp.next_move = tri(op.second, get<0>(best_move.value()), get<1>(best_move.value()));
+        //cout << "next move for label prop: " << best.second << " " << get<0>(best_move.value()) << " " << get<1>(best_move.value()) << "\n";
         return optional<int>(get<2>(best_move.value()));
     }
 }
