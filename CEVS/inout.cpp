@@ -608,7 +608,7 @@ void run_operation() {
     Graph g(adj);
     LoggingSolution log_sol;
     int num_operations = 10000;
-    test_label_propagation(g, log_sol, num_operations);
+    alns2(g, log_sol, num_operations);
 
     SolutionRepresentation calculate_sol(g.n, num_operations);
     map<int, set<int>> clusters = log_sol.clusters;

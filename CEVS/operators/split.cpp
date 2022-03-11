@@ -196,6 +196,63 @@ optional<int> random_choice_split(Graph &g, SolutionRepresentation &sol) {
     return optional(cost_of_cut);
 }
 
+optional<int> optimal_split(Graph &g, SolutionRepresentation &sol) {
+    vector<int> set_indices = sol.get_set_indices();
+    int best_set = -1;
+    int best_cost = pow(2, 16) - 1;
+    pair<set<int>, set<int>> best_cut;
+    pair<int, pair<set<int>, set<int>>> min_cut;
+    int cost_of_cut;
+    for (int si : set_indices) {
+        if (sol.get_set(si).size() <= 1 || !is_connected_component(g, sol, si)) continue;
+        min_cut = find_min_cut(g, sol, si);
+        cost_of_cut = cost_of_split(g, sol , min_cut.second.first, min_cut.second.second, si);
+        if (cost_of_cut < best_cost) {
+            best_set = si;
+            best_cost = cost_of_cut;
+            best_cut = min_cut.second;
+        }
+    }
+    if (best_set == -1) return {};
+    sol.book.b_split.si = best_set;
+    sol.book.b_split.cut = best_cut;
+    return optional<int>(best_cost);
+}
+
+struct split_info {
+    int cost;
+    int si;
+    pair<set<int>, set<int>> cut;
+
+    bool operator < (const split_info &other) const {
+        return (cost < other.cost);
+    }
+};
+
+optional<int> weighted_random_split(Graph &g, SolutionRepresentation &sol) {
+    vector<int> set_indices = sol.get_set_indices();
+    vector<split_info> best_splits;
+    pair<int, pair<set<int>, set<int>>> min_cut;
+    int cost_of_cut;
+    for (int si : set_indices) {
+        if (sol.get_set(si).size() <= 1 || !is_connected_component(g, sol, si)) continue;
+        split_info alt;
+        min_cut = find_min_cut(g, sol, si);
+        alt.cost = cost_of_split(g, sol , min_cut.second.first, min_cut.second.second, si);
+        alt.si = si;
+        alt.cut = min_cut.second;
+        best_splits.push_back(alt);
+    }
+    if (best_splits.empty()) return {};
+    sort(best_splits.begin(), best_splits.end());
+
+    int k = weighted_random_index(sol.num_sets(), best_splits.size(), 1.6);
+    split_info choice = best_splits[k];
+    sol.book.b_split.si = choice.si;
+    sol.book.b_split.cut = choice.cut;
+    return optional<int>(choice.cost);
+}
+
 int greedy_split(Graph &g, SolutionRepresentation &sol, string f) {
     //chrono::steady_clock::time_point begin = chrono::steady_clock::now();
     //cout <<" 1\n";

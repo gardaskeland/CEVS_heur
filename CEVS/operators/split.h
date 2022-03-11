@@ -38,6 +38,13 @@ int compute_inner_cost(Graph &g, SolutionRepresentation &sol, int si);
 optional<int> random_choice_split(Graph &g, SolutionRepresentation &sol);
 
 /**
+ * Finds the optimal split over all possible splits and may execute this.
+ */
+optional<int> optimal_split(Graph &g, SolutionRepresentation &sol);
+
+optional<int> weighted_random_split(Graph &g, SolutionRepresentation &sol);
+
+/**
 * Stores info about a split that may be executed in sol.book.b_split and returns
 * the cost of executing this split. It splits a set with as low inner cost as
 * possible and uses Karger's algorithm to find an optimal way to split it (default).

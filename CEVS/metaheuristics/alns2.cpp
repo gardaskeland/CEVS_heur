@@ -25,7 +25,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     int operation_score[operations] = {0, 0, 0, 0, 0, 0};
     vector<double> time_taken(operations*2, 0);
     set<int> solution_hashes;
-    int change_weights_after = 100;
+    int change_weights_after = 300;
     int change_weights_count = 0;
     double rate = 0.5;
     int start_score = 20;
@@ -66,7 +66,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             alpha = pow(0.01/t, 1.0/(num_operations-end_warmup));
             cout << "t set to " << t << "\n";
         }
-
+        /**
         if (i % 500 == 499) {
             for (int j = 0; j < 3; j++) {current_cost += label_propagation_round(wg, current_solution);}
             current_cost += remove_nodes_(wg, current_solution);
@@ -75,7 +75,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                 last_iteration_of_best_solution = i;
                 best_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
             }
-        }
+        }*/
 
         if (change_weights_count >= change_weights_after) {
             
@@ -136,13 +136,13 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             //cout << "choice: " << choice << "\n";
             //current_solution.print_solution();
             //Look for better random choice!
-            res = random_choice_split(wg, current_solution);
+            res = weighted_random_split(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
             current_solution.book.b_split.last_split_operation = i;
             chrono::steady_clock::time_point end_1 = chrono::steady_clock::now();
             time_taken[1] += chrono::duration_cast<chrono::microseconds>(end_1 - begin_1).count();
             //cout << "current cost - new cost: " << current_cost - new_cost << "\n";
-        } else if (r < c_weights[2]) {
+        } else if (false && r < c_weights[2]) {
             chrono::steady_clock::time_point begin_2 = chrono::steady_clock::now();
             choice = 2;
             res = weighted_random_merge(wg, current_solution);
@@ -199,7 +199,10 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             } else if (choice == 1) {
                 chrono::steady_clock::time_point begin_4 = chrono::steady_clock::now();
                 set<int> indices = current_solution.get_set_indices_as_set();
+                //cout << "Before split: " << "\n";
+                //current_solution.print_solution();
                 if (res.has_value()) {
+                    //cout << "set to split: " << current_solution.book.b_split.si << "\n";
                     do_split(current_solution);
                     if (new_cost > current_cost) {
                         sum_delta += new_cost - current_cost;
@@ -207,6 +210,8 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                     }
                     current_cost = new_cost;
                 }
+                //cout << "After split:  \n";
+                //current_solution.print_solution();
                 chrono::steady_clock::time_point end_4 = chrono::steady_clock::now();
                 time_taken[operations+2] += chrono::duration_cast<chrono::microseconds>(end_4 - begin_4).count();
             }
