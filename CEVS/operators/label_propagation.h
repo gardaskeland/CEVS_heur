@@ -90,4 +90,9 @@ optional<tri> find_best_move(Graph &g, SolutionRepresentation &sol, int u);
  */
 optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol);
 
+/**
+ * Returns cost of moving a vertex from set si to set s.
+ */
+int cost_of_move(Graph &g, SolutionRepresentation &sol, int u, int si, int sj);
+
 #endif

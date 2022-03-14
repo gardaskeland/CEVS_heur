@@ -6,6 +6,8 @@
 #include "add_node.h"
 #include "label_propagation.h"
 
+#define tri tuple<int, int, int>
+
 using namespace std;
 
 /**
@@ -36,6 +38,20 @@ int vertex_mover(Graph &g, SolutionRepresentation &sol);
  * @return int 
  */
 int clique_splitter(Graph &g, SolutionRepresentation &sol);
+
+/**
+ * Finds the inverse degree of coveredness of all vertices, that is how many of its neighbours it
+ * does not cooccur with. Then returns the vertex with most neighbours not covered and tries to
+ * add a set with three vertixes to the solution: That one and two of its neighbours.
+ */
+optional<int> add_trio(Graph &g, SolutionRepresentation &sol);
+
+/**
+ * Finds a set in the solution to remove.
+ */
+optional<int> remove_set_op(Graph &g, SolutionRepresentation &sol);
+
+optional<int> swap(Graph &g, SolutionRepresentation &sol);
 
 /**
  * @brief Picks a random set and adds a neighbour of one of its vertices to it.

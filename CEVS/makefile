@@ -5,12 +5,14 @@ cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o \
 		b_merge.o shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
-		label_propagation.o perturbation.o alns.o logging_solution.o inout.o alns2.o
+		label_propagation.o perturbation.o alns.o logging_solution.o inout.o alns2.o \
+		b_perturbation.o
 	g++ -std=c++17 -g -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o b_merge.o \
 		shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
-		label_propagation.o perturbation.o alns.o logging_solution.o inout.o alns2.o
+		label_propagation.o perturbation.o alns.o logging_solution.o inout.o alns2.o \
+		b_perturbation.o
 
 main.o: main.cpp
 	$(boiler) main.cpp
@@ -47,6 +49,9 @@ b_merge.o: bookkeep/b_merge.cpp bookkeep/b_merge.h
 
 b_add_node.o: bookkeep/b_add_node.cpp bookkeep/b_add_node.h
 	$(boiler) bookkeep/b_add_node.cpp
+
+b_perturbation.o: bookkeep/b_perturbation.cpp bookkeep/b_perturbation.h
+	$(boiler) bookkeep/b_perturbation.cpp
 
 shallow_solution.o: utility/shallow_solution.cpp utility/shallow_solution.h
 	$(boiler) utility/shallow_solution.cpp

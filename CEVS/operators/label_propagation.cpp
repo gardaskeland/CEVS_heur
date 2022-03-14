@@ -193,6 +193,7 @@ struct cmp_greater_pair {
 
 optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol) {
     optional<tri> temp;
+    //map<int, tri> best;
     if (sol.num_sets() < 2) {
         return optional<int>();
     }
@@ -207,6 +208,7 @@ optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol) {
             }
             //cout << "get 2 of temp: :" << get<2>(temp.value()) << ":\n";
             sol.book.b_lp.best_label_prop.emplace_back(pair<int, int>(get<2>(temp.value()), v));
+            //best[v] = temp.value();
         }
         if (sol.book.b_lp.best_label_prop.empty()) {
             return optional<int>();
@@ -214,13 +216,13 @@ optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol) {
         sort(sol.book.b_lp.best_label_prop.begin(), sol.book.b_lp.best_label_prop.end(), cmp_greater_pair());
 
         //sol.book.b_lp.best_label_prop.pop_back();
-        sol.book.b_lp.label_prop_counter = g.n / 10;
+        sol.book.b_lp.label_prop_counter = g.n / 20;
     } else {
         sol.book.b_lp.label_prop_counter--;
     }
 
     int sz = sol.book.b_lp.best_label_prop.size();
-    int ind = sz - weighted_random_index(20, sz, 1.5) - 1; 
+    int ind = sz - weighted_random_index(20, sz, 2) - 1; 
     pair<int, int> op = sol.book.b_lp.best_label_prop[ind];
     sol.book.b_lp.best_label_prop.erase(sol.book.b_lp.best_label_prop.begin() + ind);
 

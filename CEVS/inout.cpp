@@ -85,7 +85,7 @@ void write_cost_dev_for_iterations(vector<LoggingSolution> &sol, string &filenam
 void run_alns_on_heur_instances() {
     int num_operations = 10000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 3; i < 4; i = i + 2) {
+    for (int i = 1; i < 10; i = i + 2) {
         ostringstream oss;
         string filename;
         oss.clear();
@@ -98,7 +98,7 @@ void run_alns_on_heur_instances() {
         Graph g = Graph(adj);
 
         int summed_costs = 0;
-        int iterations = 2;
+        int iterations = 5;
         int num_operators = 6;
         int best_cost = pow(2, 30);
         ShallowSolution best_solution;
@@ -189,8 +189,8 @@ void run_alns_on_heur_instances() {
         out_file << "average time of random_choice_split: " << average_time_operators[1] / 1000000 << "\n";
         out_file << "average time of weighted_random_merge: " << average_time_operators[2] / 1000000 << "\n";
         out_file << "average time of label_propagation_round " << average_time_operators[3] / 1000000 << "\n";
-        out_file << "average time of remove_nodes_ " << average_time_operators[4] / 1000000 << "\n";
-        out_file << "average time of add_node_to_all " << average_time_operators[5] / 1000000 << "\n";
+        //out_file << "average time of remove_nodes_ " << average_time_operators[4] / 1000000 << "\n";
+        //out_file << "average time of add_node_to_all " << average_time_operators[5] / 1000000 << "\n";
         out_file << "------------------\n";
 
         out_file << "average improvement of add_all_nodes_to_neighbours " << average_improvement_operations[0] << "\n";
@@ -201,10 +201,10 @@ void run_alns_on_heur_instances() {
         out_file << "per second: " << average_improvement_operations[2] / (average_time_operators[2] / 1000000) << "\n";
         out_file << "average improvement of label_propagation_round " << average_improvement_operations[3] << "\n";
         out_file << "per second: " << average_improvement_operations[3] / (average_time_operators[3] / 1000000) << "\n";
-        out_file << "average improvement of remove_nodes_ " << average_improvement_operations[4] << "\n";
-        out_file << "per second: " << average_improvement_operations[4] / (average_time_operators[4] / 1000000) << "\n";
-        out_file << "average improvement of add_node_to_all " << average_improvement_operations[5] << "\n";
-        out_file << "per second: " << average_improvement_operations[5] / (average_time_operators[5] / 1000000) << "\n";
+        //out_file << "average improvement of remove_nodes_ " << average_improvement_operations[4] << "\n";
+        //out_file << "per second: " << average_improvement_operations[4] / (average_time_operators[4] / 1000000) << "\n";
+        //out_file << "average improvement of add_node_to_all " << average_improvement_operations[5] << "\n";
+        //out_file << "per second: " << average_improvement_operations[5] / (average_time_operators[5] / 1000000) << "\n";
 
         out_file << "all solutions:\n";
         out_file << "------------------\n";

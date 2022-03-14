@@ -11,7 +11,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     cout << "cost of initial solution: " << current_cost << "\n";
     int best_cost = current_cost;
 
-    const int operations = 6;
+    const int operations = 5;
     double start_weight = 100 / operations;
     vector<double> weights(operations, start_weight);
     vector<double> c_weights(operations, 0);
@@ -22,7 +22,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         }
         c_weights[i] = c_weights[i - 1] + weights[i];
     }
-    int operation_score[operations] = {0, 0, 0, 0, 0, 0};
+    vector<double> operation_score(operations, 0);
     vector<double> time_taken(operations*2, 0);
     set<int> solution_hashes;
     int change_weights_after = 300;
@@ -45,15 +45,19 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     int sol_diff = 0;
     double t_max = 50;
     double t = t_max;
-    double alpha = pow(0.01/t_max, 1.0/num_operations);
+    double alpha = pow(0.001/t_max, 1.0/num_operations);
     double find_prob_of_acceptance;
     int positive_delta_counter = 0;
     int sum_delta = 0;
     int end_warmup = 200;
 
+    int escape_counter = 0;
+    const int escape_threshold = 100;
+
     optional<int> res;
 
     for (int i = 0; i < num_operations; i++) {
+        escape_counter += 1;
         //cout << i << "\n";
         solution_cost_iteration.push_back(current_cost);
         //cout << "11\n";
@@ -63,7 +67,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
 
         if (i == end_warmup && positive_delta_counter > 0) {
             t = -((double)sum_delta / (double)positive_delta_counter)* (1/log(0.8));
-            alpha = pow(0.01/t, 1.0/(num_operations-end_warmup));
+            alpha = pow(0.02/t, 1.0/(num_operations-end_warmup));
             cout << "t set to " << t << "\n";
         }
         /**
@@ -76,10 +80,23 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                 best_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
             }
         }*/
+        /**
+        if (escape_counter >= escape_threshold) {
+            //cout << "Escape!\n";
+            //cout << "Before escape: \n";
+            //cout << "Cost: " << current_cost << "\n";
+            //current_solution.print_solution();
+            current_cost += add_node_to_all(wg, current_solution) + label_propagation_round(wg, current_solution) \
+                + label_propagation_round(wg, current_solution) + remove_nodes_(wg, current_solution);
+            //cout << "After escape: \n";
+            //cout << "Cost: " << current_cost << "\n";
+            //current_solution.print_solution();
+
+            escape_counter = 0;
+        }*/
 
         if (change_weights_count >= change_weights_after) {
             
-
             change_weights_count = 0;
             int max_score = 0;
             int max_ind = 0;
@@ -101,11 +118,12 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                 operation_score[p.first] += p.second;
                 operation_score[max_ind] -= p.second;
             }
-            //cout << "recalibrate weights: \n";
+            
+            cout << "recalibrate weights: \n";
             for (int i = 0; i < operations; i++) {
                 weights[i] = (1 - rate) * weights[i] + rate * 100 * (operation_score[i] / total_score);
                 operation_score[i] = start_score;
-                //cout << i << ": " << weights[i] << "\n";
+                cout << i << ": " << weights[i] << "\n";
             }
             weights_over_iteration.push_back(weights);
             for (int i = 0; i < operations; i++) {
@@ -130,7 +148,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             current_solution.book.b_add_node.last_add_operation = i;
             chrono::steady_clock::time_point end_0 = chrono::steady_clock::now();
             time_taken[0] += chrono::duration_cast<chrono::microseconds>(end_0 - begin_0).count();
-        } else if (r < c_weights[1]) {
+        } /**else if (r < c_weights[1]) {
             chrono::steady_clock::time_point begin_1 = chrono::steady_clock::now();
             choice = 1;
             //cout << "choice: " << choice << "\n";
@@ -142,36 +160,47 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             chrono::steady_clock::time_point end_1 = chrono::steady_clock::now();
             time_taken[1] += chrono::duration_cast<chrono::microseconds>(end_1 - begin_1).count();
             //cout << "current cost - new cost: " << current_cost - new_cost << "\n";
-        } else if (false && r < c_weights[2]) {
+        }   else if (r < c_weights[2]) {
             chrono::steady_clock::time_point begin_2 = chrono::steady_clock::now();
             choice = 2;
-            res = weighted_random_merge(wg, current_solution);
+            res = add_trio(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
-            current_solution.book.b_merge.last_merge_operation = i;
             chrono::steady_clock::time_point end_2 = chrono::steady_clock::now();
             time_taken[2] += chrono::duration_cast<chrono::microseconds>(end_2 - begin_2).count();
-        } else if ( r < c_weights[3]) {
+        } */else if ( r < c_weights[1]) {
             chrono::steady_clock::time_point begin_3 = chrono::steady_clock::now();
-            choice = 3;
+            choice = 1;
             res = label_propagation_accept(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
             chrono::steady_clock::time_point end_3 = chrono::steady_clock::now();
             time_taken[3] += chrono::duration_cast<chrono::microseconds>(end_3 - begin_3).count();
-        } else if (r < c_weights[4]) {
+        } else if (r < c_weights[2]) {
             chrono::steady_clock::time_point begin_4 = chrono::steady_clock::now();
-            choice = 4;
+            choice = 2;
             res = remove_node_accept(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
             chrono::steady_clock::time_point end_4 = chrono::steady_clock::now();
             time_taken[4] += chrono::duration_cast<chrono::microseconds>(end_4 - begin_4).count();
-        } else {
+        } else if (r < c_weights[3]) {
             chrono::steady_clock::time_point begin_5 = chrono::steady_clock::now();
-            choice = 5;
+            choice = 3;
             res = add_node_to_set(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
             chrono::steady_clock::time_point end_5 = chrono::steady_clock::now();
             time_taken[5] += chrono::duration_cast<chrono::microseconds>(end_5 - begin_5).count();
+        } else {
+            choice = 4;
+            res = swap(wg, current_solution);
+            new_cost = current_cost + res.value_or(0);
+
         }
+            /** 
+        else {
+            choice = 6;
+            res = remove_set_op(wg, current_solution);
+            new_cost = current_cost + res.value_or(0);
+            //current_solution.book.b_merge.last_merge_operation = i;
+        }*/
         //cout << "choice: " << choice << "\n";
 
         if (i >= end_warmup) {
@@ -179,7 +208,13 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         } else {
             find_prob_of_acceptance = 80;
         }
+
+        if (new_cost > current_cost) {
+            sum_delta += new_cost - current_cost;
+            positive_delta_counter += 1;
+        }
         if (new_cost <= current_cost || rand() % 100 < find_prob_of_acceptance) {
+            //if (new_cost > current_cost) cout << "find_prob_of_acceptance: " << find_prob_of_acceptance << "\n";
             if (new_cost < current_cost) operation_score[choice] += 1;
             if (new_cost < best_cost) operation_score[choice] += 1;
             if (choice == 0) {
@@ -188,15 +223,11 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                     for (int s : current_solution.book.b_add_node.sets_to_change) {
                         current_solution.add(current_solution.book.b_add_node.v, s);
                     }
-                    if (new_cost > current_cost) {
-                        sum_delta += new_cost - current_cost;
-                        positive_delta_counter += 1;
-                    }
                     current_cost = new_cost;
                 }
                 chrono::steady_clock::time_point end_3 = chrono::steady_clock::now();
                 time_taken[operations+1] += chrono::duration_cast<chrono::microseconds>(end_3 - begin_3).count();
-            } else if (choice == 1) {
+            } else if (false && choice == 1) {
                 chrono::steady_clock::time_point begin_4 = chrono::steady_clock::now();
                 set<int> indices = current_solution.get_set_indices_as_set();
                 //cout << "Before split: " << "\n";
@@ -204,10 +235,6 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                 if (res.has_value()) {
                     //cout << "set to split: " << current_solution.book.b_split.si << "\n";
                     do_split(current_solution);
-                    if (new_cost > current_cost) {
-                        sum_delta += new_cost - current_cost;
-                        positive_delta_counter += 1;
-                    }
                     current_cost = new_cost;
                 }
                 //cout << "After split:  \n";
@@ -215,18 +242,21 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                 chrono::steady_clock::time_point end_4 = chrono::steady_clock::now();
                 time_taken[operations+2] += chrono::duration_cast<chrono::microseconds>(end_4 - begin_4).count();
             }
-            else if (choice == 2) {
+            else if (false && choice == 2) {
                 chrono::steady_clock::time_point begin_5 = chrono::steady_clock::now();
                 //cout << "line 66: ";
                 //current_solution.print_solution();
                 if (res.has_value()) {
-                    do_merge(current_solution);
+                    tuple<int, int, int> t = current_solution.book.b_perturbation.to_add;
+                    set<int> set_to_add;
+                    set_to_add.insert(get<0>(t)); set_to_add.insert(get<1>(t)); set_to_add.insert(get<2>(t));
+                    current_solution.add_set(set_to_add);
                     current_cost = new_cost;
                 } 
                 chrono::steady_clock::time_point end_5 = chrono::steady_clock::now();
                 time_taken[operations+3] += chrono::duration_cast<chrono::microseconds>(end_5 - begin_5).count();
             }
-            else if (choice == 3) {
+            else if (choice == 1) {
                 if (res.has_value()) {
                     tuple<int, int, int> move = current_solution.book.b_lp.next_move;
                     current_solution.remove(get<0>(move), get<1>(move));
@@ -238,35 +268,35 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                     else {
                         current_solution.add(get<0>(move), get<2>(move));
                     }
-                    if (new_cost > current_cost) {
-                        sum_delta += new_cost - current_cost;
-                        positive_delta_counter += 1;
-                    }
                     current_cost = new_cost;
                 }   
-            } else if (choice == 4) {
+            } else if (choice == 2) {
                 if (res.has_value()) {
                     for (int si : current_solution.book.b_add_node.sets_to_change) {
                         current_solution.remove(current_solution.book.b_add_node.v, si);
                     }
-                    if (new_cost > current_cost) {
-                        sum_delta += new_cost - current_cost;
-                        positive_delta_counter += 1;
-                    }
                     current_cost = new_cost;
                 }
-            } else if (choice == 5) {
+            } else if (choice == 3) {
                 if (res.has_value()) {
                     current_solution.add(current_solution.book.b_add_node.v, current_solution.book.b_add_node.si);
-                    if (new_cost > current_cost) {
-                        sum_delta += new_cost - current_cost;
-                        positive_delta_counter += 1;
-                    }
                     current_cost = new_cost;  
                 }
+            } else if (choice == 4) {
+                if (res.has_value()) {
+                    BPerturbation &bp = current_solution.book.b_perturbation;
+                    current_solution.remove(bp.to_swap.first, bp.sets_to_swap.first);
+                    current_solution.add(bp.to_swap.first, bp.sets_to_swap.second);
+                    current_solution.remove(bp.to_swap.second, bp.sets_to_swap.second);
+                    current_solution.add(bp.to_swap.second, bp.sets_to_swap.first);
+                    current_cost = new_cost;
+                }
             }
-             else {
-                current_cost = new_cost;
+             else if (choice == 6) {
+                if (res.has_value()) {
+                    current_solution.remove_set(current_solution.book.b_perturbation.si_to_remove);
+                    current_cost = new_cost;  
+                }
             }
         }
         //cout << "c\n";
@@ -286,6 +316,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
 
         //cout << "d\n";
         if (current_cost < best_cost) {
+            escape_counter = 0;
             best_cost = current_cost;
             last_iteration_of_best_solution = i;
             best_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
@@ -310,7 +341,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         //current_solution.print_solution();
         //cout << "e\n";
         
-        
+        /**
         int actual_cost = current_solution.cost_solution(wg);
         if (current_cost - actual_cost != sol_diff) {
             sol_diff = current_cost - actual_cost;
@@ -324,7 +355,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             last_solution.print_solution();
             cout << "current solution: \n"; 
             current_solution.print_solution();
-        }
+        }*/
         
         
         
@@ -353,8 +384,9 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         
 
     }
-    int count_choices[6] = {0, 0, 0, 0, 0, 0};
+    vector<int> count_choices(operations, 0);
     for (int x : choices) count_choices[x] += 1;
+    /**
     cout << "Average time spent on add_node: " << (time_taken[0] / count_choices[0]) / 1000000 << "\n";
     cout << "Average time spent on adding: " << (time_taken[operations + 1] / count_choices[0]) / 1000000 << "\n";
     cout << "Average time spent on greedy_split: " << (time_taken[1] / count_choices[1]) / 1000000 << "\n";
@@ -364,6 +396,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     cout << "Average time spent on label propagation: " << (time_taken[3] / count_choices[3]) / 1000000 << "\n";
     cout << "Average time spent on remove_nodes_: " << (time_taken[4] / count_choices[4]) / 1000000 << "\n";
     //cout << "Average time spent on add_node_to_all: " << (time_taken[5] / count_choices[5]) / 1000000 << "\n";
+    */
     /**
     cout << "edges:\n";
     for (int i = 0; i < wg.n; i++) {
@@ -411,8 +444,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             best_cost = current_cost;
         }
     }
-*/
-    
+*/ 
 
     ShallowSolution shallow = from_cc_sol_to_sol(g, best_solution, revert);
     for (map<int, set<int>>::iterator it = shallow.clusters.begin(); it != shallow.clusters.end(); it++) {

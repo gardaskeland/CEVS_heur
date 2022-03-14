@@ -14,7 +14,8 @@
 #include "../weighted_graph.h"
 #include "../operators/split.h"
 #include <optional>
-#include"../operators/label_propagation.h"
+#include "../operators/label_propagation.h"
+#include "../operators/perturbation.h"
 #include "../solution_representation.h"
 #include "../utility/logging_solution.h"
 

@@ -243,14 +243,14 @@ optional<int> add_node_to_set(Graph &g, SolutionRepresentation &sol) {
 
         sort(b.best_nodes_to_add_to_set.begin(), b.best_nodes_to_add_to_set.end(), cmp_tri_descending());
 
-        b.add_node_to_set_counter = g.n / 10;
+        b.add_node_to_set_counter = g.n / 5;
         updated = true;
     } else {
         //cost, node, set
         b.add_node_to_set_counter--;
     }
     int sz = b.best_nodes_to_add_to_set.size();
-    int ind = sz - weighted_random_index(20, sz, 1.7) - 1;
+    int ind = sz - weighted_random_index(20, sz, 2) - 1;
     tri op = b.best_nodes_to_add_to_set[ind];
     b.best_nodes_to_add_to_set.erase(b.best_nodes_to_add_to_set.begin() + ind);
     
@@ -320,6 +320,7 @@ tuple<int, vector<int>> add_node_to_all_neighbours_accept(Graph &g, SolutionRepr
 
 optional<int> add_node_to_neighbours_accept(Graph &g, SolutionRepresentation &sol) {
     BAddNode &b = sol.book.b_add_node;
+    //map<int, tuple<int, vector<int>>> best;
     if (sol.num_sets() == 1) {
         return optional<int>();
     }
@@ -330,19 +331,20 @@ optional<int> add_node_to_neighbours_accept(Graph &g, SolutionRepresentation &so
             result = add_node_to_all_neighbours_accept(g, sol, u);
             if (get<1>(result).size() == 0) continue;
             sol.book.b_add_node.best_vertices_to_add.emplace_back(pair<int, int>(get<0>(result), u));
+            //best[u] = result;
         }
         if (b.best_vertices_to_add.empty()) return optional<int>();
 
         sort(sol.book.b_add_node.best_vertices_to_add.begin(), 
             sol.book.b_add_node.best_vertices_to_add.end(), cmp_descending());
 
-        sol.book.b_add_node.add_node_counter = g.n / 10;
+        sol.book.b_add_node.add_node_counter = g.n / 5;
     }
     else {
         sol.book.b_add_node.add_node_counter--;
     }
     int sz = b.best_vertices_to_add.size();
-    int ind = sz - weighted_random_index(20, sz, 1.4);
+    int ind = sz - weighted_random_index(20, sz, 2);
     int u = b.best_vertices_to_add[ind].second;
     b.best_vertices_to_add.erase(b.best_vertices_to_add.begin() + ind);
 
@@ -509,13 +511,13 @@ optional<int> remove_node_accept(Graph &g, SolutionRepresentation &sol) {
         if (b.best_nodes_to_remove.empty()) return optional<int>();
         sort(b.best_nodes_to_remove.begin(), b.best_nodes_to_remove.end(), cmp_descending());
 
-        b.remove_node_counter = g.n / 10;
+        b.remove_node_counter = g.n / 5;
     }
     else {
         b.remove_node_counter--;
     }
     int sz = b.best_nodes_to_remove.size();
-    int ind = sz - weighted_random_index(20, sz, 1.4);
+    int ind = sz - weighted_random_index(20, sz, 2);
     int u = b.best_nodes_to_remove[ind].second;
     b.best_nodes_to_remove.erase(b.best_nodes_to_remove.begin() + ind);
 

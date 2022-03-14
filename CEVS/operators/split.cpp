@@ -246,7 +246,7 @@ optional<int> weighted_random_split(Graph &g, SolutionRepresentation &sol) {
     if (best_splits.empty()) return {};
     sort(best_splits.begin(), best_splits.end());
 
-    int k = weighted_random_index(sol.num_sets(), best_splits.size(), 1.6);
+    int k = weighted_random_index(sol.num_sets(), best_splits.size(), 2);
     split_info choice = best_splits[k];
     sol.book.b_split.si = choice.si;
     sol.book.b_split.cut = choice.cut;
