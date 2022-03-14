@@ -4,70 +4,70 @@ edges: 37
 runs: 5
 operations per iteration: 2000
 best solution:
-[[0: 3, 10, 16, ], [1: 5, 8, 9, 10, ], [2: 0, 4, 10, ], [3: 7, 11, ], [4: 2, 6, 8, 13, ], [5: 15, ], [6: 1, 9, 12, ], [7: 14, 18, ], [8: 3, 5, 19, ], [9: 17, ], ]
+[[0: 0, 4, 10, ], [1: 1, 9, 12, ], [2: 15, ], [3: 3, 10, 16, ], [4: 5, 8, 9, 10, ], [5: 3, 5, 19, ], [6: 7, 11, ], [7: 17, ], [8: 2, 6, 8, 13, ], [9: 14, 18, ], ]
 cost of best solution: 19
 average cost of solutions: 19
-average last operation finding best solution: 45.4
-average runtime: 0.524622
+average last operation finding best solution: 59.2
+average runtime: 0.441932
 ------------------
-average time of add_all_nodes_to_neighbours: 0.000104744
-average time of random_choice_split: 1.08128e-05
-average time of weighted_random_merge: 0.000601248
-average time of label_propagation_round 0.000295254
-average time of remove_nodes_ 0.000100076
-average time of add_node_to_all 0.000156571
+average time of add_all_nodes_to_neighbours: 0.000112325
+average time of random_choice_split: 8.73853e-06
+average time of weighted_random_merge: -nan
+average time of label_propagation_round 0.00030751
+average time of remove_nodes_ 0.000155546
+average time of add_node_to_all 0.000208334
 ------------------
-average improvement of add_all_nodes_to_neighbours -0.233157
-per second: -2225.96
-average improvement of random_choice_split 0.0954128
-per second: 8824.03
-average improvement of weighted_random_merge -1.04897
-per second: -1744.65
-average improvement of label_propagation_round -2.68531
-per second: -9094.91
-average improvement of remove_nodes_ -12.3356
-per second: -123262
-average improvement of add_node_to_all 19.8171
-per second: 126569
+average improvement of add_all_nodes_to_neighbours -0.201183
+per second: -1791.09
+average improvement of random_choice_split 0.156881
+per second: 17952.8
+average improvement of weighted_random_merge -nan
+per second: -nan
+average improvement of label_propagation_round -1.94748
+per second: -6333.08
+average improvement of remove_nodes_ -15.0879
+per second: -96999.1
+average improvement of add_node_to_all 22.7773
+per second: 109331
 all solutions:
 ------------------
-iteration 0: [[0: 3, 10, 16, ], [1: 5, 8, 9, 10, ], [2: 0, 4, 10, ], [3: 7, 11, ], [4: 2, 6, 8, 13, ], [5: 15, ], [6: 1, 9, 12, ], [7: 14, 18, ], [8: 3, 5, 19, ], [9: 17, ], ]
+iteration 0: [[0: 0, 4, 10, ], [1: 1, 9, 12, ], [2: 15, ], [3: 3, 10, 16, ], [4: 5, 8, 9, 10, ], [5: 3, 5, 19, ], [6: 7, 11, ], [7: 17, ], [8: 2, 6, 8, 13, ], [9: 14, 18, ], ]
 edge deletions: 12
 edge additions: 1
 vertex splittings: 6
 cost of solution: 19
-time used on iteration: 0.527727
-best solution found at iteration 93
+time used on iteration: 0.495892
+best solution found at iteration 100
 ------------------
-iteration 1: [[0: 2, 6, 8, 13, ], [1: 3, 10, 16, ], [2: 14, 18, ], [3: 0, 6, 10, ], [4: 3, 5, 19, ], [5: 5, 8, 9, 10, ], [6: 1, 9, 12, ], [7: 4, 10, 12, ], [8: 7, 11, ], [9: 15, ], [10: 17, ], ]
+iteration 1: [[0: 5, 8, 9, 10, ], [1: 0, 4, 10, ], [2: 2, 5, 6, 8, ], [3: 1, 9, 12, ], [4: 3, 10, 16, ], [5: 3, 5, 19, ], [6: 17, ], [7: 15, ], [8: 13, ], [9: 14, 18, ], [10: 7, 11, ], ]
+edge deletions: 12
+edge additions: 0
+vertex splittings: 7
+cost of solution: 19
+time used on iteration: 0.457933
+best solution found at iteration 85
+------------------
+iteration 2: [[0: 0, 4, 10, ], [1: 2, 5, 6, 8, 10, ], [2: 7, 11, ], [3: 3, 5, 19, ], [4: 13, ], [5: 3, 10, 16, ], [6: 1, 9, 12, ], [7: 17, ], [8: 15, ], [9: 14, 18, ], ]
+edge deletions: 14
+edge additions: 1
+vertex splittings: 4
+cost of solution: 19
+time used on iteration: 0.410268
+best solution found at iteration 59
+------------------
+iteration 3: [[0: 0, 4, 10, 12, ], [1: 2, 5, 6, 8, 9, 10, ], [2: 7, 11, ], [3: 3, 5, 19, ], [4: 3, 10, 16, ], [5: 9, 17, ], [6: 9, 15, ], [7: 14, 18, ], [8: 1, 9, 12, ], [9: 6, 8, 13, ], ]
+edge deletions: 5
+edge additions: 4
+vertex splittings: 10
+cost of solution: 19
+time used on iteration: 0.427139
+best solution found at iteration 19
+------------------
+iteration 4: [[0: 5, 8, 9, 10, ], [1: 3, 10, 16, ], [2: 2, 5, 6, 8, ], [3: 1, 9, 12, ], [4: 4, 10, 12, ], [5: 7, 11, ], [6: 0, 6, 10, ], [7: 3, 5, 19, ], [8: 14, 18, ], [9: 13, ], [10: 15, ], [11: 17, ], ]
 edge deletions: 9
-edge additions: 1
-vertex splittings: 9
+edge additions: 0
+vertex splittings: 10
 cost of solution: 19
-time used on iteration: 0.758653
-best solution found at iteration 7
-------------------
-iteration 2: [[0: 5, 8, 9, 10, ], [1: 1, 9, 12, ], [2: 14, 18, ], [3: 2, 6, 8, 13, ], [4: 3, 10, 16, ], [5: 7, 11, ], [6: 3, 5, 19, ], [7: 0, 4, 10, ], [8: 15, ], [9: 17, ], ]
-edge deletions: 12
-edge additions: 1
-vertex splittings: 6
-cost of solution: 19
-time used on iteration: 0.522
-best solution found at iteration 11
-------------------
-iteration 3: [[0: 3, 10, 16, ], [1: 7, 11, ], [2: 9, 15, 17, ], [3: 2, 5, 6, 8, 9, 10, ], [4: 14, 18, ], [5: 0, 4, 10, 12, ], [6: 6, 8, 13, ], [7: 1, 9, 12, ], [8: 3, 5, 19, ], ]
-edge deletions: 5
-edge additions: 5
-vertex splittings: 9
-cost of solution: 19
-time used on iteration: 0.421537
-best solution found at iteration 52
-------------------
-iteration 4: [[0: 4, 10, 12, ], [1: 2, 6, 8, 13, ], [2: 7, 11, ], [3: 3, 5, 6, 19, ], [4: 3, 10, 16, ], [5: 0, 6, 10, ], [6: 5, 8, 9, 10, ], [7: 14, 18, ], [8: 9, 15, ], [9: 1, 9, 12, ], [10: 9, 17, ], ]
-edge deletions: 5
-edge additions: 2
-vertex splittings: 12
-cost of solution: 19
-time used on iteration: 0.393193
-best solution found at iteration 64
+time used on iteration: 0.418427
+best solution found at iteration 33
 ------------------

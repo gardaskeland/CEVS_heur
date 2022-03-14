@@ -128,7 +128,7 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             chrono::steady_clock::time_point end_1 = chrono::steady_clock::now();
             time_taken[1] += chrono::duration_cast<chrono::microseconds>(end_1 - begin_1).count();
             //cout << "current cost - new cost: " << current_cost - new_cost << "\n";
-        } else if (r < c_weights[2]) {
+        } else if (false && r < c_weights[2]) {
             chrono::steady_clock::time_point begin_2 = chrono::steady_clock::now();
             choice = 2;
             res2 = weighted_random_merge(wg, current_solution);
