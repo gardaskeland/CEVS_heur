@@ -343,8 +343,10 @@ optional<int> add_node_to_neighbours_accept(Graph &g, SolutionRepresentation &so
     else {
         sol.book.b_add_node.add_node_counter--;
     }
+
+    if (b.best_vertices_to_add.empty()) return {};
     int sz = b.best_vertices_to_add.size();
-    int ind = sz - weighted_random_index(20, sz, 2);
+    int ind = sz - weighted_random_index(20, sz, 2) - 1;
     int u = b.best_vertices_to_add[ind].second;
     b.best_vertices_to_add.erase(b.best_vertices_to_add.begin() + ind);
 
@@ -476,6 +478,9 @@ int remove_nodes_(Graph &g, SolutionRepresentation &sol) {
 
 //returns cost and sets to remove nodes from
 pair<int, vector<int>> cost_of_remove_node(Graph &g, SolutionRepresentation &sol, int u) {
+    if (sol.get_node_to_clusters(u).size() == 1) {
+        return make_pair(10000, vector<int>());
+    }
     int total_cost = 0;
     int cost;
     set<int> u_sets = sol.get_node_to_clusters(u);

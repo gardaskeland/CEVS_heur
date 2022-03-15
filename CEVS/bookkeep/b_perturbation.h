@@ -3,6 +3,7 @@
 
 #include <utility>
 #include <tuple>
+#include <set>
 
 using namespace std;
 
@@ -15,6 +16,8 @@ class BPerturbation {
 
         pair<int, int> to_swap;
         pair<int, int> sets_to_swap;
+
+        set<int> set_to_add;
 };
 
 #endif

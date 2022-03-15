@@ -245,6 +245,77 @@ optional<int> swap(Graph &g, SolutionRepresentation &sol) {
     return optional<int>(get<0>(choice));
 }
 
+struct cmp_int_set {
+    bool operator() (pair<int, set<int>> &left, pair<int, set<int>> &right) {
+        return left.first < right.first;
+    }
+};
+
+optional<int> add_set_over_uncovered(Graph &g, SolutionRepresentation &sol) {
+    int covered;
+    vector<pair<int, int>> best;
+    for (int u = 0; u < g.n - 1; u++) {
+        covered = 0;
+        for (int v : g.adj[u]) {
+            if (sol.get_co_occurence(u, v) > 0) covered += 1;
+        }
+        best.emplace_back(pair<int, int>(g.adj[u].size() - covered, u));
+    }
+    if (best.empty()) return {};
+
+    sort(best.begin(), best.end(), cmp_descending());
+    int sz = best.size();
+
+    vector<pair<int, set<int>>> candidates;
+
+    for (int i = 0; i < min(10, sz); i++) {
+
+        int center_node = best[i].second;
+        vector<int> to_add;
+        for (int v : g.adj[center_node]) {
+            if (sol.get_co_occurence(center_node, v) == 0) to_add.push_back(v);
+        }
+        to_add.push_back(center_node);
+
+        int cost = 0;
+        /**
+        cout << "Center node is " << center_node << "\n";
+        cout << "to_add is ";
+        for (int x : to_add) cout << x << " ";
+        cout << "\n";*/
+        for (int i = 0; i < to_add.size() - 1; i++) {
+            for (int j = i + 1; j < to_add.size(); j++) {
+                if (sol.get_co_occurence(to_add[i], to_add[j]) == 0) {
+                    //cout << to_add[i] << " and " << to_add[j] << " not co-occuring. Has edge: " << g.has_edge(to_add[i], to_add[j]) << "\n";
+                    if (g.has_edge(to_add[i], to_add[j])) cost -= g.get_edge_cost(to_add[i], to_add[j]);
+                    else cost += g.get_edge_cost(to_add[i], to_add[j]);
+                }
+            }
+        }
+
+        set<int> to_add_set;
+        for (int x : to_add) {
+            cost += g.get_node_weight(x);
+            to_add_set.insert(x);
+        }
+
+        //cout << "Cost of adding: " << cost << "\n";
+
+        candidates.emplace_back(make_pair(cost, to_add_set));
+    }
+
+    sort(candidates.begin(), candidates.end(), cmp_int_set());
+
+    //for (int i = 0; i < candidates.size(); i++) {
+    //    cout << candidates[i].first << " ";
+    //} cout << "\n";
+
+    int k = weighted_random_index(10, candidates.size(), 2);
+
+    sol.book.b_perturbation.set_to_add = candidates[k].second;
+    return optional<int>(candidates[k].first);
+}
+
 int add_adjacent_vertex(Graph &g, SolutionRepresentation &sol) {
     set<int> adjacent_vertices;
     vector<int> indices = sol.get_set_indices();

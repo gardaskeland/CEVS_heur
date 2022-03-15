@@ -161,3 +161,23 @@ map<int, set<int>> read_csv_groups_football(string &filename) {
 
     return to_return;
 }
+
+map<int, set<int>> read_solution(string &filename) {
+    string line, word;
+    vector<string> row;
+    map<int, set<int>> to_return;
+    fstream file(filename, ios::in);
+    getline(file, line);
+    set<int> to_insert;
+    int counter = 0;
+    while(getline(file, line)) {
+        //cout << line << "\n";
+        to_insert = set<int>();
+        stringstream str(line);
+        while(getline(str, word, ',')) {
+            to_insert.insert(stoi(word));
+        }
+        to_return[counter++] = to_insert;
+    }
+    return to_return;
+}

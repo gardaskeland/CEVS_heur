@@ -603,11 +603,11 @@ void run_alns_on_gml() {
 }
 
 void run_operation() {
-    string filename = "../../../heur/heur003.gr";
+    string filename = "../../../heur/heur001.gr";
     vector<vector<int>> adj = read_gz_file(filename);
     Graph g(adj);
     LoggingSolution log_sol;
-    int num_operations = 10000;
+    int num_operations = 1000;
     alns2(g, log_sol, num_operations);
 
     SolutionRepresentation calculate_sol(g.n, num_operations);
@@ -620,6 +620,4 @@ void run_operation() {
     cout << "Final cost: " << calculate_sol.cost_solution(g) << "\n";
     cout << "Solution: \n";
     calculate_sol.print_solution();
-
-    return;
 }

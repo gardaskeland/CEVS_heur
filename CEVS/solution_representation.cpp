@@ -35,6 +35,18 @@ void SolutionRepresentation::initial_solution_complete_graph(int n) {
     clusters[0] = nodes_in_set;
 }
 
+/**
+void SolutionRepresentation::calculate_node_in_clusters() {
+    set<int> to_add;
+    for (int u = 0; u < number_nodes; u++) {
+        to_add = set<int>();
+        for (auto it = clusters.begin(); it != clusters.end(); it++) {
+            if ((it->second).find(u) != (it->second).end()) to_add.insert(it->first);
+        }
+        node_in_clusters[u] = to_add;
+    }
+}*/
+
 int get_vertex_degree(Graph &g, int &v, set<int> &marked) {
     int counter = 0;
     for (int i : g.adj[v]) {

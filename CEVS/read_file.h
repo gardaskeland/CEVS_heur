@@ -33,5 +33,10 @@ map<int, set<int>> read_csv_groups_karate(string &filename);
 
 map<int, set<int>> read_csv_groups_football(string &filename);
 
+/**
+ * Read a solution written as csv with each line representing a cluster. 0 to n-1 enumeration.
+ */
+map<int, set<int>> read_solution(string &filename);
+
 
 #endif

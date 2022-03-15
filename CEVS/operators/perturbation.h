@@ -5,6 +5,8 @@
 #include "../solution_representation.h"
 #include "add_node.h"
 #include "label_propagation.h"
+#include <algorithm>
+#include <set>
 
 #define tri tuple<int, int, int>
 
@@ -52,6 +54,12 @@ optional<int> add_trio(Graph &g, SolutionRepresentation &sol);
 optional<int> remove_set_op(Graph &g, SolutionRepresentation &sol);
 
 optional<int> swap(Graph &g, SolutionRepresentation &sol);
+
+/**
+ * Find one of the vertices with most uncovered edges. Then make a new set with the
+ * vertices at the other end of these uncovered edges.
+ */
+optional<int> add_set_over_uncovered(Graph &g, SolutionRepresentation &sol);
 
 /**
  * @brief Picks a random set and adds a neighbour of one of its vertices to it.

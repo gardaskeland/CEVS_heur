@@ -2,6 +2,5 @@
 using namespace std;
 
 int main() {
-    run_operation();
-    return 0;
+    run_alns_on_heur_instances();
 }
