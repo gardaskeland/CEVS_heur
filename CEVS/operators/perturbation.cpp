@@ -192,13 +192,14 @@ optional<int> remove_set_op(Graph &g, SolutionRepresentation &sol) {
     }
     if (best_to_remove.empty()) return {};
     sort(best_to_remove.begin(), best_to_remove.end(), cmp_ascending());
+    if (best_to_remove[0].first >= 0) return {};
 
     //for (pair<int, int> p : best_to_remove) {
      //  cout << p.first << " ";
     //}
     //cout << "\n";
 
-    int k = weighted_random_index(20, best_to_remove.size(), 2);
+    int k = 0;
     pair<int, int> to_remove = best_to_remove[k];
     sol.book.b_perturbation.si_to_remove = to_remove.second;
     return optional<int>(to_remove.first);
@@ -273,7 +274,7 @@ optional<int> add_set_over_uncovered(Graph &g, SolutionRepresentation &sol) {
         int center_node = best[i].second;
         vector<int> to_add;
         for (int v : g.adj[center_node]) {
-            if (sol.get_co_occurence(center_node, v) == 0) to_add.push_back(v);
+            if (sol.get_co_occurence(center_node, v) == 0 && g.has_edge(center_node, v)) to_add.push_back(v);
         }
         to_add.push_back(center_node);
 
@@ -310,7 +311,7 @@ optional<int> add_set_over_uncovered(Graph &g, SolutionRepresentation &sol) {
     //    cout << candidates[i].first << " ";
     //} cout << "\n";
 
-    int k = weighted_random_index(10, candidates.size(), 2);
+    int k = weighted_random_index(20, candidates.size(), 2);
 
     sol.book.b_perturbation.set_to_add = candidates[k].second;
     return optional<int>(candidates[k].first);

@@ -522,7 +522,7 @@ optional<int> remove_node_accept(Graph &g, SolutionRepresentation &sol) {
         b.remove_node_counter--;
     }
     int sz = b.best_nodes_to_remove.size();
-    int ind = sz - weighted_random_index(20, sz, 2);
+    int ind = sz - weighted_random_index(20, sz, 2) - 1;
     int u = b.best_nodes_to_remove[ind].second;
     b.best_nodes_to_remove.erase(b.best_nodes_to_remove.begin() + ind);
 
@@ -532,11 +532,110 @@ optional<int> remove_node_accept(Graph &g, SolutionRepresentation &sol) {
     b.v = u;
 
     return optional<int>(result.first);
+}
 
+void pick_k_adjacent(Graph &g, vector<int> &chosen, vector<vector<int>> &alternatives, vector<int> &neighbours, int k, int i) {
+    if (k == 0) {
+        vector<int> alt;
+        for (int u : chosen) {
+            alt.push_back(u);
+        }
+        alternatives.push_back(alt);
+        return;
+    }
+    bool add = true;
+    int sz = neighbours.size();
+    for (int j = i; j < sz - k + 1; j++) {
+        //cout << j << "\n";
+        //cout << sz - k + 1 << "\n";
+        add = true;
+        for (int u : chosen) {
+            if (!g.has_edge(u, neighbours[j])) {
+                add = false; break;
+            }
+        }
+        if (!add) continue;
+        chosen.push_back(neighbours[j]);
+        pick_k_adjacent(g, chosen, alternatives, neighbours, k-1, j+1);
+        chosen.pop_back();
+    }
+}
 
+template<typename T>
+struct cmp_ascending_cost {
+    bool operator() (pair<int, T> &left, pair<int, T> &right) {
+        return left.first < right.first;
+    }
+};
+
+optional<int> add_k_to_set(Graph &g, SolutionRepresentation &sol, int si, int k) {
+    set<int> neighbours_set;
+    set<int> si_nodes = sol.get_set(si);
+    for (int u : si_nodes) {
+        for (int v : g.adj[u]) {
+            if (si_nodes.find(v) != si_nodes.end()) continue;
+            neighbours_set.insert(v);
+        }
+    }
+    vector<int> neighbours;
+    for (int u : neighbours_set) neighbours.push_back(u);
+
+    if (neighbours.empty()) return {};
+
+    vector<int> chosen;
+    vector<vector<int>> alternatives;
+    pick_k_adjacent(g, chosen, alternatives, neighbours, k, 0);
+
+    if (alternatives.empty()) return {};
+
+    //find cost of each alternative
+    vector<pair<int, vector<int>>> cost_alt;
+    int cost;
+    for (vector<int> alt : alternatives) {
+        cost = 0;
+        for (int u : alt) {
+            cost += add_node_to_set_cost(g, sol, si, u);
+        }
+        for (int i = 0; i < alt.size() - 1; i++) {
+            for (int j = i+1; j < alt.size(); j++) {
+                //if (!g.has_edge(alt[i], alt[j])) cout << "ERROR!\n";
+                if (sol.get_co_occurence(alt[i], alt[j]) == 0) {
+                    //We know the vertices are adjacent.
+                    cost -= g.get_edge_cost(alt[i], alt[j]);
         
+                }
+            }
+        }
+        cost_alt.push_back(make_pair(cost, alt));
+    }
 
+    sort(cost_alt.begin(), cost_alt.end(), cmp_ascending_cost<vector<int>>());
 
+    int r = weighted_random_index(5, cost_alt.size(), 3);
+    sol.book.b_add_node.add_to_set = cost_alt[r].second;
+    sol.book.b_add_node.si = si;
+    return optional<int>(cost_alt[r].first);
+}
+
+optional<int> add_k_to_a_set(Graph &g, SolutionRepresentation &sol, int k) {
+    vector<int> set_indices = sol.get_set_indices();
+    vector<pair<int, pair<int, vector<int>>>> alternatives;
+    optional<int> cost;
+    for (int si : set_indices) { 
+        cost = add_k_to_set(g, sol, si, k);
+        if (!cost.has_value()) continue;
+        alternatives.push_back(make_pair(cost.value(), make_pair(si, sol.book.b_add_node.add_to_set)));
+    }
+
+    if (alternatives.empty()) return {};
+
+    sort(alternatives.begin(), alternatives.end(), cmp_ascending_cost<pair<int, vector<int>>>());
+
+    int r = weighted_random_index(5, alternatives.size(), 3);
+
+    sol.book.b_add_node.si = alternatives[r].second.first;
+    sol.book.b_add_node.add_to_set = alternatives[r].second.second;
+    return optional<int>(alternatives[r].first);
 }
 
 

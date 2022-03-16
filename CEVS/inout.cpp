@@ -83,9 +83,9 @@ void write_cost_dev_for_iterations(vector<LoggingSolution> &sol, string &filenam
 }
 
 void run_alns_on_heur_instances() {
-    int num_operations = 10000;
+    int num_operations = 30000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 1; i < 10; i = i + 2) {
+    for (int i = 1; i < 6; i = i + 2) {
         ostringstream oss;
         string filename;
         oss.clear();
@@ -99,7 +99,7 @@ void run_alns_on_heur_instances() {
 
         int summed_costs = 0;
         int iterations = 5;
-        int num_operators = 6;
+        int num_operators = 7;
         int best_cost = pow(2, 30);
         ShallowSolution best_solution;
         vector<LoggingSolution> solutions;
@@ -244,7 +244,7 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
     string filename_without_path = get_filename_after_path(filename);
 
     int summed_costs = 0;
-    int num_operators = 6;
+    int num_operators = 5;
     int best_cost = pow(2, 30);
     ShallowSolution best_solution;
     vector<LoggingSolution> solutions;
@@ -603,11 +603,11 @@ void run_alns_on_gml() {
 }
 
 void run_operation() {
-    string filename = "../../../heur/heur001.gr";
-    vector<vector<int>> adj = read_gz_file(filename);
+    string filename = "../../../FARZgraphs/FARZ_500_edges_100.gml";
+    vector<vector<int>> adj = read_gml(filename);
     Graph g(adj);
     LoggingSolution log_sol;
-    int num_operations = 1000;
+    int num_operations = 5000;
     alns2(g, log_sol, num_operations);
 
     SolutionRepresentation calculate_sol(g.n, num_operations);

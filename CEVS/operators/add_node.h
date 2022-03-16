@@ -157,6 +157,18 @@ int add_all_nodes_to_neighbours(Graph &g, SolutionRepresentation &sol);
 optional<int> add_node_to_neighbours_accept(Graph &g, SolutionRepresentation &sol);
 
 /**
+ * Checks all possibilities of adding k connected vertices to the set, where every vertex
+ * is a neighbour of the set. Picks the best one.
+ */
+optional<int> add_k_to_set(Graph &g, SolutionRepresentation &sol, int si, int k);
+
+/**
+ * Picks the best operation when checking add_k_to_set for all sets.
+ */
+optional<int> add_k_to_a_set(Graph &g, SolutionRepresentation &sol, int k);
+
+
+/**
  * @brief Apply the latest add-operation to sol.
  * 
  * @param sol 

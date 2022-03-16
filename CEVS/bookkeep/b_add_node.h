@@ -41,6 +41,9 @@ class BAddNode {
 
         int add_node_to_set_counter = 0;
 
+        //For add_k_to_set
+        vector<int> add_to_set;
+
         //Stores the relative out-degrees of sets. Mapped from set index to relative out-degree.
         map<int, int> relative_out_degrees;
 

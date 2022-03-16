@@ -90,6 +90,8 @@ optional<tri> find_best_move(Graph &g, SolutionRepresentation &sol, int u);
  */
 optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol);
 
+optional<int> label_propagation_accept_weighted_random(Graph &g, SolutionRepresentation &sol);
+
 /**
  * Returns cost of moving a vertex from set si to set s.
  */

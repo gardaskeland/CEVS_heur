@@ -11,7 +11,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     cout << "cost of initial solution: " << current_cost << "\n";
     int best_cost = current_cost;
 
-    const int operations = 5;
+    const int operations = 7;
     double start_weight = 100 / operations;
     vector<double> weights(operations, start_weight);
     vector<double> c_weights(operations, 0);
@@ -49,10 +49,10 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     double find_prob_of_acceptance;
     int positive_delta_counter = 0;
     int sum_delta = 0;
-    int end_warmup = 200;
+    int end_warmup = 1000;
 
     int escape_counter = 0;
-    const int escape_threshold = 100;
+    const int escape_threshold = 500;
 
     optional<int> res;
 
@@ -86,6 +86,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             //cout << "Before escape: \n";
             //cout << "Cost: " << current_cost << "\n";
             //current_solution.print_solution();
+            /**
             for (int i = 0; i < wg.n / 4; i++) {
                 res = add_node_to_set(wg, current_solution);
                 new_cost = current_cost + res.value_or(0);
@@ -93,8 +94,10 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                     current_solution.add(current_solution.book.b_add_node.v, current_solution.book.b_add_node.si);
                     current_cost = new_cost;
                 }
-            }
-            current_cost += label_propagation_round(wg, current_solution) + remove_nodes_(wg, current_solution);
+            }*/
+
+            current_cost += add_node_to_all(wg, current_solution) + label_propagation_round(wg, current_solution) \
+                + label_propagation_round(wg, current_solution) + label_propagation_round(wg, current_solution) + remove_nodes_(wg, current_solution);
             //cout << "After escape: \n";
             //cout << "Cost: " << current_cost << "\n";
             //current_solution.print_solution();
@@ -200,11 +203,21 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             res = swap(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
 
-        } */else {
+        } */else if (r < c_weights[4]) {
             choice = 4;
+            res = label_propagation_accept_weighted_random(wg, current_solution);
+            //cout << "res has value: " << res.has_value() << "\n";
+            new_cost = current_cost + res.value_or(0);
+        } else if (r < c_weights[5]) {
+            choice = 5;
             res = add_set_over_uncovered(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
+        } else {
+            choice = 6;
+            res = remove_set_op(wg, current_solution);
+            new_cost = current_cost + res.value_or(0);
         }
+
             /** 
         else {
             choice = 6;
@@ -267,7 +280,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                 chrono::steady_clock::time_point end_5 = chrono::steady_clock::now();
                 time_taken[operations+3] += chrono::duration_cast<chrono::microseconds>(end_5 - begin_5).count();
             }
-            else if (choice == 1) {
+            else if (choice == 1 || choice == 4) {
                 if (res.has_value()) {
                     tuple<int, int, int> move = current_solution.book.b_lp.next_move;
                     current_solution.remove(get<0>(move), get<1>(move));
@@ -302,9 +315,12 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                     current_solution.add(bp.to_swap.second, bp.sets_to_swap.first);
                     current_cost = new_cost;
                 }
-            } else if (choice == 4) {
+            } else if (choice == 5) {
                 if (res.has_value()) {
+                    //cout << "before:\n";
+                    //current_solution.print_solution();
                     current_solution.add_set(current_solution.book.b_perturbation.set_to_add);
+                    //current_solution.print_solution();
                     current_cost = new_cost;
                 }
             }

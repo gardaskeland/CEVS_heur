@@ -179,6 +179,8 @@ class SolutionRepresentation
      */
     int num_sets();
 
+    int get_random_set_index();
+
     /**
      * Obtain the indices of the sets currently in the solution.
      */

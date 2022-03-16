@@ -261,6 +261,16 @@ int SolutionRepresentation::num_sets() {
     return clusters.size();
 }
 
+int SolutionRepresentation::get_random_set_index() {
+    int sz = clusters.size();
+    int r = rand() % sz;
+    auto it = clusters.begin();
+    while(r > 0) {
+        it++;
+        r--;
+    }
+    return it->first;
+}
 
 set<int> SolutionRepresentation::get_node_to_clusters(int vi) {
     return node_in_clusters[vi];
