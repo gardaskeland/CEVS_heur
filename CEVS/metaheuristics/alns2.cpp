@@ -11,7 +11,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     cout << "cost of initial solution: " << current_cost << "\n";
     int best_cost = current_cost;
 
-    const int operations = 7;
+    const int operations = 5;
     double start_weight = 100 / operations;
     vector<double> weights(operations, start_weight);
     vector<double> c_weights(operations, 0);
@@ -97,12 +97,24 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             }*/
 
             current_cost += add_node_to_all(wg, current_solution) + label_propagation_round(wg, current_solution) \
-                + label_propagation_round(wg, current_solution) + label_propagation_round(wg, current_solution) + remove_nodes_(wg, current_solution);
+                + remove_nodes_(wg, current_solution);
             //cout << "After escape: \n";
             //cout << "Cost: " << current_cost << "\n";
             //current_solution.print_solution();
 
             escape_counter = 0;
+            if (current_cost < best_cost) {
+                best_cost = current_cost;
+                best_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters()); 
+            }
+            current_solution.book.operation_number += 1;
+            choices.push_back(operations);
+            change_weights_count += 1;
+
+            if (i == num_operations - 1) {
+                solution_cost_iteration.push_back(current_cost);
+            }
+            continue;
         }
 
         if (change_weights_count >= change_weights_after) {
@@ -203,12 +215,19 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             res = swap(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
 
-        } */else {//if (r < c_weights[4]) {
+        }*/ 
+        else {//(r < c_weights[4]) {
             choice = 4;
             res = label_propagation_accept_weighted_random(wg, current_solution);
             //cout << "res has value: " << res.has_value() << "\n";
             new_cost = current_cost + res.value_or(0);
-        } /**else if (r < c_weights[5]) {
+        } /**else {
+            choice = 5;
+            res = fast_merge(wg, current_solution);
+            new_cost = current_cost + res.value_or(0);
+            current_solution.book.b_merge.last_merge_operation = i;
+        }*/
+        /**else if (r < c_weights[5]) {
             choice = 5;
             res = add_set_over_uncovered(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
@@ -227,13 +246,14 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         }*/
         //cout << "choice: " << choice << "\n";
 
-        if (i >= end_warmup) {
+        if (i >= end_warmup || choice == 5) {
             find_prob_of_acceptance = 100 * exp(-(new_cost - current_cost)/t);
         } else {
             find_prob_of_acceptance = 80;
         }
-
-        if (new_cost > current_cost) {
+        
+        //results of fast merge not counted here because of volatility.
+        if (new_cost > current_cost && choice != 5) {
             sum_delta += new_cost - current_cost;
             positive_delta_counter += 1;
         }
@@ -317,10 +337,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                 }
             } else if (choice == 5) {
                 if (res.has_value()) {
-                    //cout << "before:\n";
-                    //current_solution.print_solution();
-                    current_solution.add_set(current_solution.book.b_perturbation.set_to_add);
-                    //current_solution.print_solution();
+                    do_merge(current_solution);
                     current_cost = new_cost;
                 }
             }
@@ -417,7 +434,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         
 
     }
-    vector<int> count_choices(operations, 0);
+    vector<int> count_choices(operations + 1, 0);
     for (int x : choices) count_choices[x] += 1;
     /**
     cout << "Average time spent on add_node: " << (time_taken[0] / count_choices[0]) / 1000000 << "\n";

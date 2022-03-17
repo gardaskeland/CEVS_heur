@@ -396,7 +396,7 @@ int weighted_random_merge(Graph &g, SolutionRepresentation &sol) {
     map<int, pair<int, int>> cost_of_merges = find_cost_of_merges_diff(g, sol);
     //cout << "finished find_cost_of_merges_diff\n";
 
-    int ind = weighted_random_index(10, sol.book.b_merge.pq_merge_cost.size(), 1.7);
+    int ind = weighted_random_index(10, sol.book.b_merge.pq_merge_cost.size(), 3);
 
     //cout << "ind = " << ind << "\n";
     //cout << "ind: " << ind << "\n";
@@ -446,6 +446,88 @@ int weighted_random_merge(Graph &g, SolutionRepresentation &sol) {
 
     //sol.merge(to_merge.first, to_merge.second);
 
+}
+
+int find_cost_of_merge(Graph &g, SolutionRepresentation &sol, int si, int sj) {
+    set<int> si_nodes = sol.get_set(si);
+    set<int> sj_nodes = sol.get_set(sj);
+    int cost = 0;
+    for (int u : si_nodes) {
+        for (int v : sj_nodes) {
+            if (sol.get_co_occurence(u, v) > 0) continue;
+            if (g.has_edge(u, v)) cost -= g.get_edge_cost(u, v);
+            else cost += g.get_edge_cost(u, v);
+        }
+    }
+    //subtract copies of node deleted by being in the union of si and sj.
+    for (int u : si_nodes) {
+        if (sj_nodes.find(u) != sj_nodes.end()) cost -= g.get_node_weight(u);
+    }
+    return cost;
+}
+
+template<typename T>
+struct cmp_descending_cost {
+    bool operator() (pair<int, T> &left, pair<int, T> &right) {
+        return left.first < right.first;
+    }
+};
+
+optional<int> fast_merge(Graph &g, SolutionRepresentation &sol) {
+    if (sol.num_sets() == 1) return {};
+    set<int> neighbour_sets;
+    set<int> si_nodes;
+    int cost_of_merge;
+    BMerge &b = sol.book.b_merge;
+    if (b.fast_merge_counter == 0 || b.fast_merge_sets.empty()) {
+        b.fast_merge_sets.clear();
+        for (int si : sol.get_set_indices()) {
+            neighbour_sets.clear();
+            si_nodes = sol.get_set(si);
+            //find neighbours sets.
+            for (int u : si_nodes) {
+                for (int v : g.adj[u]) {
+                    for (int sj : sol.get_node_to_clusters(v)) {
+                        //Don't calculate the cost of a pair twice.
+                        if (si >= sj) continue;
+                        neighbour_sets.insert(sj);
+                    }
+                }
+            }
+            for (int sj : neighbour_sets) {
+                cost_of_merge = find_cost_of_merge(g, sol, si, sj);
+                b.fast_merge_sets.push_back(make_pair(cost_of_merge, make_pair(si, sj)));
+            }
+        }
+        sort(b.fast_merge_sets.begin(), b.fast_merge_sets.end(), cmp_descending_cost<pair<int, int>>());
+
+
+
+        pair<int, int> to_merge = b.fast_merge_sets.back().second;
+        int cost = b.fast_merge_sets.back().first;
+        b.fast_merge_sets.pop_back();
+        b.si = to_merge.first;
+        b.sj = to_merge.second;
+        b.fast_merge_counter = 0;
+        return optional<int>(cost);
+        //for (auto p : b.fast_merge_sets) {
+        //    cout << p.first << " ";
+        //}
+        //cout << "\n";
+    }
+    else {
+        b.fast_merge_counter--;
+    }
+
+    if (b.fast_merge_sets.empty()) return {};
+    pair<int, int> to_merge = b.fast_merge_sets.back().second;
+    b.fast_merge_sets.pop_back();
+    set<int> sets = sol.get_set_indices_as_set();
+    if (!(sets.find(to_merge.first) != sets.end()) || !(sets.find(to_merge.second) != sets.end())) return fast_merge(g, sol);
+    int cost = find_cost_of_merge(g, sol, to_merge.first, to_merge.second);
+    b.si = to_merge.first;
+    b.sj = to_merge.second;
+    return cost;
 }
 
 void do_merge(SolutionRepresentation &sol) {

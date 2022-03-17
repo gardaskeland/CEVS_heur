@@ -34,6 +34,10 @@ class BMerge {
         // map_merge_cost while popping.
         priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, cmp2> pq_merge_cost; 
 
+        vector<pair<int, pair<int, int>>> fast_merge_sets;
+
+        int fast_merge_counter = 0;
+
         BMerge() {
             last_merge_operation = -1;
         }

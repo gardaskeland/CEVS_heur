@@ -243,7 +243,7 @@ optional<int> add_node_to_set(Graph &g, SolutionRepresentation &sol) {
 
         sort(b.best_nodes_to_add_to_set.begin(), b.best_nodes_to_add_to_set.end(), cmp_tri_descending());
 
-        b.add_node_to_set_counter = g.n / 2;
+        b.add_node_to_set_counter = g.n / 5;
         updated = true;
     } else {
         //cost, node, set
@@ -336,7 +336,7 @@ optional<int> add_node_to_neighbours_accept(Graph &g, SolutionRepresentation &so
         sort(sol.book.b_add_node.best_vertices_to_add.begin(), 
             sol.book.b_add_node.best_vertices_to_add.end(), cmp_descending());
 
-        sol.book.b_add_node.add_node_counter = g.n / 2;
+        sol.book.b_add_node.add_node_counter = g.n / 5;
     }
     else {
         sol.book.b_add_node.add_node_counter--;
@@ -512,7 +512,7 @@ optional<int> remove_node_accept(Graph &g, SolutionRepresentation &sol) {
         if (b.best_nodes_to_remove.empty()) return optional<int>();
         sort(b.best_nodes_to_remove.begin(), b.best_nodes_to_remove.end(), cmp_descending());
 
-        b.remove_node_counter = g.n / 2;
+        b.remove_node_counter = g.n / 5;
     }
     else {
         b.remove_node_counter--;

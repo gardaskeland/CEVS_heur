@@ -13,6 +13,8 @@
 #include <algorithm>
 #include "../utility/segment_tree.h"
 #include <queue>
+#include <optional>
+#include "label_propagation.h"
 
 using namespace std;
 
@@ -37,6 +39,13 @@ void greedy_merge(Graph &g, SolutionRepresentation &sol, Bookkeep &book);
  * change in cost after executing the merge.
  */
 int weighted_random_merge(Graph &g, SolutionRepresentation &sol);
+
+/**
+ * Every now and then, considers pairs of all sets that are neighbours and finds the cost
+ * of merging them. Then tries to merge one of the best ones each time the operator is
+ * executed.
+ */
+optional<int> fast_merge(Graph &g, SolutionRepresentation &sol);
 
 
 #endif
