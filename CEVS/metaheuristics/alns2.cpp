@@ -52,7 +52,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     int end_warmup = 1000;
 
     int escape_counter = 0;
-    const int escape_threshold = 500;
+    const int escape_threshold = 1000;
 
     optional<int> res;
 
@@ -203,12 +203,12 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             res = swap(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
 
-        } */else if (r < c_weights[4]) {
+        } */else {//if (r < c_weights[4]) {
             choice = 4;
             res = label_propagation_accept_weighted_random(wg, current_solution);
             //cout << "res has value: " << res.has_value() << "\n";
             new_cost = current_cost + res.value_or(0);
-        } else if (r < c_weights[5]) {
+        } /**else if (r < c_weights[5]) {
             choice = 5;
             res = add_set_over_uncovered(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
@@ -216,7 +216,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             choice = 6;
             res = remove_set_op(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
-        }
+        }*/
 
             /** 
         else {

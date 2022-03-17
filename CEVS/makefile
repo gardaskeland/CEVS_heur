@@ -1,5 +1,5 @@
 
-boiler=g++ -std=c++17 -c -O -g
+boiler=g++ -std=c++17 -c -O3
 
 cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o \

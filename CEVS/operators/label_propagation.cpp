@@ -247,17 +247,16 @@ optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol) {
         sort(sol.book.b_lp.best_label_prop.begin(), sol.book.b_lp.best_label_prop.end(), cmp_greater_pair());
 
         //sol.book.b_lp.best_label_prop.pop_back();
-        sol.book.b_lp.label_prop_counter = g.n / 20;
+        sol.book.b_lp.label_prop_counter = g.n / 2;
     } else {
         sol.book.b_lp.label_prop_counter--;
     }
 
-    int sz = sol.book.b_lp.best_label_prop.size();
-    int ind = sz - weighted_random_index(20, sz, 2) - 1; 
-    pair<int, int> op = sol.book.b_lp.best_label_prop[ind];
-    sol.book.b_lp.best_label_prop.erase(sol.book.b_lp.best_label_prop.begin() + ind);
+    pair<int, int> op = sol.book.b_lp.best_label_prop.back();
+    sol.book.b_lp.best_label_prop.pop_back();
 
     temp = find_best_move(g, sol, op.second);
+    if (!temp.has_value()) return {};
     sol.book.b_lp.next_move = tri(op.second, get<0>(temp.value()), get<1>(temp.value()));
     //cout << "next move for label prop: " << best_move_vertex << " " << best_move_set_from << " " << best_move_set_to << "\n";
     return optional<int>(get<2>(temp.value()));
@@ -288,15 +287,13 @@ optional<int> label_propagation_accept_weighted_random(Graph &g, SolutionReprese
         sort(sol.book.b_lp.best_label_prop.begin(), sol.book.b_lp.best_label_prop.end(), cmp_greater_pair());
 
         //sol.book.b_lp.best_label_prop.pop_back();
-        sol.book.b_lp.label_prop_counter = g.n / 20;
+        sol.book.b_lp.label_prop_counter = g.n / 2;
     } else {
         sol.book.b_lp.label_prop_counter--;
     }
 
-    int sz = sol.book.b_lp.best_label_prop.size();
-    int ind = sz - weighted_random_index(20, sz, 2) - 1; 
-    pair<int, int> op = sol.book.b_lp.best_label_prop[ind];
-    sol.book.b_lp.best_label_prop.erase(sol.book.b_lp.best_label_prop.begin() + ind);
+    pair<int, int> op = sol.book.b_lp.best_label_prop.back();
+    sol.book.b_lp.best_label_prop.pop_back();
 
     vector<tri> best_moves = find_best_moves(g, sol, op.second);
     //for (auto t : best_moves) {
@@ -306,6 +303,7 @@ optional<int> label_propagation_accept_weighted_random(Graph &g, SolutionReprese
     if (best_moves.empty()) return optional<int>();
     int r = weighted_random_index(5, best_moves.size(), 2);
     temp = best_moves[r];
+    if (!temp.has_value()) return {};
     sol.book.b_lp.next_move = tri(op.second, get<1>(temp.value()), get<2>(temp.value()));
     //cout << "next move for label prop: " << best_move_vertex << " " << best_move_set_from << " " << best_move_set_to << "\n";
     return optional<int>(get<0>(temp.value()));
