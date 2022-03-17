@@ -54,6 +54,9 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     int escape_counter = 0;
     const int escape_threshold = 1000;
 
+    bool local_search = false;
+    const int activate_local_search = num_operations - (num_operations / 20);
+
     optional<int> res;
 
     for (int i = 0; i < num_operations; i++) {
@@ -61,7 +64,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         //cout << i << "\n";
         solution_cost_iteration.push_back(current_cost);
         //cout << "11\n";
-        last_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
+        //last_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
         //cout << "22\n";
         t *= alpha; //t_max * (1 - ((static_cast<float>(i + 1))/num_operations));
 
@@ -70,6 +73,34 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             alpha = pow(0.02/t, 1.0/(num_operations-end_warmup));
             cout << "t set to " << t << "\n";
         }
+
+        /**
+        if (!local_search && i > activate_local_search) {
+            local_search = true;
+            cout << "before ls init:\n";
+            cout << "best solution: \n";
+            best_solution.print_solution();
+            cout << "current solution: \n";
+            current_solution.print_solution();
+            current_solution.clusters.clear();
+            for (auto it = current_solution.node_in_clusters.begin(); it != current_solution.node_in_clusters.end(); it++) {
+                (it->second).clear();
+            }
+            for (auto ma : current_solution.co_occurence) {
+                ma.clear();
+            }
+            for (auto it = best_solution.clusters.begin(); it != best_solution.clusters.end(); it++) {
+                if ((it->second).size() == 0) continue;
+                current_solution.add_set(it->second);
+            }
+            cout << "after ls init:\n";
+            current_solution.print_solution();
+            current_cost = best_cost;
+            current_solution.book.b_add_node.add_node_counter = 0;
+            current_solution.book.b_add_node.add_node_to_set_counter = 0;
+            current_solution.book.b_add_node.remove_node_counter = 0;
+            current_solution.book.b_lp.label_prop_counter = 0;
+        }*/
         /**
         if (i % 500 == 499) {
             for (int j = 0; j < 3; j++) {current_cost += label_propagation_round(wg, current_solution);}
@@ -84,7 +115,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         if (escape_counter >= escape_threshold) {
             //cout << "Escape!\n";
             //cout << "Before escape: \n";
-            //cout << "Cost: " << current_cost << "\n";
+            //cout << "Cost: " << current_cost << "\n";if (i == num_operations - 1) {
             //current_solution.print_solution();
             /**
             for (int i = 0; i < wg.n / 4; i++) {
@@ -246,10 +277,13 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         }*/
         //cout << "choice: " << choice << "\n";
 
-        if (i >= end_warmup || choice == 5) {
-            find_prob_of_acceptance = 100 * exp(-(new_cost - current_cost)/t);
+        if (local_search) {
+            find_prob_of_acceptance = -1;
+        }
+        else if (i >= end_warmup || choice == 5) {
+            find_prob_of_acceptance = 1000000 * exp(-(new_cost - current_cost)/t);
         } else {
-            find_prob_of_acceptance = 80;
+            find_prob_of_acceptance = 800000;
         }
         
         //results of fast merge not counted here because of volatility.
@@ -257,7 +291,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             sum_delta += new_cost - current_cost;
             positive_delta_counter += 1;
         }
-        if (new_cost <= current_cost || rand() % 100 < find_prob_of_acceptance) {
+        if (new_cost <= current_cost || rand() % 1000000 < find_prob_of_acceptance) {
             //if (new_cost > current_cost) cout << "find_prob_of_acceptance: " << find_prob_of_acceptance << "\n";
             if (new_cost < current_cost) operation_score[choice] += 1;
             if (new_cost < best_cost) operation_score[choice] += 1;
@@ -371,7 +405,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             best_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
         }
         
-        if (!current_solution.simple_feasibility_check()) cout << "not feasible after operation " << choice << "\n";
+        //if (!current_solution.simple_feasibility_check()) cout << "not feasible after operation " << choice << "\n";
         //if (i % 10 == 9) {
         //    cout << i << "\n";
         //}

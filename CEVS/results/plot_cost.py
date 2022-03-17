@@ -29,10 +29,10 @@ for t in range(1, 10, 2):
         y = np.array([plot_y[i - 1] - plot_y[i] for i in range(1, operations+1)])
         for g in np.unique(group):
             ix = np.where(group == g)
-            axs.scatter(x[ix], y[ix],
+            axs[plot].scatter(x[ix], y[ix],
             c=cdict[g], label=g, s=10, marker="^")
     fig.legend(["add_node_to_neighbours", "label_propagation", "remove node", 
-                "add_node_to_set", "label_propagation_wr", "fast_merge"], loc="upper left")
+                "add_node_to_set", "label_propagation_wr", "escape"], loc="upper left")
     fig.tight_layout(pad=0.6)
     #plt.legend([0, 1, 2, 3, 4, 5], loc="upper left")
     plt.suptitle("Cost change over runs of ALNS algorithm on problem heur" + integer_to_three_digits(t))
