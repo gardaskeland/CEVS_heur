@@ -26,6 +26,7 @@ class Bookkeep {
         set<int> revert_merge_sets[2];
         int operation_number;
         SegmentTree<int> modified_clusters;
+        SegmentTree<int> modified_vertices;
         BMerge b_merge;
         BAddNode b_add_node;
         BSplit b_split;
@@ -40,12 +41,14 @@ class Bookkeep {
         operation_number = 0;
         SegmentTree<int> sgt(operations);
         modified_clusters = sgt;
+        modified_vertices = sgt;
     }
 
     Bookkeep() {
         operation_number = 0;
         SegmentTree<int> sgt(1);
         modified_clusters = sgt;
+        modified_vertices = sgt;
 
     }
 

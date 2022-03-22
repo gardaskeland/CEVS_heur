@@ -309,6 +309,25 @@ optional<int> label_propagation_accept_weighted_random(Graph &g, SolutionReprese
     return optional<int>(get<0>(temp.value()));
 }
 
+optional<int> label_propagation_accept_unchanged(Graph &g, SolutionRepresentation &sol, int i) {
+    if (sol.num_sets() < 2) {
+        return optional<int>();
+    }
+    //i - 1 since we want one vertex to be moved several times in escape sequence
+    set<int> recently_moved = sol.book.modified_vertices.query(max(0, i - 500), max(0, i - 1));
+    vector<int> choices;
+    for (int j = 0; j < g.n; j++) {
+        if (!(recently_moved.find(j) != recently_moved.end())) choices.push_back(j);
+    }
+    if (choices.empty()) return {};
+    int v = choices[get_random_int() % choices.size()];
+    optional<tri> temp = find_best_move(g, sol, v);
+    if (!temp.has_value()) return {};
+    sol.book.b_lp.next_move = tri(v, get<0>(temp.value()), get<1>(temp.value()));
+    //cout << "next move for label prop: " << best_move_vertex << " " << best_move_set_from << " " << best_move_set_to << "\n";
+    return optional<int>(get<2>(temp.value()));
+}
+
 /**
 optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol) {
     if (sol.num_sets() < 2) {

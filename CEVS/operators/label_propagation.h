@@ -93,6 +93,12 @@ optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol);
 optional<int> label_propagation_accept_weighted_random(Graph &g, SolutionRepresentation &sol);
 
 /**
+ * Chooses a vertex that has not been moved in a while and moves this. If all vertices have been
+ * moved, moves a random vertex. Parameter i is the current iteration number.
+ */
+optional<int> label_propagation_accept_unchanged(Graph &g, SolutionRepresentation &sol, int i);
+
+/**
  * Returns cost of moving a vertex from set si to set s.
  */
 int cost_of_move(Graph &g, SolutionRepresentation &sol, int u, int si, int sj);

@@ -175,7 +175,7 @@ void do_revert_add_node(SolutionRepresentation &sol, Bookkeep &book) {
 
 optional<int> random_choice_add_node(Graph &g, SolutionRepresentation &sol) {
     vector<int> set_indices = sol.get_set_indices();
-    int si = set_indices[rand() % set_indices.size()];
+    int si = set_indices[get_random_int() % set_indices.size()];
     vector<pair<int, int>> best_nodes = best_nodes_to_add(g, sol, si);
     if (best_nodes.size() == 0) {
         sol.book.b_add_node.v = -1;
@@ -267,6 +267,34 @@ optional<int> add_node_to_set(Graph &g, SolutionRepresentation &sol) {
     return optional<int>(cost);
 }
 
+
+optional<int> add_node_to_set_unchanged(Graph &g, SolutionRepresentation &sol) {
+    set<int> changed = sol.book.modified_clusters.query(max(0, sol.book.operation_number), sol.book.operation_number - 1);
+    vector<int> choices;
+    for (int si : sol.get_set_indices()) {
+        if (!(changed.find(si) != changed.end())) choices.push_back(si);
+    }
+    if (choices.empty()) return {};
+    int si = choices[get_random_int() % choices.size()];
+    int best_node = -1;
+    int best_cost = pow(2, 16) - 1;
+    int cost;
+    for (int v : sol.get_set(si)) {
+        cost = add_node_to_set_cost(g, sol, si, v);
+        if (cost < best_cost) {
+            best_cost = cost;
+            best_node = v;
+        }
+    }
+    if (best_node == -1) return {};
+
+    BAddNode &b = sol.book.b_add_node;
+    b.v = best_node;
+    b.si = si;
+    return optional<int>(best_cost);
+}
+
+
 set<int> get_neighbour_set_of_u(Graph &g, SolutionRepresentation &sol, int u) {
     set<int> current;
     set<int> neighbours;
@@ -279,6 +307,7 @@ set<int> get_neighbour_set_of_u(Graph &g, SolutionRepresentation &sol, int u) {
     }
     return neighbours;
 }
+
 
 int add_node_to_neighbours(Graph &g, SolutionRepresentation &sol, int u) {
     int cost = 0;
@@ -350,8 +379,24 @@ optional<int> add_node_to_neighbours_accept(Graph &g, SolutionRepresentation &so
     sol.book.b_add_node.v = u;
     sol.book.b_add_node.sets_to_change = get<1>(result);
     return optional<int>(get<0>(result));
-
 }
+
+
+optional<int> add_node_to_neighbours_accept_unchanged(Graph &g, SolutionRepresentation &sol, int i) {
+    set<int> changed_nodes = sol.book.modified_vertices.query(max(0, i - 500), i);
+    vector<int> unchanged;
+    for (int j = 0; j < g.n; j++) {
+        if (!(changed_nodes.find(j) != changed_nodes.end())) unchanged.push_back(j);
+    }
+    if(unchanged.empty()) return {};
+    int u = unchanged[get_random_int() % unchanged.size()];
+    tuple<int, vector<int>> result = add_node_to_all_neighbours_accept(g, sol, u);
+    if (get<1>(result).empty()) return {};
+    sol.book.b_add_node.v = u;
+    sol.book.b_add_node.sets_to_change = get<1>(result);
+    return optional<int>(get<0>(result));
+}
+
 
 int add_all_nodes_to_neighbours(Graph &g, SolutionRepresentation &sol) {
     int cost = 0;
@@ -517,6 +562,7 @@ optional<int> remove_node_accept(Graph &g, SolutionRepresentation &sol) {
     else {
         b.remove_node_counter--;
     }
+
     int u = b.best_nodes_to_remove.back().second;
     b.best_nodes_to_remove.pop_back();
 
@@ -526,6 +572,25 @@ optional<int> remove_node_accept(Graph &g, SolutionRepresentation &sol) {
     b.v = u;
 
     return optional<int>(result.first);
+}
+
+optional<int> remove_node_accept_unchanged(Graph &g, SolutionRepresentation &sol, int i) {
+    set<int> changed = sol.book.modified_vertices.query(max(0, i - 500), i);
+    vector<int> unchanged;
+    for (int j = 0; j < g.n; j++) {
+        if (!(changed.find(j) != changed.end())) unchanged.push_back(j); 
+    }
+    if (unchanged.empty()) return {};
+    int u = unchanged[rand() % unchanged.size()];
+
+    BAddNode &b = sol.book.b_add_node;
+    pair<int, vector<int>> result = cost_of_remove_node(g, sol, u);
+    if (result.second.empty()) return optional<int>();
+    b.sets_to_change = result.second;
+    b.v = u;
+
+    return optional<int>(result.first);
+
 }
 
 void pick_k_adjacent(Graph &g, vector<int> &chosen, vector<vector<int>> &alternatives, vector<int> &neighbours, int k, int i) {

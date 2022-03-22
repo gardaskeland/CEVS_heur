@@ -11,7 +11,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     cout << "cost of initial solution: " << current_cost << "\n";
     int best_cost = current_cost;
 
-    const int operations = 5;
+    const int operations = 7;
     double start_weight = 100 / operations;
     vector<double> weights(operations, start_weight);
     vector<double> c_weights(operations, 0);
@@ -61,6 +61,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
 
     for (int i = 0; i < num_operations; i++) {
         escape_counter += 1;
+        current_solution.book.operation_number = i;
         //cout << i << "\n";
         solution_cost_iteration.push_back(current_cost);
         //cout << "11\n";
@@ -117,18 +118,35 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             //cout << "Before escape: \n";
             //cout << "Cost: " << current_cost << "\n";if (i == num_operations - 1) {
             //current_solution.print_solution();
-            /**
-            for (int i = 0; i < wg.n / 4; i++) {
-                res = add_node_to_set(wg, current_solution);
+            for (int j = 0; j < 20; j++) {
+                res = add_node_to_neighbours_accept_unchanged(wg, current_solution, i);
                 new_cost = current_cost + res.value_or(0);
                 if (res.has_value()) {
-                    current_solution.add(current_solution.book.b_add_node.v, current_solution.book.b_add_node.si);
+                    for (int s : current_solution.book.b_add_node.sets_to_change) {
+                        current_solution.add(current_solution.book.b_add_node.v, s);
+                    }
                     current_cost = new_cost;
                 }
-            }*/
 
-            current_cost += add_node_to_all(wg, current_solution) + label_propagation_round(wg, current_solution) \
-                + remove_nodes_(wg, current_solution);
+                res = label_propagation_accept_unchanged(wg, current_solution, i);
+                new_cost = current_cost + res.value_or(0);
+                if (res.has_value()) {
+                    tuple<int, int, int> move = current_solution.book.b_lp.next_move;
+                    current_solution.remove(get<0>(move), get<1>(move));
+                    if (get<2>(move) == -1) {
+                        set <int> new_set;
+                        new_set.insert(get<0>(move));
+                        current_solution.add_set(new_set);
+                    }
+                    else {
+                        current_solution.add(get<0>(move), get<2>(move));
+                    }
+                    current_cost = new_cost;
+                }
+            }
+
+            //current_cost += add_node_to_all(wg, current_solution) + label_propagation_round(wg, current_solution) \
+            //    + remove_nodes_(wg, current_solution);
             //cout << "After escape: \n";
             //cout << "Cost: " << current_cost << "\n";
             //current_solution.print_solution();
@@ -138,7 +156,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                 best_cost = current_cost;
                 best_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters()); 
             }
-            current_solution.book.operation_number += 1;
+            //current_solution.book.operation_number += 1;
             choices.push_back(operations);
             change_weights_count += 1;
 
@@ -163,8 +181,8 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                     max_score = operation_score[i];
                     max_ind = i;
                 }
-                if (operation_score[i] / total_score < 0.1) {
-                    give_points_to.push_back(pair<int, int>(i, floor(total_score * 0.1 - operation_score[i])));
+                if (operation_score[i] / total_score < 0.08) {
+                    give_points_to.push_back(pair<int, int>(i, floor(total_score * 0.08 - operation_score[i])));
                 }
             }
             for (pair<int, int> p : give_points_to) {
@@ -188,7 +206,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             }
         }
         //current_solution.print_solution();
-        int r = rand() % 100;
+        int r = get_random_int() % 100;
         //cout << "a\n";
         //cout << "r = " << r << "\n";
         
@@ -247,14 +265,26 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             new_cost = current_cost + res.value_or(0);
 
         }*/ 
-        else {//(r < c_weights[4]) {
+        else if (r < c_weights[4]) {
             choice = 4;
             res = label_propagation_accept_weighted_random(wg, current_solution);
             //cout << "res has value: " << res.has_value() << "\n";
             new_cost = current_cost + res.value_or(0);
-        } /**else {
+        } else if (r < c_weights[5]) {
             choice = 5;
-            res = fast_merge(wg, current_solution);
+            res = label_propagation_accept_unchanged(wg, current_solution, i);
+            new_cost = current_cost + res.value_or(0);
+        } else {//(r < c_weights[6]) {
+            choice = 6;
+            res = add_node_to_neighbours_accept_unchanged(wg, current_solution, i);
+            new_cost = current_cost + res.value_or(0);
+        } /**else  {
+            choice = 7;
+            res = remove_node_accept_unchanged(wg, current_solution, i);
+            new_cost = current_cost + res.value_or(0);
+        }*//**else {
+            choice = 5;
+             else  fast_merge(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
             current_solution.book.b_merge.last_merge_operation = i;
         }*/
@@ -291,11 +321,11 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             sum_delta += new_cost - current_cost;
             positive_delta_counter += 1;
         }
-        if (new_cost <= current_cost || rand() % 1000000 < find_prob_of_acceptance) {
+        if (new_cost <= current_cost || get_random_int() % 1000000 < find_prob_of_acceptance) {
             //if (new_cost > current_cost) cout << "find_prob_of_acceptance: " << find_prob_of_acceptance << "\n";
             if (new_cost < current_cost) operation_score[choice] += 1;
             if (new_cost < best_cost) operation_score[choice] += 1;
-            if (choice == 0) {
+            if (choice == 0 || choice == 6) {
                 chrono::steady_clock::time_point begin_3 = chrono::steady_clock::now();
                 if (res.has_value()) {
                     for (int s : current_solution.book.b_add_node.sets_to_change) {
@@ -334,7 +364,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                 chrono::steady_clock::time_point end_5 = chrono::steady_clock::now();
                 time_taken[operations+3] += chrono::duration_cast<chrono::microseconds>(end_5 - begin_5).count();
             }
-            else if (choice == 1 || choice == 4) {
+            else if (choice == 1 || choice == 4 || choice == 5) {
                 if (res.has_value()) {
                     tuple<int, int, int> move = current_solution.book.b_lp.next_move;
                     current_solution.remove(get<0>(move), get<1>(move));
@@ -348,7 +378,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                     }
                     current_cost = new_cost;
                 }   
-            } else if (choice == 2) {
+            } else if (choice == 2 || choice == 7) {
                 if (res.has_value()) {
                     for (int si : current_solution.book.b_add_node.sets_to_change) {
                         current_solution.remove(current_solution.book.b_add_node.v, si);
@@ -404,6 +434,11 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             last_iteration_of_best_solution = i;
             best_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
         }
+
+        //if (i > 500 && i % 1000 == 999) {
+        //    set<int> modified = current_solution.book.modified_clusters.query(i - 500, i);
+        //    cout << "Number of vertices changed in last 500 operations: " << modified.size() << "\n";
+        //}
         
         //if (!current_solution.simple_feasibility_check()) cout << "not feasible after operation " << choice << "\n";
         //if (i % 10 == 9) {
@@ -417,7 +452,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         current_solution.print_co_occurence();
         */
 
-        if (i % 500 == 499) { 
+        if (i % 1500 == 1499) { 
             cout << "Current cost: " << current_cost << "\n";
             //cout << "Current cost by cost function " << current_solution.cost_solution(g) << "\n";
             //current_solution.print_solution();
@@ -448,7 +483,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         
 
         //Makes the current number of operations executed available in all operations.
-        current_solution.book.operation_number += 1;
+        //current_solution.book.operation_number += 1;
         choices.push_back(choice);
         change_weights_count += 1; 
         if (i == num_operations - 1) {
@@ -606,6 +641,7 @@ LoggingSolution test_label_propagation(Graph &g, LoggingSolution &log_sol, int &
     optional<int> res;
 
     for (int i = 0; i < num_operations; i++) {
+        current_solution.book.operation_number = i;
         //cout << i << "\n";
         solution_cost_iteration.push_back(current_cost);
         //cout << "11\n";
@@ -658,7 +694,7 @@ LoggingSolution test_label_propagation(Graph &g, LoggingSolution &log_sol, int &
             find_prob_of_acceptance = 80;
         }
 
-        if (new_cost <= current_cost || rand() % 100 < find_prob_of_acceptance) {
+        if (new_cost <= current_cost || get_random_int() % 100 < find_prob_of_acceptance) {
             if (new_cost < current_cost) operation_score[choice] += 1;
             if (new_cost < best_cost) operation_score[choice] += 1;
             if (choice == 0) {
@@ -815,7 +851,6 @@ LoggingSolution test_label_propagation(Graph &g, LoggingSolution &log_sol, int &
         
 
         //Makes the current number of operations executed available in all operations.
-        current_solution.book.operation_number += 1;
         choices.push_back(choice);
         change_weights_count += 1; 
         if (i == num_operations - 1) {

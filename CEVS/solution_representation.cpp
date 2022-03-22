@@ -146,6 +146,7 @@ void SolutionRepresentation::add(int node, int si) {
     s.insert(si);
     node_in_clusters[node] = s;
     changed_set(si);
+    book.modified_vertices.update_time(node, book.operation_number);
 }
 
 //slow. Change?
@@ -156,6 +157,7 @@ void SolutionRepresentation::remove(int node, int si) {
     }
 
     changed_set(si);
+    book.modified_vertices.update_time(node, book.operation_number);
     set<int> s = clusters[si];
     if (s.size() > 1) {
         s.erase(node);
@@ -311,6 +313,8 @@ void SolutionRepresentation::add_set(set<int> s) {
         node_in_clusters[i].insert(biggest + 1);
     }
     changed_set(biggest + 1);
+    vector<int> update_vec; for (int node : s) update_vec.push_back(node);
+    book.modified_vertices.update_time(update_vec, book.operation_number);
 }
 
 
@@ -329,6 +333,8 @@ void SolutionRepresentation::add_set_ind(int si, set<int> s) {
 
     clusters[si] = s;
     changed_set(si);
+    vector<int> update_vec; for (int node : s) update_vec.push_back(node);
+    book.modified_vertices.update_time(update_vec, book.operation_number);
 }
 
 
@@ -353,6 +359,8 @@ void SolutionRepresentation::remove_set(int si) {
         node_in_clusters[i] = nic;
     }
     clusters.erase(si);
+    vector<int> update_vec; for (int node : s) update_vec.push_back(node);
+    book.modified_vertices.update_time(update_vec, book.operation_number);
 }
 
 

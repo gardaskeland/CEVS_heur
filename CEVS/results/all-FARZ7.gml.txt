@@ -1,0 +1,73 @@
+instance: ../../../FARZgraphs/FARZ7.gml
+nodes: 20
+edges: 79
+runs: 5
+operations per iteration: 80000
+best solution:
+[[0: 17, ], [1: 0, 4, 7, 8, 9, 10, 14, ], [2: 1, 2, 3, 7, 13, 14, ], [3: 1, 5, 8, 11, 12, 15, ], [4: 3, 4, 6, 7, 11, 13, ], [5: 2, 3, 6, 8, 9, 10, 12, ], [6: 16, ], [7: 18, ], [8: 19, ], ]
+cost of best solution: 31
+average cost of solutions: 31
+average last operation finding best solution: 845.8
+average runtime: 4.37501
+------------------
+average time of add_all_nodes_to_neighbours: 0.000100231
+average time of random_choice_split: 0
+average time of weighted_random_merge: 0
+average time of label_propagation_round 3.41136e-05
+average time of remove_nodes_ 4.28501e-05
+average time of add_node_to_all 0.00496047
+------------------
+average improvement of add_all_nodes_to_neighbours -0.0500143
+per second: -498.99
+average improvement of random_choice_split 0.123564
+per second: inf
+average improvement of weighted_random_merge -0.169846
+per second: -inf
+average improvement of label_propagation_round 0.0643811
+per second: 1887.26
+average improvement of remove_nodes_ 0.290919
+per second: 6789.22
+average improvement of add_node_to_all -0.450633
+per second: -90.8449
+all solutions:
+------------------
+iteration 0: [[0: 17, ], [1: 0, 4, 7, 8, 9, 10, 14, ], [2: 1, 2, 3, 7, 13, 14, ], [3: 1, 5, 8, 11, 12, 15, ], [4: 3, 4, 6, 7, 11, 13, ], [5: 2, 3, 6, 8, 9, 10, 12, ], [6: 16, ], [7: 18, ], [8: 19, ], ]
+edge deletions: 9
+edge additions: 6
+vertex splittings: 16
+cost of solution: 31
+time used on iteration: 3.95771
+best solution found at iteration 727
+------------------
+iteration 1: [[0: 1, 3, 5, 8, 11, 12, 15, ], [1: 0, 3, 4, 6, 7, 8, 9, 10, 14, ], [2: 4, 11, 13, ], [3: 1, 2, 3, 7, 13, 14, ], [4: 2, 6, 9, 12, ], [5: 19, ], [6: 18, ], [7: 16, ], [8: 17, ], ]
+edge deletions: 11
+edge additions: 7
+vertex splittings: 13
+cost of solution: 31
+time used on iteration: 4.07729
+best solution found at iteration 747
+------------------
+iteration 2: [[0: 3, 4, 6, 7, 11, 13, ], [1: 1, 5, 8, 11, 12, 15, ], [2: 0, 4, 7, 8, 9, 10, 14, ], [3: 2, 3, 6, 8, 9, 10, 12, ], [4: 7, 17, ], [5: 16, ], [6: 1, 2, 3, 7, 13, 14, ], [7: 18, ], [8: 19, ], ]
+edge deletions: 8
+edge additions: 6
+vertex splittings: 17
+cost of solution: 31
+time used on iteration: 4.55884
+best solution found at iteration 593
+------------------
+iteration 3: [[0: 0, 3, 4, 6, 7, 8, 9, 10, 14, ], [1: 1, 3, 5, 8, 11, 12, 15, ], [2: 1, 2, 3, 7, 13, 14, ], [3: 2, 6, 9, 12, ], [4: 19, ], [5: 7, 18, ], [6: 16, ], [7: 7, 17, ], ]
+edge deletions: 12
+edge additions: 7
+vertex splittings: 12
+cost of solution: 31
+time used on iteration: 4.53903
+best solution found at iteration 767
+------------------
+iteration 4: [[0: 0, 4, 7, 8, 9, 10, 14, ], [1: 2, 3, 6, 8, 9, 10, 12, ], [2: 1, 2, 3, 7, 13, 14, ], [3: 3, 4, 6, 7, 11, 13, ], [4: 1, 5, 8, 11, 12, 15, ], [5: 7, 17, ], [6: 16, ], [7: 7, 18, ], [8: 13, 19, ], ]
+edge deletions: 6
+edge additions: 6
+vertex splittings: 19
+cost of solution: 31
+time used on iteration: 4.74217
+best solution found at iteration 1395
+------------------

@@ -6,6 +6,7 @@
 #include "../utility/weighted_random.h"
 #include <set>
 #include <utility>
+#include <algorithm>
 #include <vector>
 #include <iostream>
 #include <limits>
@@ -97,6 +98,11 @@ int add_node_to_all(Graph &g, SolutionRepresentation &sol);
 optional<int> add_node_to_set(Graph &g, SolutionRepresentation &sol);
 
 /**
+ * Finds a set that has not been changed for a while and tries to add a vertex to it.
+ */
+optional<int> add_node_to_set_unchanged(Graph &g, SolutionRepresentation &sol);
+
+/**
  * Chooses a set with high relative out-degree and finds neighbour node of the set.
  * Returns the cost of adding the node to the set.
  */
@@ -129,6 +135,11 @@ int remove_nodes_(Graph &g, SolutionRepresentation &sol);
 optional<int> remove_node_accept(Graph &g, SolutionRepresentation &sol);
 
 /**
+ * Removes a node that have not been moved in a while.
+ */
+optional<int> remove_node_accept_unchanged(Graph &g, SolutionRepresentation &sol, int i);
+
+/**
  * @brief Adds u to all its neighbours if it results in cost reduction.
  * 
  * @param g 
@@ -155,6 +166,11 @@ int add_all_nodes_to_neighbours(Graph &g, SolutionRepresentation &sol);
  * @return optional<int> 
  */
 optional<int> add_node_to_neighbours_accept(Graph &g, SolutionRepresentation &sol);
+
+/**
+ * Like add_node_to_neighbours_accept, but chooses a random vertex that has not been moved for a while.
+ */
+optional<int> add_node_to_neighbours_accept_unchanged(Graph &g, SolutionRepresentation &sol, int i);
 
 /**
  * Checks all possibilities of adding k connected vertices to the set, where every vertex
