@@ -8,7 +8,7 @@ def integer_to_three_digits(i):
         return "0" + str(i)
     return str(i)
 ylimlist = [0, [0, 30], 0, [800, 1500], 0, [1300, 2500], 0, [2200, 4000], 0, [400, 700]]
-cdict = {0: "blue", 1: "lightblue", 2: "lightgreen", 3: "green", 4: "purple", 5: "pink"}
+cdict = {0: "blue", 1: "lightblue", 2: "lightgreen", 3: "green", 4: "purple", 5: "pink", 6: "red", 7: "brown"}
 for t in range(1, 10, 2):
     filename = "cost-heur" + integer_to_three_digits(t) + ".txt"
     f = open(filename, 'r')

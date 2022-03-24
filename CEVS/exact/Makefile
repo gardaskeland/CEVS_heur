@@ -1,4 +1,4 @@
-boiler=g++ -std=c++17 -c -g -O
+boiler=g++ -std=c++17 -c -O3
 
 exact: exact.o read_file.o graph.o solution_representation.o segment_tree.o
 	g++ -std=c++17 -g -o exact exact.o read_file.o graph.o solution_representation.o segment_tree.o

@@ -18,11 +18,12 @@ int weighted_random_index(int max_index, int length, double log_base) {
 }
 
 int get_random_int() {
-    random_device rd;
-    mt19937 gen(rd());
-    return gen();
+    //random_device rd;
+    //mt19937 gen(rd());
+    return rand();
 }
 
+/**
 int main() {
     vector<int> count(10, 0);
     for (int i = 0; i < 1000000; i++) {
@@ -34,4 +35,4 @@ int main() {
     for (int i = 0; i < 100; i++) {
         cout << get_random_int() << "\n";
     }
-}
+}*/

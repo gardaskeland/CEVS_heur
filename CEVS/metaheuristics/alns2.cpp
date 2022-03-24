@@ -310,14 +310,14 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         if (local_search) {
             find_prob_of_acceptance = -1;
         }
-        else if (i >= end_warmup || choice == 5) {
+        else if (i >= end_warmup) {
             find_prob_of_acceptance = 1000000 * exp(-(new_cost - current_cost)/t);
         } else {
             find_prob_of_acceptance = 800000;
         }
         
         //results of fast merge not counted here because of volatility.
-        if (new_cost > current_cost && choice != 5) {
+        if (new_cost > current_cost) {
             sum_delta += new_cost - current_cost;
             positive_delta_counter += 1;
         }

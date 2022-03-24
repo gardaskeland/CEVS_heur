@@ -1,26 +1,26 @@
 instance: ../../../heur/heur001.gr
 iterations: 5
-operations per iteration: 80000
+operations per iteration: 200000
 best solution:
 [[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 0, 6, 7, 8, 9, ], ]
 cost of best solution: 7
 average cost of solutions: 7
-average last operation finding best solution: 525.4
-average runtime: 0.211037
+average last operation finding best solution: 307
+average runtime: 0.374105
 ------------------
-average time of add_all_nodes_to_neighbours: 2.41751e-06
+average time of add_all_nodes_to_neighbours: 1.24084e-06
 average time of random_choice_split: 0
 average time of weighted_random_merge: 0
-average time of label_propagation_round 1.49976e-06
+average time of label_propagation_round 7.91696e-07
 ------------------
-average improvement of add_all_nodes_to_neighbours -0.0408308
-per second: -16889.6
-average improvement of random_choice_split 0.0650811
+average improvement of add_all_nodes_to_neighbours -0.0229251
+per second: -18475.5
+average improvement of random_choice_split 0.0405012
 per second: inf
-average improvement of weighted_random_merge -0.157981
+average improvement of weighted_random_merge -0.0944382
 per second: -inf
-average improvement of label_propagation_round 0.0495322
-per second: 33026.6
+average improvement of label_propagation_round 0.0264176
+per second: 33368.4
 all solutions:
 ------------------
 iteration 0: [[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 0, 6, 7, 8, 9, ], ]
@@ -28,7 +28,7 @@ edge deletions: 3
 edge additions: 2
 vertex splittings: 2
 cost of solution: 7
-time used on iteration: 0.231609
+time used on iteration: 0.33443
 best solution found at iteration 200
 ------------------
 iteration 1: [[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 0, 6, 7, 8, 9, ], ]
@@ -36,30 +36,30 @@ edge deletions: 3
 edge additions: 2
 vertex splittings: 2
 cost of solution: 7
-time used on iteration: 0.133452
-best solution found at iteration 533
+time used on iteration: 0.502882
+best solution found at iteration 230
 ------------------
 iteration 2: [[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 0, 6, 7, 8, 9, ], ]
 edge deletions: 3
 edge additions: 2
 vertex splittings: 2
 cost of solution: 7
-time used on iteration: 0.270093
-best solution found at iteration 526
+time used on iteration: 0.420399
+best solution found at iteration 283
 ------------------
-iteration 3: [[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 0, 6, 7, 8, 9, ], ]
+iteration 3: [[0: 0, 6, 7, 8, 9, ], [1: 0, 1, 2, 3, 4, 5, 9, ], ]
 edge deletions: 3
 edge additions: 2
 vertex splittings: 2
 cost of solution: 7
-time used on iteration: 0.214827
-best solution found at iteration 385
+time used on iteration: 0.299395
+best solution found at iteration 769
 ------------------
-iteration 4: [[0: 0, 1, 2, 3, 4, 5, 9, ], [1: 0, 6, 7, 8, 9, ], ]
+iteration 4: [[0: 0, 6, 7, 8, 9, ], [1: 0, 1, 2, 3, 4, 5, 9, ], ]
 edge deletions: 3
 edge additions: 2
 vertex splittings: 2
 cost of solution: 7
-time used on iteration: 0.205202
-best solution found at iteration 983
+time used on iteration: 0.313417
+best solution found at iteration 53
 ------------------

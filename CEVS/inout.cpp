@@ -83,7 +83,7 @@ void write_cost_dev_for_iterations(vector<LoggingSolution> &sol, string &filenam
 }
 
 void run_alns_on_heur_instances() {
-    int num_operations = 80000;
+    int num_operations = 200000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
     for (int i = 1; i < 10; i = i + 2) {
         ostringstream oss;
