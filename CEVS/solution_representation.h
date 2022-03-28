@@ -10,6 +10,7 @@
 #include "bookkeep/bookkeep.h"
 #include "utility/segment_tree.h"
 #include "utility/shallow_solution.h"
+#include "utility/gard_random.h"
 #include <map>
 #include <set>
 #include <vector>
@@ -20,7 +21,8 @@ using namespace std;
 
 class SolutionRepresentation
 {
-    public: 
+    public:
+        GardRandom ra;
         int number_nodes;
         // Enumerated sets of nodes corresponding to clusters
         map<int, set<int>> clusters;
@@ -40,6 +42,7 @@ class SolutionRepresentation
         for (int i = 0; i < number_nodes; i++) {
             to_permute.push_back(i);
         }
+        ra = GardRandom();
     }
 
     /**
@@ -59,6 +62,7 @@ class SolutionRepresentation
             to_permute.push_back(i);
             co_occurence.emplace_back(map<int, int>());
         }
+        ra = GardRandom();
     }
 
     /**

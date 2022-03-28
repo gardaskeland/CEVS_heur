@@ -59,6 +59,17 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
 
     optional<int> res;
 
+    /**
+    //test ra
+    vector<int> vec(100, 0);
+    for (int x = 0; x < 1000000; x++) {
+        int a = current_solution.ra.get_random_int() % 100;
+        //cout << a << "\n";
+        vec[current_solution.ra.get_random_int() % 100] += 1;
+    }
+    for (int x : vec) cout << x << " "; 
+    cout << "\n";*/
+
     for (int i = 0; i < num_operations; i++) {
         escape_counter += 1;
         current_solution.book.operation_number = i;
@@ -206,7 +217,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             }
         }
         //current_solution.print_solution();
-        int r = get_random_int() % 100;
+        int r = current_solution.ra.get_random_int() % 100;
         //cout << "a\n";
         //cout << "r = " << r << "\n";
         
@@ -321,7 +332,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             sum_delta += new_cost - current_cost;
             positive_delta_counter += 1;
         }
-        if (new_cost <= current_cost || get_random_int() % 1000000 < find_prob_of_acceptance) {
+        if (new_cost <= current_cost || current_solution.ra.get_random_int() % 1000000 < find_prob_of_acceptance) {
             //if (new_cost > current_cost) cout << "find_prob_of_acceptance: " << find_prob_of_acceptance << "\n";
             if (new_cost < current_cost) operation_score[choice] += 1;
             if (new_cost < best_cost) operation_score[choice] += 1;
@@ -694,7 +705,7 @@ LoggingSolution test_label_propagation(Graph &g, LoggingSolution &log_sol, int &
             find_prob_of_acceptance = 80;
         }
 
-        if (new_cost <= current_cost || get_random_int() % 100 < find_prob_of_acceptance) {
+        if (new_cost <= current_cost || current_solution.ra.get_random_int() % 100 < find_prob_of_acceptance) {
             if (new_cost < current_cost) operation_score[choice] += 1;
             if (new_cost < best_cost) operation_score[choice] += 1;
             if (choice == 0) {

@@ -6,13 +6,13 @@ cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		b_merge.o shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
 		label_propagation.o perturbation.o alns.o logging_solution.o inout.o alns2.o \
-		b_perturbation.o
+		b_perturbation.o gard_random.o
 	g++ -std=c++17 -g -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o b_merge.o \
 		shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
 		label_propagation.o perturbation.o alns.o logging_solution.o inout.o alns2.o \
-		b_perturbation.o
+		b_perturbation.o gard_random.o
 
 main.o: main.cpp
 	$(boiler) main.cpp
@@ -91,6 +91,9 @@ alns2.o: metaheuristics/alns2.cpp metaheuristics/alns2.h
 
 logging_solution.o: utility/logging_solution.cpp utility/logging_solution.h
 	$(boiler) utility/logging_solution.cpp
+
+gard_random.o: utility/gard_random.cpp utility/gard_random.h
+	$(boiler) utility/gard_random.cpp
 
 clean:
 	rm *.o cevs

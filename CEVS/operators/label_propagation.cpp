@@ -21,8 +21,8 @@ int label_propagation_round(Graph &g, SolutionRepresentation &sol) {
     int sol_diff = 0;
     //Shuffle from: https://en.cppreference.com/w/cpp/algorithm/random_shuffle 13.01.2021
     std::random_device rd;
-    std::mt19937 gr(rd());
-    shuffle(to_permute.begin(), to_permute.end(), gr);
+    std::mt19937 mt(rd());
+    shuffle(to_permute.begin(), to_permute.end(), mt);
     for (int u : to_permute) {
         int vertex_cost = 0;
         set<int> set_with_u = sol.get_node_to_clusters(u);
@@ -301,7 +301,7 @@ optional<int> label_propagation_accept_weighted_random(Graph &g, SolutionReprese
     //}
     //cout << "\n";
     if (best_moves.empty()) return optional<int>();
-    int r = weighted_random_index(5, best_moves.size(), 2);
+    int r = sol.ra.weighted_random_index(5, best_moves.size(), 2);
     temp = best_moves[r];
     if (!temp.has_value()) return {};
     sol.book.b_lp.next_move = tri(op.second, get<1>(temp.value()), get<2>(temp.value()));
@@ -315,12 +315,14 @@ optional<int> label_propagation_accept_unchanged(Graph &g, SolutionRepresentatio
     }
     //i - 1 since we want one vertex to be moved several times in escape sequence
     set<int> recently_moved = sol.book.modified_vertices.query(max(0, i - 500), max(0, i - 1));
+    //for (int p : recently_moved) cout << p << " ";
+    //cout << "\n";
     vector<int> choices;
     for (int j = 0; j < g.n; j++) {
         if (!(recently_moved.find(j) != recently_moved.end())) choices.push_back(j);
     }
     if (choices.empty()) return {};
-    int v = choices[get_random_int() % choices.size()];
+    int v = choices[sol.ra.get_random_int() % choices.size()];
     optional<tri> temp = find_best_move(g, sol, v);
     if (!temp.has_value()) return {};
     sol.book.b_lp.next_move = tri(v, get<0>(temp.value()), get<1>(temp.value()));

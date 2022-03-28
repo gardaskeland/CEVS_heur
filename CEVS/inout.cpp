@@ -83,7 +83,7 @@ void write_cost_dev_for_iterations(vector<LoggingSolution> &sol, string &filenam
 }
 
 void run_alns_on_heur_instances() {
-    int num_operations = 200000;
+    int num_operations = 80000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
     for (int i = 1; i < 10; i = i + 2) {
         ostringstream oss;
@@ -589,11 +589,11 @@ SolutionRepresentation calculate_and_print_sol(LoggingSolution &sol, Graph &g, i
 
 void run_alns_on_gml() {
     ostringstream str;
-    vector<int> v = {2, 5, 10, 20, 30, 40, 50, 60, 70, 80};
+    vector<int> v = {2, 6, 10, 14, 18, 22, 26, 30};
     for (int i : v) {
         str.clear();
         str.str(string());
-        str << "../../../FARZgraphs/FARZ_100_" << i << ".gml";
+        str << "../../../FARZgraphs/FARZ_60_" << i << ".gml";
         string filename = str.str();
         vector<vector<int>> adj = read_gml(filename);
 

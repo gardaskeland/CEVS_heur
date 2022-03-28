@@ -175,7 +175,7 @@ void do_revert_add_node(SolutionRepresentation &sol, Bookkeep &book) {
 
 optional<int> random_choice_add_node(Graph &g, SolutionRepresentation &sol) {
     vector<int> set_indices = sol.get_set_indices();
-    int si = set_indices[get_random_int() % set_indices.size()];
+    int si = set_indices[sol.ra.get_random_int() % set_indices.size()];
     vector<pair<int, int>> best_nodes = best_nodes_to_add(g, sol, si);
     if (best_nodes.size() == 0) {
         sol.book.b_add_node.v = -1;
@@ -275,7 +275,7 @@ optional<int> add_node_to_set_unchanged(Graph &g, SolutionRepresentation &sol) {
         if (!(changed.find(si) != changed.end())) choices.push_back(si);
     }
     if (choices.empty()) return {};
-    int si = choices[get_random_int() % choices.size()];
+    int si = choices[sol.ra.get_random_int() % choices.size()];
     int best_node = -1;
     int best_cost = pow(2, 16) - 1;
     int cost;
@@ -389,7 +389,7 @@ optional<int> add_node_to_neighbours_accept_unchanged(Graph &g, SolutionRepresen
         if (!(changed_nodes.find(j) != changed_nodes.end())) unchanged.push_back(j);
     }
     if(unchanged.empty()) return {};
-    int u = unchanged[get_random_int() % unchanged.size()];
+    int u = unchanged[sol.ra.get_random_int() % unchanged.size()];
     tuple<int, vector<int>> result = add_node_to_all_neighbours_accept(g, sol, u);
     if (get<1>(result).empty()) return {};
     sol.book.b_add_node.v = u;
@@ -581,7 +581,7 @@ optional<int> remove_node_accept_unchanged(Graph &g, SolutionRepresentation &sol
         if (!(changed.find(j) != changed.end())) unchanged.push_back(j); 
     }
     if (unchanged.empty()) return {};
-    int u = unchanged[rand() % unchanged.size()];
+    int u = unchanged[sol.ra.get_random_int() % unchanged.size()];
 
     BAddNode &b = sol.book.b_add_node;
     pair<int, vector<int>> result = cost_of_remove_node(g, sol, u);
@@ -670,7 +670,7 @@ optional<int> add_k_to_set(Graph &g, SolutionRepresentation &sol, int si, int k)
 
     sort(cost_alt.begin(), cost_alt.end(), cmp_ascending_cost<vector<int>>());
 
-    int r = weighted_random_index(5, cost_alt.size(), 3);
+    int r = sol.ra.weighted_random_index(5, cost_alt.size(), 3);
     sol.book.b_add_node.add_to_set = cost_alt[r].second;
     sol.book.b_add_node.si = si;
     return optional<int>(cost_alt[r].first);
@@ -690,7 +690,7 @@ optional<int> add_k_to_a_set(Graph &g, SolutionRepresentation &sol, int k) {
 
     sort(alternatives.begin(), alternatives.end(), cmp_ascending_cost<pair<int, vector<int>>>());
 
-    int r = weighted_random_index(5, alternatives.size(), 3);
+    int r = sol.ra.weighted_random_index(5, alternatives.size(), 3);
 
     sol.book.b_add_node.si = alternatives[r].second.first;
     sol.book.b_add_node.add_to_set = alternatives[r].second.second;
