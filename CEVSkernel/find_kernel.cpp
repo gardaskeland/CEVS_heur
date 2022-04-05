@@ -192,26 +192,122 @@ bool is_cluster(Graph &g, set<int> &nodes) {
     } return true;
 }
 
+/**
+ * Reduction explained: There is an optimal solution with pendant vertices in a cost by itself unless
+ * the following occurs for the pendant vertices: Its neighbour also has degree 1 (component is K_2), or
+ * its neighbour has only one other neighbour that also is a pendant vertex (best to add edge between
+ * pendant vertices). This reduction may cause the cost found by using the heuristic on a critical clique
+ * graph to not be accurate (may want to add this to the cost in alns2).
+ */
+Graph pendant_vertex_reduction(Graph &g, RevertKernel &revert) {
+    vector<bool> remove_vertex(g.n, false);
+    //can add sets we remove to isolated_cc.
+    int count_neighbours, u, count;
+    int found = true; //true if we keep finding pendant vertices
+    int cost = 0;
+    int vertices_removed = 0;
+    while(found) {
+        found = false;
+        for (u = 0; u < g.n; u++) {
+            if (remove_vertex[u]) continue;
+            count_neighbours = 0;
+            for (int v : g.adj[u]) {
+                if (!remove_vertex[v]) count_neighbours += 1;
+            }
+            if (count_neighbours == 0) {
+                remove_vertex[u] = true; 
+                vertices_removed++;
+                set<int> to_insert = {u};
+                revert.removed_sets.push_back(to_insert);
+                found = true;
+            }
+            if (count_neighbours == 1) {
+                found = true;
+                //not counted as neighbour of v 
+                remove_vertex[u] = true; 
+                count = 0;
+                while(remove_vertex[g.adj[u][count]]) count++;
+                int v = g.adj[u][count];
+                count_neighbours = 0;
+                int w;
+                for (int x : g.adj[v]) {
+                    if (remove_vertex[x]) continue;
+                    count_neighbours++;
+                    w = x;
+                }
+                
+                //We remove K_2 of u and v from the graph
+                if (count_neighbours == 0) {
+                    set<int> to_insert = {u, v};
+                    remove_vertex[v] = true;
+                    revert.removed_sets.push_back(to_insert);
+                    vertices_removed += 2;
+                }
+                //We remove isolated p3 u, v, w from graph
+                else if (count_neighbours == 1) {
+                    set<int> to_insert = {u, v, w};
+                    remove_vertex[v] = true; remove_vertex[w] = true;
+                    revert.removed_sets.push_back(to_insert);
+                    vertices_removed += 3; cost += 1; // add edge between u and w.
+                }
+                //we simply remove u.
+                else {
+                    set<int> to_insert = {u};
+                    revert.removed_sets.push_back(to_insert);
+                    vertices_removed += 1; cost += 1; // remove edge of u
+                }
+            }
+        }
+    }
+    //return modified graph
+    map<int, int> relabelling;
+    map<int, int> reverse_relabelling;
+    count = 0;
+    for(int u = 0; u < g.n; u++) {
+        if (remove_vertex[u]) continue;
+        relabelling[u] = count;
+        reverse_relabelling[count++] = u;
+    }
+
+    revert.reverse_pedant_reduction_indices = reverse_relabelling;
+
+    vector<vector<int>> new_adj_list;
+    vector<int> to_relabel;
+    for (int u = 0; u < g.n; u++) {
+        if (remove_vertex[u]) continue;
+        to_relabel = g.adj[u];
+        for (int i = 0; i < to_relabel.size(); i++) {
+            to_relabel[i] = relabelling[to_relabel[i]];
+        }
+        new_adj_list.push_back(to_relabel);
+    }
+    Graph g_(new_adj_list);
+    return g_;
+}
+
 
 WeightedGraph find_critical_clique_graph(Graph &g, RevertKernel &revert) {
+    //To do the reduction: Make a new graph 'g, store removed sets/vertices in isolated_cc.
     //probably a lot slower than is possible
-    vector<vector<set<int>>> hashed_cc = find_hashed_cc(g, 1000000);
+
+    Graph g_ = pendant_vertex_reduction(g, revert);
+    vector<vector<set<int>>> hashed_cc = find_hashed_cc(g_, 1000000);
     //cout << "ok";
-    vector<set<int>> connected_components = find_connected_components(g);
+    vector<set<int>> connected_components = find_connected_components(g_);
     //cout << "ok";
     int hashed;
     int to_remove;
     int fetch;
     int index;
     for (set<int> comp : connected_components) {
-        if (!is_cluster(g, comp)) continue;
+        if (!is_cluster(g_, comp)) continue;
         //cout << "ok1";
         hashed = sum_hash(comp, 1000000);
         index = 0;
         to_remove = -1;
         for (set<int> cc : hashed_cc[hashed]) {
             fetch = *cc.begin();
-            set<int> closed_neighbourhood = find_closed_neighbourhood(g, fetch);
+            set<int> closed_neighbourhood = find_closed_neighbourhood(g_, fetch);
             if (compare_neighbourhoods(comp, closed_neighbourhood)) {
                 to_remove = index;
                 break;
@@ -223,6 +319,7 @@ WeightedGraph find_critical_clique_graph(Graph &g, RevertKernel &revert) {
             hashed_cc[hashed].erase(hashed_cc[hashed].begin() + index);
         }
     }
+    //Can add a function here to remove vertices of degree 1 / isolated P3's and put them in isolated_cc. NO! Need to do it in create_kernel_graph
     //cout << "ok2";
 
     vector<set<int>> remaining;
@@ -236,13 +333,26 @@ WeightedGraph find_critical_clique_graph(Graph &g, RevertKernel &revert) {
     //cout << "ok3";
 
     revert.other_cc = remaining;
-    WeightedGraph wg = create_kernel_graph(g, revert, remaining);
+    WeightedGraph wg = create_kernel_graph(g_, revert, remaining);
     //cout << "ok4";
     return wg;
 }
     //For each remaining cc, give a node in the new graph. Index from nodes in G to
     //nodes in G'.
     //If there is an edge uv in E(G), add edge C(U) to C(V) in E(G').
+
+
+map<int, set<int>> relabel_map_of_sets(map<int, set<int>> &ma, RevertKernel &revert) {
+    map<int, set<int>> new_ma;
+    map<int, int> &relabelling = revert.reverse_pedant_reduction_indices;
+    set<int> new_set;
+    for (auto it = ma.begin(); it != ma.end(); it++) {
+        for (int i : it-> second) new_set.insert(relabelling[i]);
+        new_ma[relabelling[it->first]] = new_set;
+        new_set.clear();
+    }
+    return new_ma;
+}
 
 ShallowSolution from_cc_sol_to_sol(Graph &g, ShallowSolution &sol, RevertKernel &revert) {
     ShallowSolution to_return;
@@ -273,5 +383,14 @@ ShallowSolution from_cc_sol_to_sol(Graph &g, ShallowSolution &sol, RevertKernel 
     for (int i = 0; i < node_to_cluster.size(); i++) {
         to_return.node_in_clusters[i] = node_to_cluster[i];
     }
+    
+    //Relabels and inserts removed sets to revert the pendant vertex reduction
+    to_return.clusters = relabel_map_of_sets(to_return.clusters, revert);
+    to_return.node_in_clusters = relabel_map_of_sets(to_return.node_in_clusters, revert);
+
+    for (set<int> s : revert.removed_from_cc) {
+
+    }
+
     return to_return;
 }

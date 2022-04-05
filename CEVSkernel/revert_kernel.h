@@ -25,6 +25,16 @@ class RevertKernel {
     //Stores the number of edges in the reduced graph returned.
     int num_edges;
 
+    int pendant_vertices_removed;
+
+    int cost_removing_pendant_vertices;
+
+    //ontains the indices from reduced graph to the original graph
+    map<int, int> reverse_pedant_reduction_indices;
+
+    //Sets removed by pendant vertex reduction.
+    vector<set<int>> removed_sets;
+
     //All isolated critical cliques removed by the kernel algorithm.
     vector<set<int>> isolated_cc;
 
