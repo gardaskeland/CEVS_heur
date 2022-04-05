@@ -221,8 +221,7 @@ Graph pendant_vertex_reduction(Graph &g, RevertKernel &revert) {
                 revert.removed_sets.push_back(to_insert);
                 found = true;
             }
-            if (count_neighbours == 1) {
-                found = true;
+            else if (count_neighbours == 1) {
                 //not counted as neighbour of v 
                 remove_vertex[u] = true; 
                 count = 0;
@@ -242,23 +241,66 @@ Graph pendant_vertex_reduction(Graph &g, RevertKernel &revert) {
                     remove_vertex[v] = true;
                     revert.removed_sets.push_back(to_insert);
                     vertices_removed += 2;
+                    found = true;
                 }
                 //We remove isolated p3 u, v, w from graph
                 else if (count_neighbours == 1) {
-                    set<int> to_insert = {u, v, w};
-                    remove_vertex[v] = true; remove_vertex[w] = true;
-                    revert.removed_sets.push_back(to_insert);
-                    vertices_removed += 3; cost += 1; // add edge between u and w.
+                    count_neighbours = 0;
+                    remove_vertex[v] = true; 
+                    for (int x : g.adj[w]) {
+                        if (!remove_vertex[x]) count_neighbours++;
+                    }
+                    if (count_neighbours == 0) {
+                        set<int> to_insert = {u, v, w};
+                        remove_vertex[w] = true;
+                        revert.removed_sets.push_back(to_insert);
+                        vertices_removed += 3; cost += 1; // add edge between u and w.
+                    } else {
+                        set<int> to_insert = {u, v};
+                        revert.removed_sets.push_back(to_insert);
+                        vertices_removed += 2; cost += 1;
+                    }
+                    found = true;
                 }
-                //we simply remove u.
                 else {
-                    set<int> to_insert = {u};
-                    revert.removed_sets.push_back(to_insert);
-                    vertices_removed += 1; cost += 1; // remove edge of u
+                    //check if another vertex than u is pendant. If not, we remove u.
+                    bool other_pendant = false;
+                    vector<int> other_pendants;
+                    for (int x : g.adj[v]) {
+                        if (remove_vertex[x]) continue;
+                        count = 0;
+                        for(int y : g.adj[x]) {
+                            if (remove_vertex[x]) continue;
+                            count++;
+                        }
+                        //if v is the only neighbour of x
+                        if (count == 1) {
+                            other_pendant = true;
+                            other_pendants.push_back(x);
+                            break;
+                        }
+                    }
+                    if (!other_pendant) {
+                        cout << "!!!" << u << "\n";
+                        set<int> to_insert = {u, v};
+                        revert.removed_sets.push_back(to_insert);
+                        vertices_removed += 1; cost += 1; // remove edge of u
+                        found = true;
+                    }
+                    else {
+                        w = other_pendants[0];
+                        remove_vertex[w] = true; //remove_vertex[v] = false since v is still in graph
+                        set<int> to_insert = {u, v, w};
+                        revert.removed_sets.push_back(to_insert);
+                        vertices_removed += 2; cost += 2; //edge addition, split of v
+                        found = true;
+                    }
                 }
             }
         }
     }
+    revert.cost_removing_pendant_vertices = cost;
+    revert.pendant_vertices_removed = vertices_removed;
     //return modified graph
     map<int, int> relabelling;
     map<int, int> reverse_relabelling;
@@ -273,15 +315,25 @@ Graph pendant_vertex_reduction(Graph &g, RevertKernel &revert) {
 
     vector<vector<int>> new_adj_list;
     vector<int> to_relabel;
+    vector<int> new_vec;
     for (int u = 0; u < g.n; u++) {
         if (remove_vertex[u]) continue;
         to_relabel = g.adj[u];
+        new_vec = vector<int>();
         for (int i = 0; i < to_relabel.size(); i++) {
-            to_relabel[i] = relabelling[to_relabel[i]];
+            if (remove_vertex[to_relabel[i]]) continue;
+            new_vec.push_back(relabelling[to_relabel[i]]);
         }
-        new_adj_list.push_back(to_relabel);
+        new_adj_list.push_back(new_vec);
     }
     Graph g_(new_adj_list);
+
+    cout << "Removed vertices:\n";
+    for (u = 0; u < g.n; u++) {
+        if (remove_vertex[u]) cout << u << " ";
+    }
+    cout << "\n";
+
     return g_;
 }
 
@@ -342,14 +394,26 @@ WeightedGraph find_critical_clique_graph(Graph &g, RevertKernel &revert) {
     //If there is an edge uv in E(G), add edge C(U) to C(V) in E(G').
 
 
-map<int, set<int>> relabel_map_of_sets(map<int, set<int>> &ma, RevertKernel &revert) {
+map<int, set<int>> relabel_clusters(map<int, set<int>> &ma, RevertKernel &revert) {
     map<int, set<int>> new_ma;
     map<int, int> &relabelling = revert.reverse_pedant_reduction_indices;
     set<int> new_set;
     for (auto it = ma.begin(); it != ma.end(); it++) {
+        new_set = set<int>();
         for (int i : it-> second) new_set.insert(relabelling[i]);
-        new_ma[relabelling[it->first]] = new_set;
-        new_set.clear();
+        new_ma[it->first] = move(new_set);
+    }
+    return new_ma;
+}
+
+map<int, set<int>> relabel_node_in_clusters(map<int, set<int>> &ma, RevertKernel &revert) {
+    map<int, set<int>> new_ma;
+    map<int, int> &relabelling = revert.reverse_pedant_reduction_indices;
+    set<int> new_set;
+    for (auto it = ma.begin(); it != ma.end(); it++) {
+        new_set = set<int>();
+        for (int i : it-> second) new_set.insert(i);
+        new_ma[relabelling[it->first]] = move(new_set);
     }
     return new_ma;
 }
@@ -385,11 +449,21 @@ ShallowSolution from_cc_sol_to_sol(Graph &g, ShallowSolution &sol, RevertKernel 
     }
     
     //Relabels and inserts removed sets to revert the pendant vertex reduction
-    to_return.clusters = relabel_map_of_sets(to_return.clusters, revert);
-    to_return.node_in_clusters = relabel_map_of_sets(to_return.node_in_clusters, revert);
-
-    for (set<int> s : revert.removed_from_cc) {
-
+    to_return.clusters = relabel_clusters(to_return.clusters, revert);
+    to_return.node_in_clusters = relabel_node_in_clusters(to_return.node_in_clusters, revert);
+    
+    //Reinserts the removed sets into the solution
+    for (set<int> s : revert.removed_sets) {
+        to_return.clusters[counter] = s;
+        for (int i : s) {
+            if (to_return.node_in_clusters.find(i) != to_return.node_in_clusters.end()) {
+                to_return.node_in_clusters[i].insert(counter);
+            } else {
+                to_return.node_in_clusters[i] = set<int>();
+                to_return.node_in_clusters[i].insert(counter);
+            }
+        }
+        counter++;
     }
 
     return to_return;

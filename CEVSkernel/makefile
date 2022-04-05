@@ -1,5 +1,5 @@
-kernel: main.o find_kernel.o read_file.o weighted_graph.o graph.o
-	g++ -g -o kernel main.o find_kernel.o read_file.o weighted_graph.o graph.o
+kernel: main.o find_kernel.o read_file.o weighted_graph.o graph.o shallow_solution.o
+	g++ -g -o kernel main.o find_kernel.o read_file.o weighted_graph.o graph.o shallow_solution.o
 
 main.o: main.cpp find_kernel.h 
 	g++ -c -g main.cpp
@@ -15,6 +15,9 @@ weighted_graph.o: ../CEVS/weighted_graph.cpp ../CEVS/weighted_graph.h
 
 graph.o: ../CEVS/graph.cpp ../CEVS/graph.h
 	g++ -c -g ../CEVS/graph.cpp
+
+shallow_solution.o: ../CEVS/utility/shallow_solution.cpp ../CEVS/utility/shallow_solution.h
+	g++ -c -g ../CEVS/utility/shallow_solution.cpp
 
 clean:
 	rm *.o kernel

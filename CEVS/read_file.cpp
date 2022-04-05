@@ -2,7 +2,7 @@
 #include "read_file.h"
 
 
-vector<vector<int>> read_gz_file(string &s) {
+vector<vector<int>> read_gz_file(string s) {
     ifstream myfile(s);
     string line;
     getline(myfile, line);

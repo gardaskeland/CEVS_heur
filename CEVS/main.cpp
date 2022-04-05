@@ -1,6 +1,7 @@
 #include "inout.h"
 #include "utility/gard_random.h"
 #include <vector>
+#include <string>
 using namespace std;
 
 int main() {

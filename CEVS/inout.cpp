@@ -141,8 +141,8 @@ void run_alns_on_heur_instances() {
             cout << "Cost of solution: " << cost << "\n";
             cout << "Number of splitting operations: " << calculate_sol.num_splits() << "\n";
             remove_nodes_(g, calculate_sol);
-            cout << "Aft cer using remove nodes: " << "\n";
-            calculate_sol.print_solution();
+            //cout << "Aft cer using remove nodes: " << "\n";
+            //calculate_sol.print_solution();
             cout << "Solution feasible: " << calculate_sol.simple_feasibility_check() << "\n";
             cout << "Cost of solution: " << calculate_sol.cost_solution(g) << "\n";
             cout << "Number of splitting operations: " << calculate_sol.num_splits() << "\n";
@@ -589,7 +589,7 @@ SolutionRepresentation calculate_and_print_sol(LoggingSolution &sol, Graph &g, i
 
 void run_alns_on_gml() {
     ostringstream str;
-    vector<int> v = {2, 6, 10, 14, 18, 22, 26, 30};
+    vector<int> v = {14};//{2, 6, 10, 14, 18, 22, 26, 30};
     for (int i : v) {
         str.clear();
         str.str(string());
@@ -598,17 +598,25 @@ void run_alns_on_gml() {
         vector<vector<int>> adj = read_gml(filename);
 
         Graph g(adj);
+        cout << "Graph: \n";
+        int counter = 0;
+        for (vector<int> v : g.adj) {
+            cout << counter << ": ";
+            for (int u : v) cout << u << " ";
+            cout << "\n";
+            counter++;
+        }
         run_alns_on_single_instance(filename, g, 5, 80000);
     }
 }
 
 void run_operation() {
-    string filename = "../../../FARZgraphs/FARZ_500_edges_100.gml";
-    vector<vector<int>> adj = read_gml(filename);
+    string filename = "../CEVStest/test_graphs/g12.txt";
+    vector<vector<int>> adj = read_gz_file(filename);
     Graph g(adj);
     LoggingSolution log_sol;
     int num_operations = 5000;
-    alns2(g, log_sol, num_operations);
+    alns2_no_cc(g, log_sol, num_operations);
 
     SolutionRepresentation calculate_sol(g.n, num_operations);
     map<int, set<int>> clusters = log_sol.clusters;

@@ -5,7 +5,6 @@
 #include "test_ops/test_add_node.h"
 #include "test_other/test_segment_tree.h"
 #include "test_kernel/test_kernel.h"
-#include "test_other/test_karger.h"
 
 using namespace std;
 
@@ -14,10 +13,11 @@ using namespace std;
  */
 int main() {
     cout << "Running tests\n";
-    run_tests_solution_representation();
-    run_tests_greedy_merge();
-    run_tests_add_node();
-    run_tests_segment_tree();
-    run_tests_karger();
+    //run_tests_solution_representation();
+    //run_tests_greedy_merge();
+    //run_tests_add_node();
+    //run_tests_segment_tree();
+    //run_tests_karger();
+    run_tests_kernel();
     cout << "Tests finished";
 }

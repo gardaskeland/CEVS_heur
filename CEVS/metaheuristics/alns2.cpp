@@ -7,7 +7,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     current_solution.initial_solution(wg.n);
     ShallowSolution best_solution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
     ShallowSolution last_solution;
-    int current_cost = current_solution.cost_solution(wg);
+    int current_cost = current_solution.cost_solution(wg) + revert.cost_removing_pendant_vertices;
     cout << "cost of initial solution: " << current_cost << "\n";
     int best_cost = current_cost;
 
@@ -49,7 +49,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     double find_prob_of_acceptance;
     int positive_delta_counter = 0;
     int sum_delta = 0;
-    int end_warmup = 1000;
+    int end_warmup = 3000;
 
     int escape_counter = 0;
     const int escape_threshold = 1000;
@@ -464,7 +464,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
         */
 
         if (i % 1500 == 1499) { 
-            cout << "Current cost: " << current_cost << "\n";
+            //cout << "Current cost: " << current_cost << "\n";
             //cout << "Current cost by cost function " << current_solution.cost_solution(g) << "\n";
             //current_solution.print_solution();
         }

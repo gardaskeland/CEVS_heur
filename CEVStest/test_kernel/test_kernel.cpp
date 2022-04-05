@@ -5,7 +5,8 @@
 //So far only uses the methods of the kernel to find a smaller graph.
 void test_kernel() {
     //Graph from "A more effective kernelization for cluster editing" by Jiong Guo, Elsevier, 2008.
-    vector<vector<int>> adj = read_gz_file("../CEVStest/test_graphs/g7.txt");
+    string filename = "../CEVStest/test_graphs/g7.txt";
+    vector<vector<int>> adj = read_gz_file(filename);
     Graph g = Graph(adj);
     RevertKernel revert;
     int k = 100;
@@ -24,7 +25,8 @@ void test_kernel() {
     if (wg.n != 7) {
         cout << "FAIL test_kernel: The number of nodes in kernel of g7 is wrong: " << wg.n << "\n";
     }
-    adj = read_gz_file("../CEVStest/test_graphs/g8.txt");
+    filename = "../CEVStest/test_graphs/g8.txt";
+    adj = read_gz_file(filename);
     g = Graph(adj);
     RevertKernel revert2;
     k = 100;

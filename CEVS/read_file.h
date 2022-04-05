@@ -13,7 +13,7 @@
 
 using namespace std;
 
-vector<vector<int>> read_gz_file(string &filename);
+vector<vector<int>> read_gz_file(string filename);
 
 /**
  * Returns adjacency list of an undirected graph given by edges in a csv-file.

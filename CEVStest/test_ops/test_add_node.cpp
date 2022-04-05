@@ -32,10 +32,12 @@ void test_relative_out_degree() {
 }
 
 void test_highest_relative_out_degree() {
-    vector<vector<int>> adj = read_gz_file("../CEVStest/test_graphs/g5.txt");
+    string filename = "../CEVStest/test_graphs/g5.txt";
+    vector<vector<int>> adj = read_gz_file(filename);
     Graph g = Graph(adj);
 
-    SolutionRepresentation sr = read_sol_file("test_sol_rep/g5_sol_1.txt");
+    filename = "test_sol_rep/g5_sol_1.txt";
+    SolutionRepresentation sr = read_sol_file(filename);
 
     double res_ = highest_relative_out_degree(g, sr);
     if (res_ != 4) {
@@ -44,10 +46,12 @@ void test_highest_relative_out_degree() {
 }
 
 void test_best_nodes_to_add() {
-    vector<vector<int>> adj = read_gz_file("../CEVStest/test_graphs/g6.txt");
+    string filename = "../CEVStest/test_graphs/g6.txt";
+    vector<vector<int>> adj = read_gz_file(filename);
     Graph g = Graph(adj);
 
-    SolutionRepresentation sr = read_sol_file("test_sol_rep/g6_sol_1.txt");
+    filename = "test_sol_rep/g6_sol_1.txt";
+    SolutionRepresentation sr = read_sol_file(filename);
 
     vector<pair<int, int>> best_nodes = best_nodes_to_add(g, sr, 1);
     int res = best_nodes.begin()->second;
