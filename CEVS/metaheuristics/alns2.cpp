@@ -353,7 +353,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                 //current_solution.print_solution();
                 if (res.has_value()) {
                     //cout << "set to split: " << current_solution.book.b_split.si << "\n";
-                    do_split(current_solution);
+                    //do_split(current_solution);
                     current_cost = new_cost;
                 }
                 //cout << "After split:  \n";
@@ -412,7 +412,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                 }
             } else if (choice == 5) {
                 if (res.has_value()) {
-                    do_merge(current_solution);
+                    //do_merge(current_solution);
                     current_cost = new_cost;
                 }
             }
@@ -596,6 +596,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     return log_sol;
 }
 
+
 LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     RevertKernel revert;
     //WeightedGraph wg = find_critical_clique_graph(g, revert);
@@ -621,7 +622,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
     vector<double> operation_score(operations, 0);
     vector<double> time_taken(operations*2, 0);
     set<int> solution_hashes;
-    int change_weights_after = 300;
+    int change_weights_after = 500;
     int change_weights_count = 0;
     double rate = 0.5;
     int start_score = 20;
@@ -672,7 +673,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
         //cout << i << "\n";
         solution_cost_iteration.push_back(current_cost);
         //cout << "11\n";
-        //last_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
+        last_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
         //cout << "22\n";
         t *= alpha; //t_max * (1 - ((static_cast<float>(i + 1))/num_operations));
 
@@ -725,7 +726,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
             //cout << "Before escape: \n";
             //cout << "Cost: " << current_cost << "\n";if (i == num_operations - 1) {
             //current_solution.print_solution();
-            for (int j = 0; j < 20; j++) {
+            for (int j = 0; j < 15; j++) {
                 res = add_node_to_neighbours_accept_unchanged(g, current_solution, i);
                 new_cost = current_cost + res.value_or(0);
                 if (res.has_value()) {
@@ -749,6 +750,22 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
                         current_solution.add(get<0>(move), get<2>(move));
                     }
                     current_cost = new_cost;
+                }
+            }
+
+            for (int j = 0; j < 5; j++) {
+                res = clique_splitter_option(g, current_solution);
+                new_cost = current_cost + res.value_or(0);
+                if (res.has_value()) {
+                    //current_solution.remove_set(current_solution.book.b_perturbation.si_to_remove);
+                    //current_cost = new_cost;
+                    BPerturbation &b = current_solution.book.b_perturbation;
+                    current_solution.remove(b.u_to_remove, b.si_to_remove);
+                    current_solution.remove(b.v_to_remove, b.si_to_remove);
+                    set<int> new_set = {b.u_to_remove, b.v_to_remove};
+                    current_solution.add_set(new_set);
+                    current_cost = new_cost;
+                    //cout << "Execute clique split!\n";
                 }
             }
 
@@ -885,6 +902,8 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
             choice = 6;
             res = add_node_to_neighbours_accept_unchanged(g, current_solution, i);
             new_cost = current_cost + res.value_or(0);
+            //res = clique_splitter_option(g, current_solution);
+            //new_cost = current_cost + res.value_or(0);
         } /**else  {
             choice = 7;
             res = remove_node_accept_unchanged(wg, current_solution, i);
@@ -949,7 +968,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
                 //current_solution.print_solution();
                 if (res.has_value()) {
                     //cout << "set to split: " << current_solution.book.b_split.si << "\n";
-                    do_split(current_solution);
+                    //do_split(current_solution);
                     current_cost = new_cost;
                 }
                 //cout << "After split:  \n";
@@ -1008,14 +1027,21 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
                 }
             } else if (choice == 5) {
                 if (res.has_value()) {
-                    do_merge(current_solution);
+                    //do_merge(current_solution);
                     current_cost = new_cost;
                 }
             }
              else if (choice == 6) {
                 if (res.has_value()) {
-                    current_solution.remove_set(current_solution.book.b_perturbation.si_to_remove);
-                    current_cost = new_cost;  
+                    //current_solution.remove_set(current_solution.book.b_perturbation.si_to_remove);
+                    //current_cost = new_cost;
+                    BPerturbation &b = current_solution.book.b_perturbation;
+                    current_solution.remove(b.u_to_remove, b.si_to_remove);
+                    current_solution.remove(b.v_to_remove, b.si_to_remove);
+                    set<int> new_set = {b.u_to_remove, b.v_to_remove};
+                    current_solution.add_set(new_set);
+                    current_cost = new_cost;
+                    //cout << "Execute clique split!\n";
                 }
             }
         }
@@ -1068,7 +1094,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
         //cout << "e\n";
         
         /**
-        int actual_cost = current_solution.cost_solution(wg);
+        int actual_cost = current_solution.cost_solution(g);
         if (current_cost - actual_cost != sol_diff) {
             sol_diff = current_cost - actual_cost;
             cout << "Change in sol_diff after operation " << choice << "\n";
@@ -1320,7 +1346,7 @@ LoggingSolution test_label_propagation(Graph &g, LoggingSolution &log_sol, int &
                 chrono::steady_clock::time_point begin_4 = chrono::steady_clock::now();
                 set<int> indices = current_solution.get_set_indices_as_set();
                 if (res.has_value()) {
-                    do_split(current_solution);
+                    //do_split(current_solution);
                     if (new_cost > current_cost) {
                         sum_delta += new_cost - current_cost;
                         positive_delta_counter += 1;
@@ -1335,7 +1361,7 @@ LoggingSolution test_label_propagation(Graph &g, LoggingSolution &log_sol, int &
                 //cout << "line 66: ";
                 //current_solution.print_solution();
                 if (res.has_value()) {
-                    do_merge(current_solution);
+                    //do_merge(current_solution);
                     current_cost = new_cost;
                 } 
                 chrono::steady_clock::time_point end_5 = chrono::steady_clock::now();

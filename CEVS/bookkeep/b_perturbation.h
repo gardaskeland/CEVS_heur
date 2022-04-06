@@ -4,6 +4,7 @@
 #include <utility>
 #include <tuple>
 #include <set>
+#include <vector>
 
 using namespace std;
 
@@ -18,6 +19,12 @@ class BPerturbation {
         pair<int, int> sets_to_swap;
 
         set<int> set_to_add;
+
+        int u_to_remove;
+        int v_to_remove;
+
+        vector<int> vertices_for_clique_splitter_option;
+        int vector_index = -1;
 };
 
 #endif

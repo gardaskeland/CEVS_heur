@@ -335,3 +335,59 @@ int add_adjacent_vertex(Graph &g, SolutionRepresentation &sol) {
     sol.add(to_add, si);
     return cost;
 }
+
+optional<int> clique_splitter_option(Graph &g, SolutionRepresentation &sol) {
+    BPerturbation &b = sol.book.b_perturbation;
+    //cout << "vi: " << b.vector_index << "\n";
+    if (b.vector_index >= 0) {
+        int u = b.vertices_for_clique_splitter_option[b.vector_index--];
+        //need to filter the sets of u
+        vector<int> set_indices = sol.get_set_indices();
+        vector<int> non_singleton;
+        set<int> u_in_sets = sol.get_node_to_clusters(u);
+        for (int si : set_indices) {
+            if (sol.get_set(si).size() > 1 && (u_in_sets.find(si) != u_in_sets.end())) non_singleton.push_back(si);
+        }
+        if (non_singleton.empty()) return {};
+
+        int r = sol.ra.get_random_int() % non_singleton.size();
+        int si = non_singleton[r];
+        
+        set<int> si_nodes = sol.get_set(si);
+        vector<int> si_nodes_with_edge_to_u;
+        for (int v : si_nodes) {
+            if (g.has_edge(u, v)) {
+                si_nodes_with_edge_to_u.push_back(v);
+            }
+        }
+        if (si_nodes_with_edge_to_u.empty()) return {};
+
+        r = sol.ra.get_random_int() % si_nodes_with_edge_to_u.size();
+        int v = si_nodes_with_edge_to_u[r];
+
+        //removal cost counts the edge twice, so need to weigh up for this
+        int cost = removal_cost(g, sol, si, u) + removal_cost(g, sol, si, v);
+        if (sol.get_co_occurence(u, v) == 1) {
+            cost -= 2*g.get_edge_cost(u, v); // subtract since we add back the edge, 2 since removal cost called twice.
+        }
+        cost += 2; // we add back 2 vertices
+
+        b.u_to_remove = u;
+        b.v_to_remove = v;
+        b.si_to_remove = si;
+        //cout << "pending clique split!\n";
+
+        return cost;
+
+    } else {
+        if (b.vertices_for_clique_splitter_option.empty()) {
+            b.vertices_for_clique_splitter_option = vector<int>(g.n, 0);
+            for (int i = 0; i < g.n; i++) {
+                b.vertices_for_clique_splitter_option[i] = i;
+            }
+        } 
+        b.vector_index = g.n - 1;
+        
+        return clique_splitter_option(g, sol);
+    }
+}

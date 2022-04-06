@@ -10,12 +10,8 @@
 #include "read_file.h"
 #include "graph.h"
 //#include "metaheuristics/local_search.h"
-#include "metaheuristics/simulated_annealing.h"
-#include "metaheuristics/local_search_lp.h"
-#include "metaheuristics/alns.h"
 #include "metaheuristics/alns2.h"
 #include "utility/shallow_solution.h"
-#include "bookkeep/b_merge.h"
 #include <chrono>
 #include "operators/add_node.h"
 #include "solution_representation.h"

@@ -2,10 +2,8 @@
 #define BOOKKEEP_H
 
 #include <set>
-#include "b_merge.h"
 #include "../utility/segment_tree.h"
 #include "b_add_node.h"
-#include "b_split.h"
 #include "b_lp.h"
 #include "b_perturbation.h"
 #include "map"
@@ -27,9 +25,7 @@ class Bookkeep {
         int operation_number;
         SegmentTree<int> modified_clusters;
         SegmentTree<int> modified_vertices;
-        BMerge b_merge;
         BAddNode b_add_node;
-        BSplit b_split;
         BLP b_lp;
         BPerturbation b_perturbation;
 

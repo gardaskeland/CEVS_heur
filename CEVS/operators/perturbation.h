@@ -70,4 +70,10 @@ optional<int> add_set_over_uncovered(Graph &g, SolutionRepresentation &sol);
  */
 int add_adjacent_vertex(Graph &g, SolutionRepresentation &sol);
 
+/**
+ * Isolates two vertices from a set. Uses a shuffled vector containing all vertices
+ * to choose which one to isolate, together with some vertex it is in the neighbourhood with.
+ */
+optional<int> clique_splitter_option(Graph &g, SolutionRepresentation &sol);
+
 #endif
