@@ -7,7 +7,7 @@ cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		find_kernel.o \
 		label_propagation.o perturbation.o logging_solution.o inout.o alns2.o \
 		b_perturbation.o gard_random.o
-	g++ -std=c++17 -g -o main.o read_file.o graph.o solution_representation.o add_node.o \
+	g++ -std=c++17 -g -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
 		weighted_random.o bookkeep.o \
 		shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o \

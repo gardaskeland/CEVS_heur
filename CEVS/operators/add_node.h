@@ -18,24 +18,6 @@
 using namespace std;
 
 /**
- * Returns the relative out degree of a set S in the current solution, that is outdeg(S)/|S|. Remains the same as
- * long as S is not changed.
- */ 
-double relative_out_degree(Graph &g, SolutionRepresentation &sol, int si);
-
-
-/**
- * Updates the map with relative out degrees of the sets mapped to sets in sol.book.b_add_node.relative_out_degrees.
- * Pushes the updated and old relative out degrees on the pq for relative out degrees in book.b_add_node.
- */
-void get_relative_out_degrees(Graph &g, SolutionRepresentation &sol);
-
-/**
- * Returns the number of the set with the highest relative out-degree in the solution.
- */
-int highest_relative_out_degree(Graph &g, SolutionRepresentation &sol);
-
-/**
  * @brief Returns the cost of adding node v to set si in the current solution.
  * 
  * @param g 
@@ -62,8 +44,6 @@ int removal_cost(Graph &g, SolutionRepresentation &sol, int si, int u);
  * are the nodes v. The key-value PAIR that appears first is the best node to add to S.
  */
 vector<pair<int, int>> best_nodes_to_add(Graph &g, SolutionRepresentation &sol, int si);
-
-void do_revert_add_node(SolutionRepresentation &sol, Bookkeep &book);
 
 /**
  * @brief Chooses a random set and finds the neighbour node of that set that gives the most reduction
@@ -103,16 +83,9 @@ optional<int> add_node_to_set(Graph &g, SolutionRepresentation &sol);
 optional<int> add_node_to_set_unchanged(Graph &g, SolutionRepresentation &sol);
 
 /**
- * Chooses a set with high relative out-degree and finds neighbour node of the set.
- * Returns the cost of adding the node to the set.
- */
-int add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book);
-
-/**
  * Like the above, but uses weighted randomness to choose the set and neighbour. Returns the cost of adding.
  */
 int weighted_random_add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book);
-
 
 
 /**

@@ -85,7 +85,7 @@ void write_cost_dev_for_iterations(vector<LoggingSolution> &sol, string &filenam
 void run_alns_on_heur_instances() {
     int num_operations = 80000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 1; i < 10; i = i + 2) {
+    for (int i = 7; i < 10; i = i + 2) {
         ostringstream oss;
         string filename;
         oss.clear();
@@ -461,7 +461,7 @@ void run_on_karate_graph() {
     LoggingSolution sol;
     int operations = 3000;
 
-    alns(g, sol, operations);
+    alns2(g, sol, operations);
 
     ofstream alns_solution_karate;
     alns_solution_karate.open("utility/Overlapping-NMI-master/alns_solution_karate.txt");
@@ -533,7 +533,7 @@ void run_on_football_graph() {
     LoggingSolution sol;
     int operations = 3000;
 
-    alns(g, sol, operations);
+    alns2(g, sol, operations);
 
     ofstream alns_solution;
     alns_solution.open("utility/Overlapping-NMI-master/alns_solution_football.txt");

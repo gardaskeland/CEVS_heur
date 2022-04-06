@@ -205,10 +205,10 @@ void SolutionRepresentation::merge(int si, int sj) {
     //cout << "in sp: line 82";
     //print_solution();
     //?
-    for (int i : get_set_indices()) {
-        book.b_merge.map_merge_cost.erase(minmax(sj, i));
-    }
-    book.b_split.inner_cost.erase(sj);
+    //for (int i : get_set_indices()) {
+    //    book.b_merge.map_merge_cost.erase(minmax(sj, i));
+    //}
+    //book.b_split.inner_cost.erase(sj);
 }
 
 void SolutionRepresentation::disjoint_split(int si, set<int> &set_1, set<int> &set_2) {

@@ -622,7 +622,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
     vector<double> operation_score(operations, 0);
     vector<double> time_taken(operations*2, 0);
     set<int> solution_hashes;
-    int change_weights_after = 500;
+    int change_weights_after = 300;
     int change_weights_count = 0;
     double rate = 0.5;
     int start_score = 20;
@@ -646,7 +646,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
     double find_prob_of_acceptance;
     int positive_delta_counter = 0;
     int sum_delta = 0;
-    int end_warmup = 1000;
+    int end_warmup = 3000;
 
     int escape_counter = 0;
     const int escape_threshold = 1000;
@@ -726,7 +726,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
             //cout << "Before escape: \n";
             //cout << "Cost: " << current_cost << "\n";if (i == num_operations - 1) {
             //current_solution.print_solution();
-            for (int j = 0; j < 15; j++) {
+            for (int j = 0; j < 20; j++) {
                 res = add_node_to_neighbours_accept_unchanged(g, current_solution, i);
                 new_cost = current_cost + res.value_or(0);
                 if (res.has_value()) {
@@ -752,7 +752,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
                     current_cost = new_cost;
                 }
             }
-
+            /**
             for (int j = 0; j < 5; j++) {
                 res = clique_splitter_option(g, current_solution);
                 new_cost = current_cost + res.value_or(0);
@@ -767,7 +767,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
                     current_cost = new_cost;
                     //cout << "Execute clique split!\n";
                 }
-            }
+            }*/
 
             //current_cost += add_node_to_all(wg, current_solution) + label_propagation_round(wg, current_solution) \
             //    + remove_nodes_(wg, current_solution);
@@ -1031,6 +1031,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
                     current_cost = new_cost;
                 }
             }
+            /**
              else if (choice == 6) {
                 if (res.has_value()) {
                     //current_solution.remove_set(current_solution.book.b_perturbation.si_to_remove);
@@ -1043,7 +1044,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
                     current_cost = new_cost;
                     //cout << "Execute clique split!\n";
                 }
-            }
+            }*/
         }
         //cout << "c\n";
 
