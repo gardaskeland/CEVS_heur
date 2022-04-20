@@ -330,6 +330,17 @@ optional<int> label_propagation_accept_unchanged(Graph &g, SolutionRepresentatio
     return optional<int>(get<2>(temp.value()));
 }
 
+void execute_label_propagation(SolutionRepresentation &sol) {
+    tuple<int, int, int> move = sol.book.b_lp.next_move;
+    sol.remove(get<0>(move), get<1>(move));
+    if (get<2>(move) == -1) {
+        sol.add_set({get<0>(move)});
+    }
+    else {
+        sol.add(get<0>(move), get<2>(move));
+    }
+}
+
 /**
 optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol) {
     if (sol.num_sets() < 2) {

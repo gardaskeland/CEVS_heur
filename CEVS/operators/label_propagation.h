@@ -103,4 +103,6 @@ optional<int> label_propagation_accept_unchanged(Graph &g, SolutionRepresentatio
  */
 int cost_of_move(Graph &g, SolutionRepresentation &sol, int u, int si, int sj);
 
+void execute_label_propagation(SolutionRepresentation &sol);
+
 #endif

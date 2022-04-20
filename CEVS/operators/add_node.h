@@ -189,7 +189,13 @@ optional<int> add_k_to_a_set(Graph &g, SolutionRepresentation &sol, int k);
  * 
  * @param sol 
  */
-void do_add(SolutionRepresentation &sol);
+void execute_add_node(SolutionRepresentation &sol);
+
+void execute_add_nodes_to_sets(SolutionRepresentation &sol);
+
+void execute_remove(SolutionRepresentation &sol);
+
+
 
 
 #endif

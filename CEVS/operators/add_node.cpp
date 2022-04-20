@@ -698,8 +698,20 @@ optional<int> add_k_to_a_set(Graph &g, SolutionRepresentation &sol, int k) {
 }
 
 
-void do_add(SolutionRepresentation &sol) {
+void execute_add(SolutionRepresentation &sol) {
     sol.add(sol.book.b_add_node.v, sol.book.b_add_node.si);
+}
+
+void execute_add_nodes_to_sets(SolutionRepresentation &sol) {
+    for (int si : sol.book.b_add_node.sets_to_change) {
+        sol.add(sol.book.b_add_node.v, si);
+    }
+}
+
+void execute_remove(SolutionRepresentation &sol) {
+    for (int si :sol.book.b_add_node.sets_to_change) {
+        sol.remove(sol.book.b_add_node.v, si);
+    }
 }
         /**
         set<int> in_clusters = sol.get_node_to_clusters(u);
