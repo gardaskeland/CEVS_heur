@@ -25,6 +25,7 @@ class Bookkeep {
         int revert_merge_ind[2];
         set<int> revert_merge_sets[2];
         int operation_number;
+        int last_heuristic;
         SegmentTree<int> modified_clusters;
         SegmentTree<int> modified_vertices;
         BMerge b_merge;

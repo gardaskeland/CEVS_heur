@@ -382,8 +382,8 @@ optional<int> add_node_to_neighbours_accept(Graph &g, SolutionRepresentation &so
 }
 
 
-optional<int> add_node_to_neighbours_accept_unchanged(Graph &g, SolutionRepresentation &sol, int i) {
-    set<int> changed_nodes = sol.book.modified_vertices.query(max(0, i - 500), i);
+optional<int> add_node_to_neighbours_accept_unchanged(Graph &g, SolutionRepresentation &sol) {
+    set<int> changed_nodes = sol.book.modified_vertices.query(max(0, sol.book.operation_number - 500), sol.book.operation_number);
     vector<int> unchanged;
     for (int j = 0; j < g.n; j++) {
         if (!(changed_nodes.find(j) != changed_nodes.end())) unchanged.push_back(j);

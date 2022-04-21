@@ -309,12 +309,12 @@ optional<int> label_propagation_accept_weighted_random(Graph &g, SolutionReprese
     return optional<int>(get<0>(temp.value()));
 }
 
-optional<int> label_propagation_accept_unchanged(Graph &g, SolutionRepresentation &sol, int i) {
+optional<int> label_propagation_accept_unchanged(Graph &g, SolutionRepresentation &sol) {
     if (sol.num_sets() < 2) {
         return optional<int>();
     }
     //i - 1 since we want one vertex to be moved several times in escape sequence
-    set<int> recently_moved = sol.book.modified_vertices.query(max(0, i - 500), max(0, i - 1));
+    set<int> recently_moved = sol.book.modified_vertices.query(max(0, sol.book.operation_number - 500), max(0, sol.book.operation_number - 1));
     //for (int p : recently_moved) cout << p << " ";
     //cout << "\n";
     vector<int> choices;

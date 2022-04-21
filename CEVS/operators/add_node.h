@@ -170,7 +170,7 @@ optional<int> add_node_to_neighbours_accept(Graph &g, SolutionRepresentation &so
 /**
  * Like add_node_to_neighbours_accept, but chooses a random vertex that has not been moved for a while.
  */
-optional<int> add_node_to_neighbours_accept_unchanged(Graph &g, SolutionRepresentation &sol, int i);
+optional<int> add_node_to_neighbours_accept_unchanged(Graph &g, SolutionRepresentation &sol);
 
 /**
  * Checks all possibilities of adding k connected vertices to the set, where every vertex

@@ -1,8 +1,11 @@
-#ifndef PY_INTERFACE
-#define PY_INTERFACE
+#ifndef INTERFACE_H
+#define INTERFACE_H
 
 #include "graph.h"
 #include "solution_representation.h"
+#include "operators/add_node.h"
+#include "operators/label_propagation.h"
+#include "operators/find_solution_hash.h"
 
 using namespace std;
 

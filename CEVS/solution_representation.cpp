@@ -592,8 +592,9 @@ int SolutionRepresentation::num_splits() {
 
 int SolutionRepresentation::solution_hash() {
     int result = 0;
+    int set_sum;
     for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
-        int set_sum = 0;
+        set_sum = 0;
         for (int i : it->second) set_sum += i;
         result += (set_sum * it->first) % 1000000;
     }
