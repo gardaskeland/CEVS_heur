@@ -137,12 +137,12 @@ optional<int> add_node_to_set(Graph &g, SolutionRepresentation &sol) {
     else if (b.add_node_to_set_counter == 0 || b.best_nodes_to_add_to_set.empty()) {
         b.best_nodes_to_add_to_set.clear(); //remember to do this for other ops as well.
         int cost;
-        set<int> sets = sol.get_set_indices_as_set();
+        vector<int> sets = sol.get_set_indices();
         set<int> neighbours;
-        set<int> si_nodes;
-        for (int si : sets) {
+        //Parallelize here
+        for (int i = 0; i < sets.size(); i++) {
             neighbours.clear();
-            si_nodes = sol.get_set(si);
+            set<int> &si_nodes = sol.clusters[sets[i]];
             for (int u : si_nodes) {
                 for (int v : g.adj[u]) {
                     if (si_nodes.find(v) != si_nodes.end()) continue;
@@ -150,8 +150,8 @@ optional<int> add_node_to_set(Graph &g, SolutionRepresentation &sol) {
                 }
             }
             for (int v : neighbours) {
-                cost = add_node_to_set_cost(g, sol, si, v);
-                b.best_nodes_to_add_to_set.emplace_back(tri(cost, v, si));
+                cost = add_node_to_set_cost(g, sol, sets[i], v);
+                b.best_nodes_to_add_to_set.emplace_back(tri(cost, v, sets[i]));
             }
         }
         if (b.best_nodes_to_add_to_set.empty()) return optional<int>();
@@ -211,11 +211,10 @@ optional<int> add_node_to_set_unchanged(Graph &g, SolutionRepresentation &sol) {
 
 
 set<int> get_neighbour_set_of_u(Graph &g, SolutionRepresentation &sol, int u) {
-    set<int> current;
     set<int> neighbours;
     for (int v : g.adj[u]) {
         for (int s : sol.get_node_to_clusters(v)) {
-            current = sol.get_set(s);
+            set<int> &current = sol.clusters[s];
             if (current.find(u) != current.end()) continue;
             neighbours.insert(s);
         }
@@ -269,6 +268,9 @@ optional<int> add_node_to_neighbours_accept(Graph &g, SolutionRepresentation &so
     if (sol.book.b_add_node.add_node_counter == 0 || sol.book.b_add_node.best_vertices_to_add.empty()) {
         sol.book.b_add_node.best_vertices_to_add.clear();
         tuple<int, vector<int>> result;
+        //pragma omp here. Need own vector for each thread to put results in.
+        //Actually, initialise best_vertices_to_add of size n. Use a placeholder (e.g. large number, 1 << 15)
+        //when we don't find anything, and check for this when trying to execute
         for (int u = 0; u < g.n; u++) {
             result = add_node_to_all_neighbours_accept(g, sol, u);
             if (get<1>(result).size() == 0) continue;
@@ -411,11 +413,11 @@ int remove_nodes_(Graph &g, SolutionRepresentation &sol) {
 //returns cost and sets to remove nodes from
 pair<int, vector<int>> cost_of_remove_node(Graph &g, SolutionRepresentation &sol, int u) {
     if (sol.get_node_to_clusters(u).size() == 1) {
-        return make_pair(10000, vector<int>());
+        return make_pair((1 << 15), vector<int>());
     }
     int total_cost = 0;
     int cost;
-    set<int> u_sets = sol.get_node_to_clusters(u);
+    set<int> &u_sets = sol.node_in_clusters[u];
     vector<int> seen(g.n, 0);
     vector<int> to_remove;
     for (int si : u_sets) {
@@ -440,6 +442,7 @@ optional<int> remove_node_accept(Graph &g, SolutionRepresentation &sol) {
     else if (b.remove_node_counter == 0 || b.best_nodes_to_remove.empty()) {
         b.best_nodes_to_remove.clear();
         pair<int, vector<int>> result;
+        //Do the same as for add_node_to_neighbours
         for (int u = 0; u < g.n; u++) {
             result = cost_of_remove_node(g, sol, u);
             if (result.second.empty()) continue;
