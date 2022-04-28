@@ -430,6 +430,25 @@ pair<double, double> find_majority_accuracy(Graph &g, SolutionRepresentation &so
     return p;
 }
 
+void run_on_game_thrones() {
+    string filename = "../../../Testsets/jazz_collab/edges.csv";
+    vector<vector<int>> adj = read_csv_graph(filename, 198);
+    Graph g(adj);
+    LoggingSolution logsol;
+    int operations = 10000;
+    alns2(g, logsol, operations);
+
+    SolutionRepresentation calculate_sol = SolutionRepresentation(g.n, operations);
+    map<int, set<int>> clusters = logsol.clusters;
+    //cout << "a";
+    for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
+        //cout << "b";
+        calculate_sol.add_set(it->second);
+    }
+    calculate_sol.print_solution();
+    cout << calculate_sol.cost_solution(g) << "\n";
+}
+
 void run_on_karate_graph() {
     cout << "adjacency: \n";
     string filename = "../../../karate78.csv/edges.csv";

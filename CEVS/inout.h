@@ -31,6 +31,8 @@ void run_alns_on_heur_instances();
  */
 void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_operations);
 
+void run_on_game_thrones();
+
 void run_on_karate_graph();
 
 void run_on_football_graph();
