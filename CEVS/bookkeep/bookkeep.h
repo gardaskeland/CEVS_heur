@@ -33,6 +33,7 @@ class Bookkeep {
         BSplit b_split;
         BLP b_lp;
         BPerturbation b_perturbation;
+        BRemoveAdd b_remove_add;
         int current_cost;
 
     /**
@@ -54,6 +55,15 @@ class Bookkeep {
 
     }
 
+};
+
+struct BRemoveAdd {
+    vector<pair<int, tuple<int, int, int>>> best_p3s;
+    //node from set to set
+    vector<tuple<int, int, int>> next_move;
+    int index;
+    int counter = 0;
+    bool initiated = false;
 };
 
 #endif

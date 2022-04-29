@@ -2,6 +2,7 @@
 #define ADD_REMOVE_H
 
 #include "add_node.h"
+#include "../bookkeep/bookkeep.h"
 
 using namespace std;
 
