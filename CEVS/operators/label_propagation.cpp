@@ -332,12 +332,19 @@ optional<int> label_propagation_accept_unchanged(Graph &g, SolutionRepresentatio
 
 void execute_label_propagation(SolutionRepresentation &sol) {
     tuple<int, int, int> move = sol.book.b_lp.next_move;
+    //cout << get<0>(move) << " " << get<1>(move) << " " << get<2>(move) << "\n";
+    //sol.print_solution();
+    //cout << "before remove\n";
     sol.remove(get<0>(move), get<1>(move));
+    //cout << "after remove\n";
     if (get<2>(move) == -1) {
-        sol.add_set({get<0>(move)});
+        set<int> s; s.insert(get<0>(move));
+        sol.add_set(s);
     }
     else {
+       // cout << "before add\n";
         sol.add(get<0>(move), get<2>(move));
+        //cout << "after add\n";
     }
 }
 

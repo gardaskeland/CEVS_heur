@@ -18,48 +18,77 @@ int find_next_solution_hash(SolutionRepresentation &sol, int heuristic) {
     
 }
 
-auto find_heuristic(Graph &g, SolutionRepresentation &sol, int heuristic) {
-    optional<int> res;
-    switch(heuristic) {
-        case 0: 
-            res = add_node_to_neighbours_accept(g, sol);
-        case 1:
-            res = add_node_to_neighbours_accept_unchanged(g, sol);
-        case 2:
-            res = add_node_to_set(g, sol);
-        case 3:
-            res = remove_node_accept(g, sol);
-        case 4:
-            res = label_propagation_accept(g, sol);
-        case 5:
-            res = label_propagation_accept_weighted_random(g, sol);
-        case 6:
-            res = label_propagation_accept_unchanged(g, sol);
+pair<int, int> find_heuristic(Graph &g, SolutionRepresentation &sol, int heuristic) {
+
+    //for debug
+    //if (sol.book.operation_number % 1 == 0) {
+    //    cout << "Current cost: " << sol.cost_solution(g) << "\n";
+    //}
+
+    optional<int> res = {};
+
+    if (heuristic == 0)
+        res = add_node_to_neighbours_accept(g, sol);
+    else if (heuristic == 1)
+        res = add_node_to_neighbours_accept_unchanged(g, sol);
+    else if (heuristic == 2)
+        res = add_node_to_set(g, sol);
+    else if (heuristic == 3) {
+        //cout << "calling remove node accept\n";
+        res = remove_node_accept(g, sol);
+    }
+    else if (heuristic == 4)
+        res = label_propagation_accept(g, sol);
+    else if (heuristic == 5)
+        res = label_propagation_accept_weighted_random(g, sol);
+    else if (heuristic == 6)
+        res = label_propagation_accept_unchanged(g, sol);
+
+    if (heuristic > 6) {
+        cout << "OOPS! Heuristic is " << heuristic << "\n";
     }
     sol.book.operation_number += 1;
     sol.book.last_heuristic = heuristic; //Stores last heuristic so that we can execute it by calling execute_heuristic
 
     if (res.has_value()) {
-        return find_next_solution_hash(sol, heuristic), res.value();
+        //cout << "res.value(): " << res.value() << "\n";
+        return make_pair(find_next_solution_hash(sol, heuristic), res.value());
     } else {
         //Bør spørre Jakob hvordan han håndterer caser der operatorene ikke finner en gyldig operasjon
-        return sol.solution_hash(), 0;
+        //cout << "no change: " << 0 << "\n";
+        return make_pair(-1, 0);
     }
+}
+
+int objective_function(Graph &g, SolutionRepresentation &sol) {
+    return sol.book.current_cost = sol.cost_solution(g);
 }
 
 void execute_heuristic(SolutionRepresentation &sol) {
     int heu = sol.book.last_heuristic;
     if (heu == 0 || heu == 1) {
+        //cout << "add to neighbours\n";
         execute_add_nodes_to_sets(sol);
     }
     else if (heu == 2) {
+       // cout << "add node to set\n";
         execute_add_node(sol);
+       
     }
     else if (heu == 3) {
+       // cout << "remove from set\n";
         execute_remove(sol);
+        
     }
     else {
+       // cout << "lp\n";
         execute_label_propagation(sol);
+        
     }
+}
+
+Graph make_graph_from_gml(string filename) {
+    vector<vector<int>> adj = read_gml(filename);
+    return Graph(adj);
 }
 

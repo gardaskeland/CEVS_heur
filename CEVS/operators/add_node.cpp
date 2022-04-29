@@ -519,6 +519,7 @@ int remove_nodes_(Graph &g, SolutionRepresentation &sol) {
 
 //returns cost and sets to remove nodes from
 pair<int, vector<int>> cost_of_remove_node(Graph &g, SolutionRepresentation &sol, int u) {
+   // cout << "Finding cost of removing " << u << "\n";
     if (sol.get_node_to_clusters(u).size() == 1) {
         return make_pair(10000, vector<int>());
     }
@@ -539,6 +540,7 @@ pair<int, vector<int>> cost_of_remove_node(Graph &g, SolutionRepresentation &sol
             }
         }
     }
+    //cout << "We can remove u! Cost is " << total_cost << "\n";
     return make_pair(total_cost, to_remove);
 }
 
@@ -552,9 +554,14 @@ optional<int> remove_node_accept(Graph &g, SolutionRepresentation &sol) {
         for (int u = 0; u < g.n; u++) {
             result = cost_of_remove_node(g, sol, u);
             if (result.second.empty()) continue;
+            //cout << "Says we can remove node " << u << "\n";
             b.best_nodes_to_remove.emplace_back(make_pair(result.first, u));
         }
-        if (b.best_nodes_to_remove.empty()) return optional<int>();
+        if (b.best_nodes_to_remove.empty()) {
+            //cout << "Return at logical point\n";
+            return {};
+        }
+        //cout << "sorting\n";
         sort(b.best_nodes_to_remove.begin(), b.best_nodes_to_remove.end(), cmp_descending());
 
         b.remove_node_counter = g.n / 5;
@@ -698,7 +705,7 @@ optional<int> add_k_to_a_set(Graph &g, SolutionRepresentation &sol, int k) {
 }
 
 
-void execute_add(SolutionRepresentation &sol) {
+void execute_add_node(SolutionRepresentation &sol) {
     sol.add(sol.book.b_add_node.v, sol.book.b_add_node.si);
 }
 

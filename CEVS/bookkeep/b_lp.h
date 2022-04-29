@@ -8,6 +8,8 @@
 #include <utility>
 #include <vector>
 
+using namespace std;
+
 
 struct cmp5 {
     bool operator() (pair<int, tuple<int, int, int>> &left, pair<int, tuple<int, int, int>> &right) {

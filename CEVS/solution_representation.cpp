@@ -19,6 +19,7 @@ void SolutionRepresentation::initial_solution(int n)
         set_of_sets_nodes_are_in = set<int>();
         set_of_sets_nodes_are_in.insert(i);
         node_in_clusters[i] = set_of_sets_nodes_are_in;
+        
     }
 }
 
@@ -33,6 +34,17 @@ void SolutionRepresentation::initial_solution_complete_graph(int n) {
         node_in_clusters[i] = set_of_sets_nodes_are_in;
     }
     clusters[0] = nodes_in_set;
+}
+
+SolutionRepresentation SolutionRepresentation::deep_copy() {
+    SolutionRepresentation new_sol;
+    new_sol.number_nodes = number_nodes;
+    new_sol.clusters = clusters;
+    new_sol.node_in_clusters = node_in_clusters;
+    new_sol.co_occurence = co_occurence;
+    new_sol.book = book;
+    new_sol.to_permute = to_permute;
+    return new_sol;
 }
 
 /**
@@ -508,6 +520,10 @@ SolutionRepresentation SolutionRepresentation::copy_solution() {
     return new_sol;
 }
 
+ShallowSolution SolutionRepresentation::get_shallow_solution() {
+    return ShallowSolution(clusters, node_in_clusters);
+}
+
 bool SolutionRepresentation::verify_co_occurence() {
     vector<map<int, int>> in_solution;
     for (int i = 0; i < co_occurence.size(); i++) {
@@ -593,10 +609,11 @@ int SolutionRepresentation::num_splits() {
 int SolutionRepresentation::solution_hash() {
     int result = 0;
     int set_sum;
+    int counter = 1;
     for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
         set_sum = 0;
         for (int i : it->second) set_sum += i;
-        result += (set_sum * it->first) % 1000000;
+        result += (set_sum * counter++) % 1000000;
     }
     return result;
 }

@@ -4,13 +4,13 @@ boiler=g++ -std=c++17 -c -O3
 cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o \
 		b_merge.o shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
-		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
+		find_kernel.o split.o karger.o local_search_lp.o \
 		label_propagation.o perturbation.o alns.o logging_solution.o inout.o alns2.o \
 		b_perturbation.o gard_random.o
 	g++ -std=c++17 -g -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o b_merge.o \
 		shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
-		find_kernel.o split.o karger.o simulated_annealing.o local_search_lp.o \
+		find_kernel.o split.o karger.o local_search_lp.o \
 		label_propagation.o perturbation.o alns.o logging_solution.o inout.o alns2.o \
 		b_perturbation.o gard_random.o
 
@@ -70,9 +70,6 @@ split.o: operators/split.cpp operators/split.h
 
 karger.o: utility/karger.cpp utility/karger.h
 	$(boiler) utility/karger.cpp
-
-simulated_annealing.o: metaheuristics/simulated_annealing.cpp metaheuristics/simulated_annealing.h
-	$(boiler) metaheuristics/simulated_annealing.cpp
 
 label_propagation.o: operators/label_propagation.cpp operators/label_propagation.h
 	$(boiler) operators/label_propagation.cpp

@@ -22,3 +22,7 @@ int Graph::get_edge_cost(int u, int v) {
 int Graph::get_node_weight(int u) {
     return 1;
 }
+
+int Graph::get_number_nodes() {
+    return n;
+}

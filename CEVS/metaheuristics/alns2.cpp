@@ -130,7 +130,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             //cout << "Cost: " << current_cost << "\n";if (i == num_operations - 1) {
             //current_solution.print_solution();
             for (int j = 0; j < 20; j++) {
-                res = add_node_to_neighbours_accept_unchanged(wg, current_solution, i);
+                res = add_node_to_neighbours_accept_unchanged(wg, current_solution);
                 new_cost = current_cost + res.value_or(0);
                 if (res.has_value()) {
                     for (int s : current_solution.book.b_add_node.sets_to_change) {
@@ -139,7 +139,7 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
                     current_cost = new_cost;
                 }
 
-                res = label_propagation_accept_unchanged(wg, current_solution, i);
+                res = label_propagation_accept_unchanged(wg, current_solution);
                 new_cost = current_cost + res.value_or(0);
                 if (res.has_value()) {
                     tuple<int, int, int> move = current_solution.book.b_lp.next_move;
@@ -283,11 +283,11 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             new_cost = current_cost + res.value_or(0);
         } else if (r < c_weights[5]) {
             choice = 5;
-            res = label_propagation_accept_unchanged(wg, current_solution, i);
+            res = label_propagation_accept_unchanged(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
         } else {//(r < c_weights[6]) {
             choice = 6;
-            res = add_node_to_neighbours_accept_unchanged(wg, current_solution, i);
+            res = add_node_to_neighbours_accept_unchanged(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
         } /**else  {
             choice = 7;
@@ -726,7 +726,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
             //cout << "Cost: " << current_cost << "\n";if (i == num_operations - 1) {
             //current_solution.print_solution();
             for (int j = 0; j < 20; j++) {
-                res = add_node_to_neighbours_accept_unchanged(g, current_solution, i);
+                res = add_node_to_neighbours_accept_unchanged(g, current_solution);
                 new_cost = current_cost + res.value_or(0);
                 if (res.has_value()) {
                     for (int s : current_solution.book.b_add_node.sets_to_change) {
@@ -735,7 +735,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
                     current_cost = new_cost;
                 }
 
-                res = label_propagation_accept_unchanged(g, current_solution, i);
+                res = label_propagation_accept_unchanged(g, current_solution);
                 new_cost = current_cost + res.value_or(0);
                 if (res.has_value()) {
                     tuple<int, int, int> move = current_solution.book.b_lp.next_move;
@@ -879,11 +879,11 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
             new_cost = current_cost + res.value_or(0);
         } else if (r < c_weights[5]) {
             choice = 5;
-            res = label_propagation_accept_unchanged(g, current_solution, i);
+            res = label_propagation_accept_unchanged(g, current_solution);
             new_cost = current_cost + res.value_or(0);
         } else {//(r < c_weights[6]) {
             choice = 6;
-            res = add_node_to_neighbours_accept_unchanged(g, current_solution, i);
+            res = add_node_to_neighbours_accept_unchanged(g, current_solution);
             new_cost = current_cost + res.value_or(0);
         } /**else  {
             choice = 7;

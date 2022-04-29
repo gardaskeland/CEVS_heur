@@ -66,6 +66,11 @@ class SolutionRepresentation
     }
 
     /**
+     * Makes a deep copy of the current solution.
+     */
+    SolutionRepresentation deep_copy();
+
+    /**
      * @brief Makes a normal solution rep of the shallow solution.
      * 
      * @param shallow 
@@ -214,6 +219,8 @@ class SolutionRepresentation
      * Creates an exact copy of the solution.
      */
     SolutionRepresentation copy_solution();
+
+    ShallowSolution get_shallow_solution();
 
     void print_solution();
 

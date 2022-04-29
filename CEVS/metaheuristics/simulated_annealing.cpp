@@ -75,7 +75,7 @@ ShallowSolution simulated_annealing(Graph &g, int &num_operations) {
             if (choice == 0) {
                 chrono::steady_clock::time_point begin_3 = chrono::steady_clock::now();
                 if (res0.has_value()) {
-                    do_add(current_solution);
+                    //do_add(current_solution);
                     current_cost = new_cost;
                 }
                 chrono::steady_clock::time_point end_3 = chrono::steady_clock::now();

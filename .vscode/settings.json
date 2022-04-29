@@ -10,6 +10,8 @@
         "map": "cpp",
         "queue": "cpp",
         "utility": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "*.tcc": "cpp",
+        "optional": "cpp"
     }
 }

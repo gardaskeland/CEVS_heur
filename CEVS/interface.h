@@ -1,11 +1,15 @@
-#ifndef INTERFACE_H
-#define INTERFACE_H
+#ifndef PY_INTERFACE
+#define PY_INTERFACE
 
 #include "graph.h"
 #include "solution_representation.h"
 #include "operators/add_node.h"
 #include "operators/label_propagation.h"
 #include "operators/find_solution_hash.h"
+#include <vector>
+#include "read_file.h"
+#include "operators/greedy_merge.h"
+#include "operators/split.h"
 
 using namespace std;
 
@@ -16,9 +20,15 @@ using namespace std;
  * - Executes the last operation
  */
 
-auto find_heuristic(Graph &g, SolutionRepresentation &sol, int heuristic);
+pair<int, int> find_heuristic(Graph &g, SolutionRepresentation &sol, int heuristic);
 
 void execute_heuristic(SolutionRepresentation &sol);
+
+int objective_function(Graph &g, SolutionRepresentation &sol);
+
+Graph make_graph_from_gml(string filename);
+
+
 
 
 

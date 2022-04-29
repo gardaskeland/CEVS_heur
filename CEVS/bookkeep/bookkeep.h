@@ -33,6 +33,7 @@ class Bookkeep {
         BSplit b_split;
         BLP b_lp;
         BPerturbation b_perturbation;
+        int current_cost;
 
     /**
      * Remember to initialise co-occurence in accordance with initial solution.

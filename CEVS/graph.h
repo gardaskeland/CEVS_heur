@@ -80,6 +80,8 @@ class Graph {
      */
     virtual int get_node_weight(int u);
 
+    int get_number_nodes();
+
 };
 
 

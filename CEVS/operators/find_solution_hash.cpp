@@ -7,6 +7,7 @@ int calculate_hash_add_node_to_neighbours(SolutionRepresentation &sol) {
     vector<int> &sets = sol.book.b_add_node.sets_to_change;
     sort(sets.begin(), sets.end());
     int index = 0;
+    int counter = 1;
     for (map<int, set<int>>::iterator it = sol.clusters.begin(); it != sol.clusters.end(); it++) {
         set_sum = 0;
         if (index < sets.size() && it->first == sets[index]) {
@@ -14,7 +15,7 @@ int calculate_hash_add_node_to_neighbours(SolutionRepresentation &sol) {
             index++;
         }
         for (int i : it->second) set_sum += i;
-        result += (set_sum * it->first) % 1000000;
+        result += (set_sum * counter++) % 1000000;
     }
     return result;
 }
@@ -22,13 +23,14 @@ int calculate_hash_add_node_to_neighbours(SolutionRepresentation &sol) {
 int calculate_hash_add_node_to_set(SolutionRepresentation &sol) {
     int result = 0;
     int set_sum;
+    int counter = 1;
     for (map<int, set<int>>::iterator it = sol.clusters.begin(); it != sol.clusters.end(); it++) {
         set_sum = 0;
         if (it->first == sol.book.b_add_node.si) {
             set_sum += sol.book.b_add_node.v;
         }
         for (int i : it->second) set_sum += i;
-        result += (set_sum * it->first) % 1000000;
+        result += (set_sum * counter++) % 1000000;
     }
     return result;
 }
@@ -40,6 +42,7 @@ int calculate_hash_remove_node(SolutionRepresentation &sol) {
     vector<int> &sets = sol.book.b_add_node.sets_to_change;
     sort(sets.begin(), sets.end());
     int index = 0;
+    int counter = 1;
     for (map<int, set<int>>::iterator it = sol.clusters.begin(); it != sol.clusters.end(); it++) {
         set_sum = 0;
         if (index < sets.size() && it->first == sets[index]) {
@@ -47,7 +50,7 @@ int calculate_hash_remove_node(SolutionRepresentation &sol) {
             index++;
         }
         for (int i : it->second) set_sum += i;
-        result += (set_sum * it->first) % 1000000;
+        result += (set_sum * counter++) % 1000000;
     }
     return result;
 }
@@ -56,6 +59,7 @@ int calculate_hash_label_propagation(SolutionRepresentation &sol) {
     int result = 0;
     int set_sum;
     auto& [node_to_move, from, to] = sol.book.b_lp.next_move;
+    int counter = 1;
     for (map<int, set<int>>::iterator it = sol.clusters.begin(); it != sol.clusters.end(); it++) {
         set_sum = 0;
         if (it->first == from) {
@@ -65,7 +69,7 @@ int calculate_hash_label_propagation(SolutionRepresentation &sol) {
             set_sum += node_to_move;
         }
         for (int i : it->second) set_sum += i;
-        result += (set_sum * it->first) % 1000000;
+        result += (set_sum * counter++) % 1000000;
     }
     return result;
 }

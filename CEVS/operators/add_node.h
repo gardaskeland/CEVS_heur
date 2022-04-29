@@ -183,6 +183,8 @@ optional<int> add_k_to_set(Graph &g, SolutionRepresentation &sol, int si, int k)
  */
 optional<int> add_k_to_a_set(Graph &g, SolutionRepresentation &sol, int k);
 
+void do_add(SolutionRepresentation &sol);
+
 
 /**
  * @brief Apply the latest add-operation to sol.
