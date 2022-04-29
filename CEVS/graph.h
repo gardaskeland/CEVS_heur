@@ -3,6 +3,9 @@
 
 #include <vector>
 #include <iostream>
+#include <set>
+#include <algorithm>
+#include <queue>
 
 using namespace std;
 
@@ -19,6 +22,8 @@ class Graph {
         vector<vector<int>> adj;
 
         vector<vector<int>> adj_matrix;
+
+        vector<tuple<int, int, int>> all_p3s;
 
         /**
          * Number of edges in the graph. Must be set manually when using Graph() as constructor.
@@ -37,6 +42,7 @@ class Graph {
         vector<int> to_add;
         int count_edges = 0;
         adj_matrix = vector<vector<int>>();
+        all_p3s = vector<tuple<int, int, int>>();
         if (n < 30000) {
             adj_matrix = vector<vector<int>>(n);
         
@@ -81,6 +87,11 @@ class Graph {
     virtual int get_node_weight(int u);
 
     int get_number_nodes();
+
+    /**
+     * Find all paths of lengths 3 (not cycles) and stores them in all_p3s.
+     */
+    void find_all_p3s();
 
 };
 

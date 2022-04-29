@@ -587,6 +587,18 @@ SolutionRepresentation calculate_and_print_sol(LoggingSolution &sol, Graph &g, i
     return calculate_sol;
 }
 
+//Difficulty of problem depends on number of p3s?
+void test_p3() {
+    string filename = "../../../data/heur_data/heur009.gr";
+    vector<vector<int>> adj = read_gz_file(filename);
+    Graph g(adj);
+    g.find_all_p3s();
+    for (tuple<int, int, int> t : g.all_p3s) {
+        //cout << get<0>(t) + 1 << " " << get<1>(t) + 1 << " " << get<2>(t) + 1 << "\n";
+    }
+    cout << "num p3's = " << g.all_p3s.size() << "\n";
+}
+
 void run_alns_on_gml() {
     ostringstream str;
     //vector<int> v = {2, 6, 10, 14, 18, 22, 26, 30};

@@ -168,7 +168,7 @@ LoggingSolution alns(Graph &g, LoggingSolution &log_sol, int &num_operations) {
             if (false || choice == 0) {
                 chrono::steady_clock::time_point begin_3 = chrono::steady_clock::now();
                 if (res0.has_value()) {
-                    do_add(current_solution);
+                    //do_add(current_solution);
                     if (new_cost > current_cost) {
                         sum_delta += new_cost - current_cost;
                         positive_delta_counter += 1;
