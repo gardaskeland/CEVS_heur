@@ -10,6 +10,7 @@
 #include "read_file.h"
 #include "operators/greedy_merge.h"
 #include "operators/split.h"
+#include "operators/perturbation.h"
 
 using namespace std;
 

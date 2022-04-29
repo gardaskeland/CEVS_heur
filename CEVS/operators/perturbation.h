@@ -70,4 +70,10 @@ optional<int> add_set_over_uncovered(Graph &g, SolutionRepresentation &sol);
  */
 int add_adjacent_vertex(Graph &g, SolutionRepresentation &sol);
 
+/**
+ * Escape function. Calls add_node_to_all_neighbours_accept_unchanged and label_propagation_accept_unchanged
+ * iteratively.
+ */
+int escape_by_add_lp(Graph &g, SolutionRepresentation &sol, int iterations);
+
 #endif

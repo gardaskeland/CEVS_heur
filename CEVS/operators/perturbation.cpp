@@ -335,3 +335,36 @@ int add_adjacent_vertex(Graph &g, SolutionRepresentation &sol) {
     sol.add(to_add, si);
     return cost;
 }
+
+int escape_by_add_lp(Graph &g, SolutionRepresentation &sol, int iterations) {
+    int cost = 0;
+    int new_cost;
+    optional<int> res;
+    for (int i = 0; i < iterations; i++) {
+        res = add_node_to_neighbours_accept_unchanged(g, sol);
+        new_cost = cost + res.value_or(0);
+        if (res.has_value()) {
+            for (int s : sol.book.b_add_node.sets_to_change) {
+                sol.add(sol.book.b_add_node.v, s);
+            }
+            cost = new_cost;
+        }
+
+        res = label_propagation_accept_unchanged(g, sol);
+        new_cost = cost + res.value_or(0);
+        if (res.has_value()) {
+            tuple<int, int, int> move = sol.book.b_lp.next_move;
+            sol.remove(get<0>(move), get<1>(move));
+            if (get<2>(move) == -1) {
+                set <int> new_set;
+                new_set.insert(get<0>(move));
+                sol.add_set(new_set);
+            }
+            else {
+                sol.add(get<0>(move), get<2>(move));
+            }
+            cost = new_cost;
+        }
+    }
+    return cost;
+}

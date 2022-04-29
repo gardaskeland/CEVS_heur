@@ -11,8 +11,11 @@ int find_next_solution_hash(SolutionRepresentation &sol, int heuristic) {
     else if (heuristic == 3) {
         result = calculate_hash_remove_node(sol);
     }
-    else {
+    else if (4 <= heuristic && heuristic <= 6) {
         result = calculate_hash_label_propagation(sol);
+    }
+    else if (heuristic == 7) {
+        result = sol.solution_hash();
     }
     return result;
     
@@ -43,8 +46,11 @@ pair<int, int> find_heuristic(Graph &g, SolutionRepresentation &sol, int heurist
         res = label_propagation_accept_weighted_random(g, sol);
     else if (heuristic == 6)
         res = label_propagation_accept_unchanged(g, sol);
+    else if (heuristic == 7)
+        res = escape_by_add_lp(g, sol, 20);
 
-    if (heuristic > 6) {
+
+    if (heuristic > 7) {
         cout << "OOPS! Heuristic is " << heuristic << "\n";
     }
     sol.book.operation_number += 1;
@@ -80,11 +86,12 @@ void execute_heuristic(SolutionRepresentation &sol) {
         execute_remove(sol);
         
     }
-    else {
+    else if (4 <= heu && heu <= 6) {
        // cout << "lp\n";
-        execute_label_propagation(sol);
-        
+        execute_label_propagation(sol);  
     }
+
+    //else if (heu == 7) do nothing
 }
 
 Graph make_graph_from_gml(string filename) {
