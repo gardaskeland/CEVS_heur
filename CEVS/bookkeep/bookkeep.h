@@ -13,6 +13,15 @@
 
 using namespace std;
 
+struct BRemoveAdd {
+    vector<pair<int, tuple<int, int, int>>> best_p3s;
+    //node from set to set
+    vector<tuple<int, int, int>> next_move;
+    int index;
+    int counter = 0;
+    bool initiated = false;
+};
+
 /**
  * Stores information about the current state of the algorithm. Currently,
  * stores how to revert the last change to current_solution. In the future,
@@ -55,15 +64,6 @@ class Bookkeep {
 
     }
 
-};
-
-struct BRemoveAdd {
-    vector<pair<int, tuple<int, int, int>>> best_p3s;
-    //node from set to set
-    vector<tuple<int, int, int>> next_move;
-    int index;
-    int counter = 0;
-    bool initiated = false;
 };
 
 #endif
