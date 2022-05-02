@@ -35,6 +35,8 @@ void get_relative_out_degrees(Graph &g, SolutionRepresentation &sol);
  */
 int highest_relative_out_degree(Graph &g, SolutionRepresentation &sol);
 
+set<int> get_neighbour_set_of_u(Graph &g, SolutionRepresentation &sol, int u);
+
 /**
  * @brief Returns the cost of adding node v to set si in the current solution.
  * 

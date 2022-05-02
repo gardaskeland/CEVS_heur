@@ -296,11 +296,11 @@ optional<int> add_node_to_set_unchanged(Graph &g, SolutionRepresentation &sol) {
 
 
 set<int> get_neighbour_set_of_u(Graph &g, SolutionRepresentation &sol, int u) {
-    set<int> current;
     set<int> neighbours;
     for (int v : g.adj[u]) {
-        for (int s : sol.get_node_to_clusters(v)) {
-            current = sol.get_set(s);
+        set<int> &node_to_clusters = sol.node_in_clusters[v];
+        for (int s : node_to_clusters) {
+            set<int> &current = sol.clusters[s];
             if (current.find(u) != current.end()) continue;
             neighbours.insert(s);
         }
