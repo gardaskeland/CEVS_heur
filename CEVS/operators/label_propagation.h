@@ -15,6 +15,7 @@
 #include <iostream>
 #include <tuple>
 #include "../utility/weighted_random.h"
+#include <omp.h>
 
 # define tri tuple<int, int, int>
 

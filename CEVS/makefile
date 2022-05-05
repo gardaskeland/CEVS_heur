@@ -1,5 +1,5 @@
 
-boiler=g++ -std=c++17 -c -O3
+boiler=g++ -std=c++17 -c -O3 -fopenmp
 
 cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o \
@@ -7,7 +7,7 @@ cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		find_kernel.o split.o karger.o local_search_lp.o \
 		label_propagation.o perturbation.o alns.o logging_solution.o inout.o alns2.o \
 		b_perturbation.o gard_random.o
-	g++ -std=c++17 -g -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
+	g++ -std=c++17 -g -fopenmp -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o b_merge.o \
 		shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o local_search_lp.o \

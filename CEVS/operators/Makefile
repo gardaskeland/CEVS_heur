@@ -1,9 +1,9 @@
 
-boiler=g++ -std=c++17 -c -O3
+boiler=g++ -std=c++17 -c -O3 -fopenmp
 
 cevs: test_operators.o solution_representation.o read_file.o graph.o segment_tree.o weighted_graph.o \
 	label_propagation.o add_node.o weighted_random.o perturbation.o
-	g++ -std=c++17 -g -o test_operators test_operators.o read_file.o graph.o solution_representation.o \
+	g++ -std=c++17 -g -fopenmp -o test_operators test_operators.o read_file.o graph.o solution_representation.o \
 	segment_tree.o weighted_graph.o label_propagation.o add_node.o weighted_random.o perturbation.o
 
 test_operators.o: test_operators.cpp

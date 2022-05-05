@@ -222,6 +222,80 @@ struct cmp_greater_pair {
     }
 };
 
+//parallel
+/**
+optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol) {
+    //map<int, tri> best;
+    if (sol.num_sets() < 2) {
+        return optional<int>();
+    }
+    else if (sol.book.b_lp.label_prop_counter == 0 || sol.book.b_lp.best_label_prop.empty()) {
+        //sol.book.b_lp.best_label_prop.clear();
+        //set to move from and to, cost
+        vector<int> results_per_thread(omp_get_max_threads(), 0);
+        #pragma omp parallel
+        {
+
+        optional<tri> temp;
+        vector<pair<int, int>> local_result;
+        int j;
+
+        //cout << "Thread " << omp_get_thread_num() << " says hello!\n";
+
+        #pragma omp for
+        for (int v = 0; v < g.n; v++) {
+            temp = find_best_move(g, sol, v);
+            if (!temp.has_value()) {
+                continue;
+            }
+            //cout << "get 2 of temp: :" << get<2>(temp.value()) << ":\n";
+            //sol.book.b_lp.best_label_prop.emplace_back(pair<int, int>(get<2>(temp.value()), v));
+            local_result.emplace_back(make_pair(get<2>(temp.value()), v));
+            results_per_thread[omp_get_thread_num()]++;
+            //best[v] = temp.value();
+        }
+
+        if (omp_get_thread_num() == 0) {
+            for (j = 1; j < omp_get_max_threads(); j++) {
+                results_per_thread[j] += results_per_thread[j-1];
+            }
+            sol.book.b_lp.best_label_prop = vector<pair<int, int>>(results_per_thread[omp_get_max_threads() - 1]);
+        }
+
+        #pragma omp barrier
+
+        if (omp_get_thread_num() == 0) {
+            for (j = 0; j < local_result.size(); j++) {
+                sol.book.b_lp.best_label_prop[j] = local_result[j];
+            }
+        } else {
+            for (j = results_per_thread[omp_get_thread_num() - 1]; j < results_per_thread[omp_get_thread_num()]; j++) {
+                sol.book.b_lp.best_label_prop[j] = local_result[j - results_per_thread[omp_get_thread_num() - 1]];
+            }
+        }
+        }
+        if (sol.book.b_lp.best_label_prop.empty()) {
+            return optional<int>();
+        }
+        sort(sol.book.b_lp.best_label_prop.begin(), sol.book.b_lp.best_label_prop.end(), cmp_greater_pair());
+
+        //sol.book.b_lp.best_label_prop.pop_back();
+        sol.book.b_lp.label_prop_counter = g.n / 2;
+    } else {
+        sol.book.b_lp.label_prop_counter--;
+    }
+    optional<tri> temp;
+    pair<int, int> op = sol.book.b_lp.best_label_prop.back();
+    sol.book.b_lp.best_label_prop.pop_back();
+
+    temp = find_best_move(g, sol, op.second);
+    if (!temp.has_value()) return {};
+    sol.book.b_lp.next_move = tri(op.second, get<0>(temp.value()), get<1>(temp.value()));
+    //cout << "next move for label prop: " << best_move_vertex << " " << best_move_set_from << " " << best_move_set_to << "\n";
+    return optional<int>(get<2>(temp.value()));
+}*/
+
+
 optional<int> label_propagation_accept(Graph &g, SolutionRepresentation &sol) {
     optional<tri> temp;
     //map<int, tri> best;
