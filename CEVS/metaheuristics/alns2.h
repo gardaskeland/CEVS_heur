@@ -18,6 +18,7 @@
 #include "../operators/perturbation.h"
 #include "../solution_representation.h"
 #include "../utility/logging_solution.h"
+#include "../operators/remove_add.h"
 
 using namespace std;
 

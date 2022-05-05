@@ -4,5 +4,5 @@
 using namespace std;
 
 int main() {
-    test_p3();
+    run_alns_on_heur_instances();
 }

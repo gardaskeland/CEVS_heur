@@ -11,6 +11,15 @@ using namespace std;
  */
 //void find_all_p3s(Graph &g); should be a method in graph
 
+/**
+ * Chooses a p3 and tries to remove and reinsert it in the best way possible,
+ * Now and then scans the graph to find the best p3s to move at a given point.
+ */
 optional<int> remove_add_3(Graph &g, SolutionRepresentation &sol);
+
+/**
+ * Like above, but the p3 is chosen randomly
+ */
+optional<int> remove_add_3_random(Graph &g, SolutionRepresentation &sol);
 
 #endif

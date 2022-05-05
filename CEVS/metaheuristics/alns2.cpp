@@ -607,7 +607,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
     cout << "cost of initial solution: " << current_cost << "\n";
     int best_cost = current_cost;
 
-    const int operations = 7;
+    const int operations = 8;
     double start_weight = 100 / operations;
     vector<double> weights(operations, start_weight);
     vector<double> c_weights(operations, 0);
@@ -672,7 +672,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
         //cout << i << "\n";
         solution_cost_iteration.push_back(current_cost);
         //cout << "11\n";
-        //last_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
+        last_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());
         //cout << "22\n";
         t *= alpha; //t_max * (1 - ((static_cast<float>(i + 1))/num_operations));
 
@@ -788,8 +788,8 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
                     max_score = operation_score[i];
                     max_ind = i;
                 }
-                if (operation_score[i] / total_score < 0.08) {
-                    give_points_to.push_back(pair<int, int>(i, floor(total_score * 0.08 - operation_score[i])));
+                if (operation_score[i] / total_score < 0.06) {
+                    give_points_to.push_back(pair<int, int>(i, floor(total_score * 0.06 - operation_score[i])));
                 }
             }
             for (pair<int, int> p : give_points_to) {
@@ -881,38 +881,16 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
             choice = 5;
             res = label_propagation_accept_unchanged(g, current_solution);
             new_cost = current_cost + res.value_or(0);
-        } else {//(r < c_weights[6]) {
+        } else if (r < c_weights[6]) {
             choice = 6;
             res = add_node_to_neighbours_accept_unchanged(g, current_solution);
             new_cost = current_cost + res.value_or(0);
-        } /**else  {
-            choice = 7;
-            res = remove_node_accept_unchanged(wg, current_solution, i);
-            new_cost = current_cost + res.value_or(0);
-        }*//**else {
-            choice = 5;
-             else  fast_merge(wg, current_solution);
-            new_cost = current_cost + res.value_or(0);
-            current_solution.book.b_merge.last_merge_operation = i;
-        }*/
-        /**else if (r < c_weights[5]) {
-            choice = 5;
-            res = add_set_over_uncovered(wg, current_solution);
-            new_cost = current_cost + res.value_or(0);
         } else {
-            choice = 6;
-            res = remove_set_op(wg, current_solution);
+            choice = 7;
+            //cout << "choice==7\n";
+            res = remove_add_3(g, current_solution);
             new_cost = current_cost + res.value_or(0);
-        }*/
-
-            /** 
-        else {
-            choice = 6;
-            res = remove_set_op(wg, current_solution);
-            new_cost = current_cost + res.value_or(0);
-            //current_solution.book.b_merge.last_merge_operation = i;
-        }*/
-        //cout << "choice: " << choice << "\n";
+        } 
 
         if (local_search) {
             find_prob_of_acceptance = -1;
@@ -985,7 +963,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
                     }
                     current_cost = new_cost;
                 }   
-            } else if (choice == 2 || choice == 7) {
+            } else if (choice == 2) {
                 if (res.has_value()) {
                     for (int si : current_solution.book.b_add_node.sets_to_change) {
                         current_solution.remove(current_solution.book.b_add_node.v, si);
@@ -1016,6 +994,18 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
                 if (res.has_value()) {
                     current_solution.remove_set(current_solution.book.b_perturbation.si_to_remove);
                     current_cost = new_cost;  
+                }
+            }
+            else if (choice == 7) {
+                BRemoveAdd &b = current_solution.book.b_remove_add;
+                if (res.has_value()) {
+                    //cout << "time to remove add!\n";
+                    for (pair<int, int> p : b.next_move_remove) {
+                        current_solution.remove(p.first, p.second);
+                    }
+                    for (pair<int, int> p : b.next_move_add) {
+                        current_solution.add(p.first, p.second);
+                    }
                 }
             }
         }
@@ -1067,8 +1057,8 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
         //current_solution.print_solution();
         //cout << "e\n";
         
-        /**
-        int actual_cost = current_solution.cost_solution(wg);
+        
+        int actual_cost = current_solution.cost_solution(g);
         if (current_cost - actual_cost != sol_diff) {
             sol_diff = current_cost - actual_cost;
             cout << "Change in sol_diff after operation " << choice << "\n";
@@ -1076,12 +1066,19 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
             cout << "Actual cost: " << actual_cost << "\n";
             cout << "sol_diff: " << sol_diff << "\n";
             tuple<int, int, int> next_move = current_solution.book.b_lp.next_move;
-            cout << "last operation (node, set, set): " << get<0>(next_move) << ", " << get<1>(next_move) << ", " << get<2>(next_move) << "\n";
+            //cout << "last operation (node, set, set): " << get<0>(next_move) << ", " << get<1>(next_move) << ", " << get<2>(next_move) << "\n";
+            cout << "last move with op 7: \n";
+            for (auto p : current_solution.book.b_remove_add.next_move_remove) {
+                cout << "remove " << p.first << " from set " << p.second << "\n";
+            }
+            for (auto p : current_solution.book.b_remove_add.next_move_add) {
+                cout << "add " << p.first << " to set " << p.second << "\n";
+            }
             cout << "previous solution: \n";
             last_solution.print_solution();
             cout << "current solution: \n"; 
             current_solution.print_solution();
-        }*/
+        }
         
         
         

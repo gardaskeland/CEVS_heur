@@ -83,14 +83,14 @@ void write_cost_dev_for_iterations(vector<LoggingSolution> &sol, string &filenam
 }
 
 void run_alns_on_heur_instances() {
-    int num_operations = 80000;
+    int num_operations = 20;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 9; i < 10; i = i + 2) {
+    for (int i = 1; i < 4; i = i + 2) {
         ostringstream oss;
         string filename;
         oss.clear();
         oss.str(string());
-        oss << "../../../heur/heur" << integer_to_three_digits(i) << ".gr";
+        oss << "../../../../../Master/heur/heur" << integer_to_three_digits(i) << ".gr";
         filename = oss.str(); // "../CEVStest/test_graphs/g8.txt";
         oss.clear();
         cout << "Working on file " << filename << "\n";
@@ -99,7 +99,7 @@ void run_alns_on_heur_instances() {
 
         int summed_costs = 0;
         int iterations = 5;
-        int num_operators = 7;
+        int num_operators = 8;
         int best_cost = pow(2, 30);
         ShallowSolution best_solution;
         vector<LoggingSolution> solutions;
@@ -110,7 +110,7 @@ void run_alns_on_heur_instances() {
 
             chrono::steady_clock::time_point begin_ = chrono::steady_clock::now();
             LoggingSolution sol;
-            alns2(g, sol, num_operations);
+            alns2_no_cc(g, sol, num_operations);
             chrono::steady_clock::time_point end_ = chrono::steady_clock::now();
 
             solutions.push_back(sol);

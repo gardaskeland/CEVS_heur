@@ -16,7 +16,8 @@ using namespace std;
 struct BRemoveAdd {
     vector<pair<int, tuple<int, int, int>>> best_p3s;
     //node from set to set
-    vector<tuple<int, int, int>> next_move;
+    vector<pair<int, int>> next_move_remove;
+    vector<pair<int, int>> next_move_add;
     int index;
     int counter = 0;
     bool initiated = false;
@@ -54,6 +55,8 @@ class Bookkeep {
         SegmentTree<int> sgt(operations);
         modified_clusters = sgt;
         modified_vertices = sgt;
+        b_remove_add.initiated = false;
+        b_remove_add.counter = 0;
     }
 
     Bookkeep() {
