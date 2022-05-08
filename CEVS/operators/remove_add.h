@@ -22,4 +22,6 @@ optional<int> remove_add_3(Graph &g, SolutionRepresentation &sol);
  */
 optional<int> remove_add_3_random(Graph &g, SolutionRepresentation &sol);
 
+optional<int> simple_remove_add_3(Graph &g, SolutionRepresentation &sol);
+
 #endif

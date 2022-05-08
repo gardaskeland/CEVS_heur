@@ -83,9 +83,9 @@ void write_cost_dev_for_iterations(vector<LoggingSolution> &sol, string &filenam
 }
 
 void run_alns_on_heur_instances() {
-    int num_operations = 20;
+    int num_operations = 10000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
-    for (int i = 1; i < 4; i = i + 2) {
+    for (int i = 3; i < 4; i = i + 2) {
         ostringstream oss;
         string filename;
         oss.clear();
@@ -185,12 +185,14 @@ void run_alns_on_heur_instances() {
         out_file << "average runtime: " << average_runtime / 1000000 << "\n";
         out_file << "------------------\n";
         
-        out_file << "average time of add_all_nodes_to_neighbours: " << average_time_operators[0] / 1000000 << "\n";
-        out_file << "average time of random_choice_split: " << average_time_operators[1] / 1000000 << "\n";
-        out_file << "average time of weighted_random_merge: " << average_time_operators[2] / 1000000 << "\n";
-        out_file << "average time of label_propagation_round " << average_time_operators[3] / 1000000 << "\n";
-        //out_file << "average time of remove_nodes_ " << average_time_operators[4] / 1000000 << "\n";
-        //out_file << "average time of add_node_to_all " << average_time_operators[5] / 1000000 << "\n";
+        out_file << "average time of add_nodes_to_neighbours: " << average_time_operators[0] / 1000000 << "\n";
+        out_file << "average time of label_prop: " << average_time_operators[1] / 1000000 << "\n";
+        out_file << "average time of remove_node: " << average_time_operators[2] / 1000000 << "\n";
+        out_file << "average time of add_node_to_set " << average_time_operators[3] / 1000000 << "\n";
+        out_file << "average time of label_prop_wr " << average_time_operators[4] / 1000000 << "\n";
+        out_file << "average time of label_prop_unchanged " << average_time_operators[5] / 1000000 << "\n";
+        out_file << "average time of add_nodes_to_neighbours_unchanged " << average_time_operators[6] / 1000000 << "\n";
+        out_file << "average time of simple_remove_add_3 " << average_time_operators[7] / 1000000 << "\n";
         out_file << "------------------\n";
 
         out_file << "average improvement of add_all_nodes_to_neighbours " << average_improvement_operations[0] << "\n";

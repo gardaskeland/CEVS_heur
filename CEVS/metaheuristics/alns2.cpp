@@ -654,6 +654,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
     const int activate_local_search = num_operations - (num_operations / 20);
 
     optional<int> res;
+    chrono::steady_clock::time_point begin, end;
 
     /**
     //test ra
@@ -816,16 +817,15 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
         int r = current_solution.ra.get_random_int() % 100;
         //cout << "a\n";
         //cout << "r = " << r << "\n";
+
+        begin = chrono::steady_clock::now();
         
         if (r < c_weights[0]) {
-            chrono::steady_clock::time_point begin_0 = chrono::steady_clock::now();
             choice = 0;
             //res0 = random_choice_add_node(wg, current_solution);
             res = add_node_to_neighbours_accept(g, current_solution);
             new_cost = current_cost + res.value_or(0);
             current_solution.book.b_add_node.last_add_operation = i;
-            chrono::steady_clock::time_point end_0 = chrono::steady_clock::now();
-            time_taken[0] += chrono::duration_cast<chrono::microseconds>(end_0 - begin_0).count();
         } /**else if (r < c_weights[1]) {
             chrono::steady_clock::time_point begin_1 = chrono::steady_clock::now();
             choice = 1;
@@ -846,30 +846,22 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
             chrono::steady_clock::time_point end_2 = chrono::steady_clock::now();
             time_taken[2] += chrono::duration_cast<chrono::microseconds>(end_2 - begin_2).count();
         } */else if ( r < c_weights[1]) {
-            chrono::steady_clock::time_point begin_3 = chrono::steady_clock::now();
             choice = 1;
             res = label_propagation_accept(g, current_solution);
             new_cost = current_cost + res.value_or(0);
-            chrono::steady_clock::time_point end_3 = chrono::steady_clock::now();
-            time_taken[3] += chrono::duration_cast<chrono::microseconds>(end_3 - begin_3).count();
         } else if (r < c_weights[2]) {
-            chrono::steady_clock::time_point begin_4 = chrono::steady_clock::now();
             choice = 2;
             res = remove_node_accept(g, current_solution);
             new_cost = current_cost + res.value_or(0);
-            chrono::steady_clock::time_point end_4 = chrono::steady_clock::now();
-            time_taken[4] += chrono::duration_cast<chrono::microseconds>(end_4 - begin_4).count();
         } else if (r < c_weights[3]) {
-            chrono::steady_clock::time_point begin_5 = chrono::steady_clock::now();
             choice = 3;
             res = add_node_to_set(g, current_solution);
             new_cost = current_cost + res.value_or(0);
-            chrono::steady_clock::time_point end_5 = chrono::steady_clock::now();
-            time_taken[5] += chrono::duration_cast<chrono::microseconds>(end_5 - begin_5).count();
         } /**else if (r < c_weights[4]){
             choice = 4;
             res = swap(wg, current_solution);
             new_cost = current_cost + res.value_or(0);
+
 
         }*/ 
         else if (r < c_weights[4]) {
@@ -888,9 +880,13 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
         } else {
             choice = 7;
             //cout << "choice==7\n";
-            res = remove_add_3(g, current_solution);
+            res = simple_remove_add_3(g, current_solution);
             new_cost = current_cost + res.value_or(0);
         } 
+
+        end = chrono::steady_clock::now();
+        time_taken[choice] += chrono::duration_cast<chrono::microseconds>(end - begin).count();
+
 
         if (local_search) {
             find_prob_of_acceptance = -1;
@@ -1006,6 +1002,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
                     for (pair<int, int> p : b.next_move_add) {
                         current_solution.add(p.first, p.second);
                     }
+                    current_cost = new_cost;
                 }
             }
         }
@@ -1057,7 +1054,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
         //current_solution.print_solution();
         //cout << "e\n";
         
-        
+        /**
         int actual_cost = current_solution.cost_solution(g);
         if (current_cost - actual_cost != sol_diff) {
             sol_diff = current_cost - actual_cost;
@@ -1078,7 +1075,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
             last_solution.print_solution();
             cout << "current solution: \n"; 
             current_solution.print_solution();
-        }
+        }*/
         
         
         

@@ -169,7 +169,7 @@ int add_node_to_set_cost_changed(Graph &g, SolutionRepresentation &sol, int si, 
                 }
                 continue;
            }*/
-           continue;
+           if (skip) continue;
         }
 
         if (sol.get_co_occurence(i, v) > 0) continue;
@@ -183,11 +183,23 @@ int add_node_to_set_cost_changed(Graph &g, SolutionRepresentation &sol, int si, 
             edges_to_add += g.get_edge_cost(i, v);
         }
     }
-
+    
     //Assume no pair is in both removed and added
     for (pair<int, int> p : added) {
         if (p.second == si && p.first != v) {
+            bool will_add = false;
             if (sol.get_co_occurence(p.first, v) == 0) {
+                will_add = true;
+            }
+            //If node was previously removed and we now add it back, so that co-occurence is 1
+            else if (sol.get_co_occurence(p.first, v) == 1) {
+                for (pair<int, int> p2 : removed) {
+                    if (p2.second == p.second && p2.first == p.first) {
+                        will_add = true;
+                    }
+                }
+            }
+            if (will_add) {
                  if (g.has_edge(p.first, v)) {
                     edges_to_delete += g.get_edge_cost(p.first, v);
                 }
@@ -199,6 +211,48 @@ int add_node_to_set_cost_changed(Graph &g, SolutionRepresentation &sol, int si, 
     }
     //+1 since we split the node by adding it
     return edges_to_add - edges_to_delete + g.get_node_weight(v);
+}
+
+struct cmp_int_descending {
+    bool operator() (int &left, int &right) {
+        return left > right;
+    }
+};
+
+void remove_duplicates(vector<pair<int, int>> &v1, vector<pair<int, int>> &v2) {
+    cout << "to remove:\n";
+    for (auto p : v1) {
+        cout << p.first << " " << p.second << "\n";
+    }
+
+    cout << "to add:\n";
+    for (auto p : v2) {
+        cout << p.first << " " << p.second << "\n";
+    }
+    vector<int> remove_index_v1;
+    vector<int> remove_index_v2;
+    for (int i = 0; i < v1.size(); i++) {
+        for (int j = 0; j < v2.size(); j++) {
+            if (v1[i].first == v2[j].first && v1[i].second == v2[j].second) {
+                remove_index_v1.push_back(i); remove_index_v2.push_back(j);
+                break;
+            } 
+        }
+    }
+    sort(remove_index_v1.begin(), remove_index_v1.end(), cmp_int_descending());
+    sort(remove_index_v2.begin(), remove_index_v2.end(), cmp_int_descending());
+
+    for (int ind : remove_index_v1) {
+        //cout << ind << " ";
+        v1.erase(v1.begin() + ind);
+    }
+    //cout << "\n";
+
+    for (int ind : remove_index_v2) {
+        //cout << ind << " ";
+        v2.erase(v2.begin() + ind);
+    }
+    //cout << "\n";
 }
 
 optional<int> add_3(Graph &g, SolutionRepresentation &sol, tri &t, Modifications &mod) {
@@ -228,18 +282,7 @@ optional<int> add_3(Graph &g, SolutionRepresentation &sol, tri &t, Modifications
     int first_add = nodes[best_index];
     cost += cost_set[best_index][0].first;
     pair<int, int> to_add = make_pair(first_add, cost_set[best_index][0].second);
-    bool do_add = true;
-    //Make sure there is no equal pair in added and removed to make add_node_to_set_unchanged work.
-    for (auto it = removed.begin(); it != removed.end(); it++) {
-        if (it->first == to_add.first && it->second == to_add.second) {
-            removed.erase(it);
-            do_add = false;
-            break;
-        }
-    }
-    if (do_add) {
-        added.push_back(to_add);
-    }
+    added.push_back(to_add);
     cost_set.erase(cost_set.begin() + best_index);
     nodes.erase(nodes.begin() + best_index);
 
@@ -263,18 +306,7 @@ optional<int> add_3(Graph &g, SolutionRepresentation &sol, tri &t, Modifications
     int second_add = nodes[best_index];
     cost += cost_set[best_index][0].first;
     to_add = make_pair(second_add, cost_set[best_index][0].second);
-    do_add = true;
-    //Make sure there is no equal pair in added and removed to make add_node_to_set_unchanged work.
-    for (auto it = removed.begin(); it != removed.end(); it++) {
-        if (it->first == to_add.first && it->second == to_add.second) {
-            removed.erase(it);
-            do_add = false;
-            break;
-        }
-    }
-    if (do_add) {
-        added.push_back(to_add);
-    }
+    added.push_back(to_add);
     cost_set.erase(cost_set.begin() + best_index);
     nodes.erase(nodes.begin() + best_index);
 
@@ -283,24 +315,15 @@ optional<int> add_3(Graph &g, SolutionRepresentation &sol, tri &t, Modifications
         cost_set[0].emplace_back(make_pair(add_node_to_set_cost_changed(g, sol, si, nodes[0], removed, added), si));
     }
     sort(cost_set[0].begin(), cost_set[0].end(), cmp_ascending());
-
     if (cost_set[0].empty()) return {};
 
     int third_add = nodes[0];
     cost += cost_set[0][0].first;
     to_add = make_pair(third_add, cost_set[0][0].second);
 
-    do_add = true;
-    for (auto it = removed.begin(); it != removed.end(); it++) {
-        if (it->first == to_add.first && it->second == to_add.second) {
-            removed.erase(it);
-            do_add = false;
-            break;
-        }
-    }
-    if (do_add) {
-        added.push_back(to_add);
-    }
+    added.push_back(to_add);
+
+    remove_duplicates(removed, added);
 
     sol.book.b_remove_add.next_move_remove = removed;
     sol.book.b_remove_add.next_move_add = added;
@@ -331,6 +354,7 @@ optional<int> remove_add_3(Graph &g, SolutionRepresentation &sol) {
             if (!add_cost.has_value()) return {};
             cost += add_cost.value();
             b.best_p3s[i++] = make_pair(cost, t);
+            mod.nodes_removed_from_sets.clear();
         }
         b.counter = b.best_p3s.size() / 2;
         b.index = 0;
@@ -346,4 +370,95 @@ optional<int> remove_add_3(Graph &g, SolutionRepresentation &sol) {
     if (!add_cost.has_value()) return {};
     //cout << "add_cost_ok\n";
     return remove_cost.value() + add_cost.value();
-}   
+}
+
+optional<int> simple_remove_add_3(Graph &g, SolutionRepresentation &sol) {
+    BRemoveAdd &b = sol.book.b_remove_add;
+    if (!b.initiated) {
+        g.find_all_p3s();
+        b.best_p3s = vector<pair<int, tri>>(g.all_p3s.size());
+        b.initiated = true;
+        //for (tri t : g.all_p3s) {
+        //    cout << get<0>(t) << " " << get<1>(t) << " " << get<2>(t) << "\n";
+        //}
+    }
+
+    tri p3 = g.all_p3s[sol.ra.get_random_int() % g.all_p3s.size()];
+
+    vector<pair<int, int>> removed(3);
+    vector<pair<int, int>> added(3);
+    vector<int> nodes = {get<0>(p3), get<1>(p3), get<2>(p3)};
+    int total_cost = 0;
+    int cost;
+    int best_cost;
+    int best_set;
+    for (int i = 0; i < 3; i++) {
+        best_cost = 1 << 15;
+        best_set = -1;
+        set<int> &in_clusters = sol.node_in_clusters[nodes[i]];
+        for (int si : in_clusters) {
+            cost = removal_cost(g, sol, si, nodes[i]);
+            if (cost < best_cost) {
+                best_cost = cost;
+                best_set = si;
+            }
+        }
+            //Should never occur since every node is in at least one set
+        if (best_set == -1) {
+            cout << "Got a bug in simple_add_remove!\n";
+            return {};
+        }
+
+        //cout << "cost of removing " << nodes[i] << " from set " << best_set << " is " << best_cost << "\n";
+
+        removed[i] = make_pair(nodes[i], best_set);
+        total_cost += best_cost;
+        sol.remove(nodes[i], best_set);
+    }
+
+    int added_counter = 0;
+    for (int i = 0; i < 3; i++) {
+        best_cost = 1 << 15;
+        best_set = -1;
+        set<int> neighbours = get_neighbour_set_of_u(g, sol, nodes[i]);
+        if (neighbours.empty()) break; //we reset the solution and return {}
+        for (int si : neighbours) {
+            cost = add_node_to_set_cost(g, sol, si, nodes[i]);
+            if (cost < best_cost) {
+                best_cost = cost;
+                best_set = si;
+            }
+        }
+
+        //cout << "cost of adding " << nodes[i] << " to set " << best_set << " is " << best_cost << "\n";
+
+        added[i] = make_pair(nodes[i], best_set);
+        total_cost += best_cost;
+        sol.add(nodes[i], best_set);
+        added_counter++;
+    }
+
+    for (int i = added.size()-1; i >= 0; i--) {
+        sol.remove(added[i].first, added[i].second);
+    }
+
+    set<int> set_indices;
+    for (int i = removed.size()-1; i >= 0; i--) {
+        //In inner loop since two vertices to add may be in the same set.
+        set_indices = sol.get_set_indices_as_set();
+        if (set_indices.find(removed[i].second) != set_indices.end()) {
+            sol.add(removed[i].first, removed[i].second);
+        }
+        else {
+            set<int> to_add = {removed[i].first};
+            sol.add_set_ind(removed[i].second, to_add);
+        }
+    }
+
+    if (added_counter < 3) return {};
+    else {
+        b.next_move_remove = removed;
+        b.next_move_add = added;
+        return total_cost;
+    }
+}

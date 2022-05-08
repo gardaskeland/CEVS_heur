@@ -332,6 +332,7 @@ void SolutionRepresentation::add_set(set<int> s) {
 
 void SolutionRepresentation::add_set_ind(int si, set<int> s) {
     for (int u : s) {
+        node_in_clusters[u].insert(si);
         for (int v : s) {
             if (u >= v) continue;
             map<int,int> &m = co_occurence[u];

@@ -97,8 +97,8 @@ int label_propagation_round(Graph &g, SolutionRepresentation &sol) {
 
 int cost_of_move(Graph &g, SolutionRepresentation &sol, int u, int si, int sj) {
     int cost = 0;
-    set<int> si_nodes = sol.get_set(si);
-    set<int> sj_nodes = sol.get_set(sj);
+    set<int> &si_nodes = sol.clusters[si];
+    set<int> &sj_nodes = sol.clusters[sj];
 
     for (int v : si_nodes) {
         if (u == v) continue;

@@ -1,5 +1,5 @@
 
-boiler=g++ -std=c++17 -c -O3
+boiler=g++ -std=c++17 -c -O -g
 
 cevs: test_operators.o solution_representation.o read_file.o graph.o segment_tree.o weighted_graph.o \
 	label_propagation.o add_node.o weighted_random.o perturbation.o
