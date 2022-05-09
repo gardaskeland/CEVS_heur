@@ -22,6 +22,16 @@ optional<int> remove_add_3(Graph &g, SolutionRepresentation &sol);
  */
 optional<int> remove_add_3_random(Graph &g, SolutionRepresentation &sol);
 
+/**
+ * Chooses a random p3 to remove and reinsert
+ */
 optional<int> simple_remove_add_3(Graph &g, SolutionRepresentation &sol);
+
+/**
+ * Every now and then scans a sample of p3s to remove and reinsert. Then
+ * for a number of times afterwards tries to move the p3s that previously
+ * were the best to move
+ */
+optional<int> sample_remove_add_3(Graph &g, SolutionRepresentation &sol);
 
 #endif

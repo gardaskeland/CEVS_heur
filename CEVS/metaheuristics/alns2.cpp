@@ -880,7 +880,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
         } else {
             choice = 7;
             //cout << "choice==7\n";
-            res = simple_remove_add_3(g, current_solution);
+            res = sample_remove_add_3(g, current_solution);
             new_cost = current_cost + res.value_or(0);
         } 
 
@@ -1052,6 +1052,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
             //current_solution.print_solution();
         }
         //current_solution.print_solution();
+        //cout << "choice : " << choice << "\n";
         //cout << "e\n";
         
         /**
@@ -1421,7 +1422,7 @@ LoggingSolution test_label_propagation(Graph &g, LoggingSolution &log_sol, int &
         //}
         //current_solution.print_solution();
         //cout << "e\n";
-        
+        /**
         int actual_cost = current_solution.cost_solution(wg);
         if (current_cost - actual_cost != sol_diff) {
             sol_diff = current_cost - actual_cost;
@@ -1441,7 +1442,7 @@ LoggingSolution test_label_propagation(Graph &g, LoggingSolution &log_sol, int &
             last_solution.print_solution();
             cout << "current solution: \n"; 
             current_solution.print_solution();
-        }
+        }*/
         
         
         

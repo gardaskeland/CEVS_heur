@@ -372,19 +372,7 @@ optional<int> remove_add_3(Graph &g, SolutionRepresentation &sol) {
     return remove_cost.value() + add_cost.value();
 }
 
-optional<int> simple_remove_add_3(Graph &g, SolutionRepresentation &sol) {
-    BRemoveAdd &b = sol.book.b_remove_add;
-    if (!b.initiated) {
-        g.find_all_p3s();
-        b.best_p3s = vector<pair<int, tri>>(g.all_p3s.size());
-        b.initiated = true;
-        //for (tri t : g.all_p3s) {
-        //    cout << get<0>(t) << " " << get<1>(t) << " " << get<2>(t) << "\n";
-        //}
-    }
-
-    tri p3 = g.all_p3s[sol.ra.get_random_int() % g.all_p3s.size()];
-
+optional<tuple<int, vector<pair<int, int>>, vector<pair<int, int>>>> find_remove_add_3(Graph &g, SolutionRepresentation &sol, tri &p3) {
     vector<pair<int, int>> removed(3);
     vector<pair<int, int>> added(3);
     vector<int> nodes = {get<0>(p3), get<1>(p3), get<2>(p3)};
@@ -392,6 +380,7 @@ optional<int> simple_remove_add_3(Graph &g, SolutionRepresentation &sol) {
     int cost;
     int best_cost;
     int best_set;
+    int remove_counter = 0;
     for (int i = 0; i < 3; i++) {
         best_cost = 1 << 15;
         best_set = -1;
@@ -405,8 +394,12 @@ optional<int> simple_remove_add_3(Graph &g, SolutionRepresentation &sol) {
         }
             //Should never occur since every node is in at least one set
         if (best_set == -1) {
-            cout << "Got a bug in simple_add_remove!\n";
-            return {};
+            cout << "Got a bug in find_remove_add!\n";
+            sol.print_solution();
+            cout << nodes[0] << " " << nodes[1] << " " << nodes[2] << "\n";
+            cout << "i = " << i << "\n";
+            exit(0);
+            //return {};
         }
 
         //cout << "cost of removing " << nodes[i] << " from set " << best_set << " is " << best_cost << "\n";
@@ -414,6 +407,7 @@ optional<int> simple_remove_add_3(Graph &g, SolutionRepresentation &sol) {
         removed[i] = make_pair(nodes[i], best_set);
         total_cost += best_cost;
         sol.remove(nodes[i], best_set);
+        remove_counter++;
     }
 
     int added_counter = 0;
@@ -438,12 +432,12 @@ optional<int> simple_remove_add_3(Graph &g, SolutionRepresentation &sol) {
         added_counter++;
     }
 
-    for (int i = added.size()-1; i >= 0; i--) {
+    for (int i = added_counter - 1; i >= 0; i--) {
         sol.remove(added[i].first, added[i].second);
     }
 
     set<int> set_indices;
-    for (int i = removed.size()-1; i >= 0; i--) {
+    for (int i = remove_counter - 1; i >= 0; i--) {
         //In inner loop since two vertices to add may be in the same set.
         set_indices = sol.get_set_indices_as_set();
         if (set_indices.find(removed[i].second) != set_indices.end()) {
@@ -456,9 +450,104 @@ optional<int> simple_remove_add_3(Graph &g, SolutionRepresentation &sol) {
     }
 
     if (added_counter < 3) return {};
+    else return make_tuple(total_cost, removed, added);
+}
+
+//TODO: Better selcetion heuristic: Put calculation in own function that returs cost, removed and added.
+optional<int> simple_remove_add_3(Graph &g, SolutionRepresentation &sol) {
+    BRemoveAdd &b = sol.book.b_remove_add;
+    if (!b.initiated) {
+        g.find_all_p3s();
+        b.best_p3s = vector<pair<int, tri>>(g.all_p3s.size());
+        b.initiated = true;
+        //for (tri t : g.all_p3s) {
+        //    cout << get<0>(t) << " " << get<1>(t) << " " << get<2>(t) << "\n";
+        //}
+    }
+
+    tri p3 = g.all_p3s[sol.ra.get_random_int() % g.all_p3s.size()];
+
+
+    optional<tuple<int, vector<pair<int, int>>, vector<pair<int, int>>>> move = find_remove_add_3(g, sol, p3);
+    if (!move.has_value()) return {};
     else {
-        b.next_move_remove = removed;
-        b.next_move_add = added;
-        return total_cost;
+        b.next_move_remove = get<1>(move.value());
+        b.next_move_add = get<2>(move.value());
+        return get<0>(move.value());
+    }
+}
+
+struct cmp_ascending_2 {
+    bool operator() (pair<int, tri> &left, pair<int, tri> &right) {
+        return left.first < right.first;
+    }
+};
+
+optional<int> sample_remove_add_3(Graph &g, SolutionRepresentation &sol) {
+    BRemoveAdd &b = sol.book.b_remove_add;
+    const int batch_size = 500;
+    if (!b.initiated) {
+        g.find_all_p3s();
+        b.best_p3s = vector<pair<int, tri>>(batch_size, make_pair(1 << 15, make_tuple(-1, -1, -1)));
+        b.initiated = true;
+        b.best_p3s_counter = 0;
+        b.counter = 0;
+        //for (tri t : g.all_p3s) {
+        //    cout << get<0>(t) << " " << get<1>(t) << " " << get<2>(t) << "\n";
+        //}
+    }
+
+    optional<tuple<int, vector<pair<int, int>>, vector<pair<int, int>>>> move_;
+
+    if (b.best_p3s_counter == 0) {
+        //b.counter counts upwards, indexes on best_p3s
+        //While best_p3s_counter counts downwards towards 0, when we have exhausted all p3s.
+        b.counter = 0;
+        if (g.all_p3s.size() <= batch_size) {
+            for (int i = 0; i < g.all_p3s.size(); i++) {
+                move_ = find_remove_add_3(g, sol, g.all_p3s[i]);
+                if (move_.has_value()) {
+                    b.best_p3s[b.best_p3s_counter++] = make_pair(get<0>(move_.value()), g.all_p3s[i]);
+                }
+            }
+        } else {
+            //Dividing list of p3 into blocks to get diverse p3's
+            int block_size = g.all_p3s.size() / batch_size;
+            int mod_block = g.all_p3s.size() % batch_size;
+            int r, block;
+            for (int i = 0; i < batch_size; i++) {
+                if (i < mod_block) {
+                    r = sol.ra.get_random_int() % (block_size + 1);
+                    block = (block_size+1)*i;
+                } else {
+                    r = sol.ra.get_random_int() % block_size;
+                    block = (block_size+1)*mod_block + block_size*(i - mod_block);
+                }
+                move_ = find_remove_add_3(g, sol, g.all_p3s[block + r]);
+                //tri choice = g.all_p3s[block + r];
+                //cout << get<0>(choice) << " " << get<1>(choice) << " " << get<2>(choice) << "\n";
+                if (move_.has_value()) {
+                    b.best_p3s[b.best_p3s_counter++] = make_pair(get<0>(move_.value()), g.all_p3s[block + r]);
+                }
+            }
+        }
+
+        if (b.best_p3s_counter == 0) return {};
+
+        //padding
+        for (int i = b.best_p3s_counter; i < batch_size; i++) {
+            b.best_p3s[i] = make_pair(1 << 15, make_tuple(-1, -1, -1));
+        }
+
+        sort(b.best_p3s.begin(), b.best_p3s.end(), cmp_ascending_2());
+    }
+
+    move_ = find_remove_add_3(g, sol, b.best_p3s[b.counter++].second); b.best_p3s_counter--;
+
+    if (!move_.has_value()) return {};
+    else {
+        b.next_move_remove = get<1>(move_.value());
+        b.next_move_add = get<2>(move_.value());
+        return get<0>(move_.value());
     }
 }
