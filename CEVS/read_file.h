@@ -21,6 +21,8 @@ vector<vector<int>> read_gz_file(string &filename);
  */
 vector<vector<int>> read_csv_graph(string &filename, int num_nodes);
 
+vector<vector<int>> read_csv_graph_2(string &node_file, string &edge_file);
+
 /**
  * Reads a file in the graph modelling language and returns an adjacency list of the graph.
  */

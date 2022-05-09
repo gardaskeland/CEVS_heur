@@ -41,6 +41,8 @@ void run_on_football_graph();
 
 void run_alns_on_gml();
 
+void run_alns_on_csv();
+
 void test_p3();
 
 void run_operation();

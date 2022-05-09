@@ -107,3 +107,16 @@ Graph make_graph_from_gml(string filename) {
     return Graph(adj);
 }
 
+Graph make_graph_from_gr(string filename) {
+    vector<vector<int>> adj = read_gz_file(filename);
+    return Graph(adj);
+}
+
+//TODO: Must write method that reads the nodes.csv file to find how many
+//nodes are in the graph
+/**
+Graph make_graph_from_csv(string filename) {
+    vector<vector<int>> adj = read_csv_graph(filename);
+    return Graph(adj);
+}*/
+

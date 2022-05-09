@@ -38,6 +38,9 @@ PYBIND11_MODULE(CEVS_heur, m) {
 
     m.def("make_graph_from_gml", &make_graph_from_gml, "Reads a gml file and returns a graph \
         corresponding to the content of the file.");
+
+    m.def("make_graph_from_gr", &make_graph_from_gr, "Reads a gr file and returns a graph \
+        corresponding to the content of the file.");
     
     m.def("objective_function", &objective_function, "Returns the cost of current solution.");
 }  

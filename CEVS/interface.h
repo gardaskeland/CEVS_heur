@@ -30,6 +30,8 @@ int objective_function(Graph &g, SolutionRepresentation &sol);
 
 Graph make_graph_from_gml(string filename);
 
+Graph make_graph_from_gr(string filename);
+
 
 
 

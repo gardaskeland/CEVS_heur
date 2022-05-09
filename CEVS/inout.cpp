@@ -616,6 +616,23 @@ void run_alns_on_gml() {
     }
 }
 
+void run_alns_on_csv() {
+    ostringstream str;
+    vector<string> v = {"celegans_metabolic", "cs_department", "facebook_friends", "football.csv", \
+                        "game_thrones", "jazz_collab", "karate78.csv", "law_firm", "revolution", "unicodelang"};
+    vector<int> num_nodes = {453, 61, 362, 115, 107, 198, 34, 71, 141, 868};
+    for (int i = 0; i < 10; i++) {
+        str.clear();
+        str.str(string());
+        str << "../../../../../Master/Testsets/" << v[i] << "/edges.csv";
+        string filename = str.str();
+        vector<vector<int>> adj = read_csv_graph(filename, num_nodes[i]);
+
+        Graph g(adj);
+        run_alns_on_single_instance(filename, g, 5, 80000);
+    }
+}
+
 void run_operation() {
     string filename = "../../../FARZgraphs/FARZ_500_edges_100.gml";
     vector<vector<int>> adj = read_gml(filename);

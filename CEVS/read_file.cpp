@@ -38,6 +38,15 @@ vector<vector<int>> read_gz_file(string &s) {
     return adj;
 }
 
+bool isNumber(string &s) {
+    if (s.size() == 0) return false;
+    for (char c : s) {
+        if (!isdigit(c)) return false;
+    }
+    return true;
+}
+
+
 vector<vector<int>> read_csv_graph(string &filename, int num_nodes) {
     vector<int> row;
     string line, word;
@@ -51,7 +60,7 @@ vector<vector<int>> read_csv_graph(string &filename, int num_nodes) {
         stringstream str(line);
 
         while(getline(str, word, ','))
-            row.push_back(stoi(word));
+            if(isNumber(word)) row.push_back(stoi(word));
         adj_list[row[0]].push_back(row[1]);
         adj_list[row[1]].push_back(row[0]);
     }
@@ -59,6 +68,15 @@ vector<vector<int>> read_csv_graph(string &filename, int num_nodes) {
     file.close();
 
     return adj_list;
+}
+
+vector<vector<int>> read_csv_graph_2(string &node_file, string &edge_file) {
+    string line;
+    fstream file(node_file, ios::in);
+    getline(file, line);
+    int counter = 0;
+    while(getline(file, line)) counter++;
+    return read_csv_graph(edge_file, counter);
 }
 
 vector<vector<int>> read_gml(string &filename) {
