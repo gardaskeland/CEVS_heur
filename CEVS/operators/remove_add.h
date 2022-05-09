@@ -34,4 +34,6 @@ optional<int> simple_remove_add_3(Graph &g, SolutionRepresentation &sol);
  */
 optional<int> sample_remove_add_3(Graph &g, SolutionRepresentation &sol);
 
+void execute_remove_add_3(SolutionRepresentation &sol);
+
 #endif

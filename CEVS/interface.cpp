@@ -17,6 +17,9 @@ int find_next_solution_hash(SolutionRepresentation &sol, int heuristic) {
     else if (heuristic == 7) {
         result = sol.solution_hash();
     }
+    else if (heuristic == 8) {
+        result = sol.book.b_remove_add.solution_hash;
+    }
     return result;
     
 }
@@ -48,9 +51,11 @@ pair<int, int> find_heuristic(Graph &g, SolutionRepresentation &sol, int heurist
         res = label_propagation_accept_unchanged(g, sol);
     else if (heuristic == 7)
         res = escape_by_add_lp(g, sol, 20);
+    else if (heuristic == 8)
+        res = sample_remove_add_3(g, sol);
 
 
-    if (heuristic > 7) {
+    if (heuristic > 8) {
         cout << "OOPS! Heuristic is " << heuristic << "\n";
     }
     sol.book.operation_number += 1;
@@ -89,6 +94,9 @@ void execute_heuristic(SolutionRepresentation &sol) {
     else if (4 <= heu && heu <= 6) {
        // cout << "lp\n";
         execute_label_propagation(sol);  
+    }
+    else if (heu == 8) {
+        execute_remove_add_3(sol);
     }
 
     //else if (heu == 7) do nothing

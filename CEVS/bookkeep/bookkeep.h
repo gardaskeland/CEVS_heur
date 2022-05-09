@@ -23,6 +23,7 @@ class BRemoveAdd {
         int index;
         int counter;
         bool initiated;
+        int solution_hash;
 
         BRemoveAdd() {
             counter = 0;

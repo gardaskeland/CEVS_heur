@@ -11,6 +11,7 @@
 #include "operators/greedy_merge.h"
 #include "operators/split.h"
 #include "operators/perturbation.h"
+#include "operators/remove_add.h"
 
 using namespace std;
 

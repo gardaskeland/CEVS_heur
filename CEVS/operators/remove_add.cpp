@@ -432,6 +432,9 @@ optional<tuple<int, vector<pair<int, int>>, vector<pair<int, int>>>> find_remove
         added_counter++;
     }
 
+    //may want to give a parameter to calculate this or skip it
+    sol.book.b_remove_add.solution_hash = sol.solution_hash();
+
     for (int i = added_counter - 1; i >= 0; i--) {
         sol.remove(added[i].first, added[i].second);
     }
@@ -549,5 +552,15 @@ optional<int> sample_remove_add_3(Graph &g, SolutionRepresentation &sol) {
         b.next_move_remove = get<1>(move_.value());
         b.next_move_add = get<2>(move_.value());
         return get<0>(move_.value());
+    }
+}
+
+void execute_remove_add_3(SolutionRepresentation &sol) {
+    BRemoveAdd b = sol.book.b_remove_add;
+    for (pair<int, int> p : b.next_move_remove) {
+        sol.remove(p.first, p.second);
+    }
+    for (pair<int, int> p : b.next_move_add) {
+        sol.add(p.first, p.second);
     }
 }
