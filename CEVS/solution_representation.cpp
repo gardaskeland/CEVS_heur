@@ -634,7 +634,7 @@ int SolutionRepresentation::solution_hash() {
     for (set<int> s : sets) {
         set_sum = 0;
         for (int i : s) set_sum += i;
-        result += (set_sum * counter++) % 1000000;
+        result = (result + (set_sum * counter++)) % (1 << 15);
     }
     return result;
 }

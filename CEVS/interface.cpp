@@ -1,6 +1,7 @@
 #include "interface.h"
 
 int find_next_solution_hash(SolutionRepresentation &sol, int heuristic) {
+    //cout << "finding solution hash of " << heuristic << "+\n";
     int result;
     if (heuristic == 0 || heuristic == 1) {
         result = calculate_hash_add_node_to_neighbours(sol);
@@ -54,6 +55,7 @@ pair<int, int> find_heuristic(Graph &g, SolutionRepresentation &sol, int heurist
     else if (heuristic == 8)
         res = sample_remove_add_3(g, sol);
 
+    //cout << "found operator\n";
 
     if (heuristic > 8) {
         cout << "OOPS! Heuristic is " << heuristic << "\n";

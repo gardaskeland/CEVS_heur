@@ -904,8 +904,8 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
         }
         if (new_cost <= current_cost || current_solution.ra.get_random_int() % 1000000 < find_prob_of_acceptance) {
             //if (new_cost > current_cost) cout << "find_prob_of_acceptance: " << find_prob_of_acceptance << "\n";
-            if (new_cost < current_cost) operation_score[choice] += 2;
-            if (new_cost < best_cost) operation_score[choice] += 2;
+            if (new_cost < current_cost) operation_score[choice] += 1;
+            if (new_cost < best_cost) operation_score[choice] += 1;
             if (choice == 0 || choice == 6) {
                 chrono::steady_clock::time_point begin_3 = chrono::steady_clock::now();
                 if (res.has_value()) {
