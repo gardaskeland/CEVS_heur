@@ -545,7 +545,7 @@ optional<int> sample_remove_add_3(Graph &g, SolutionRepresentation &sol) {
 
         sort(b.best_p3s.begin(), b.best_p3s.end(), cmp_ascending_2());
 
-        b.best_p3s_counter = max(10, b.best_p3s_counter / 4);
+        b.best_p3s_counter = max(10, b.best_p3s_counter / 2);
     }
 
     move_ = find_remove_add_3(g, sol, b.best_p3s[b.counter++].second); b.best_p3s_counter--;
