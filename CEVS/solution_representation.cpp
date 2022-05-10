@@ -607,13 +607,33 @@ int SolutionRepresentation::num_splits() {
     return count;
 }
 
+struct cmp_hash {
+
+    bool operator() (set<int> &left, set<int> &right) {
+        //cout << "size left: " << left.size() << ", size right: " << right.size() << "\n";
+        auto itl = left.begin(); auto itr = right.begin();
+        while(itl != left.end() && itr != right.end()) {
+            if (*itl < *itr) return true;
+            if (*itl > *itr) return false;
+            itl++; itr++;
+        }
+        return false;
+    }
+};
+
 int SolutionRepresentation::solution_hash() {
+    vector<set<int>> sets;
+    for (auto it = clusters.begin(); it != clusters.end(); it++) {
+        sets.push_back(it->second);
+    }
+    sort(sets.begin(), sets.end(), cmp_hash());
+
     int result = 0;
     int set_sum;
     int counter = 1;
-    for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
+    for (set<int> s : sets) {
         set_sum = 0;
-        for (int i : it->second) set_sum += i;
+        for (int i : s) set_sum += i;
         result += (set_sum * counter++) % 1000000;
     }
     return result;
