@@ -489,6 +489,7 @@ struct cmp_ascending_2 {
 optional<int> sample_remove_add_3(Graph &g, SolutionRepresentation &sol) {
     BRemoveAdd &b = sol.book.b_remove_add;
     const int batch_size = 500;
+    //const int pick_size = 100;
     if (!b.initiated) {
         g.find_all_p3s();
         b.best_p3s = vector<pair<int, tri>>(batch_size, make_pair(1 << 15, make_tuple(-1, -1, -1)));
@@ -543,6 +544,8 @@ optional<int> sample_remove_add_3(Graph &g, SolutionRepresentation &sol) {
         }
 
         sort(b.best_p3s.begin(), b.best_p3s.end(), cmp_ascending_2());
+
+        b.best_p3s_counter = max(10, b.best_p3s_counter / 4);
     }
 
     move_ = find_remove_add_3(g, sol, b.best_p3s[b.counter++].second); b.best_p3s_counter--;
