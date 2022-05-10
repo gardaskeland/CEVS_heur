@@ -84,6 +84,24 @@ void SolutionRepresentation::initialise_co_occurence(int u, int v) {
     co_occurence[v][u] = 1;
 }
 
+void SolutionRepresentation::make_co_occurence(int n) {
+    co_occurence.clear();
+    for (auto it = clusters.begin(); it != clusters.end(); it++) {
+        vector<int> set_nodes;
+        for (int u : it->second) set_nodes.push_back(u);
+        for (int i = 0; i < set_nodes.size() - 1; i++) {
+            for (int j = i + 1; j < set_nodes.size(); j++) {
+                map<int,int> &m = co_occurence[set_nodes[i]];
+                if (m.find(set_nodes[j]) != m.end()) {
+                    increase_co_occurence(set_nodes[i], set_nodes[j]);
+                } else {
+                    initialise_co_occurence(set_nodes[i], set_nodes[j]);
+                }
+            }
+        }   
+    }
+}
+
 void SolutionRepresentation::initial_solution_max_degree(Graph &g) {
     number_nodes = g.n;
     set<int> marked;

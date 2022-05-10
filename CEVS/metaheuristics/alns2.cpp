@@ -596,6 +596,28 @@ LoggingSolution alns2(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     return log_sol;
 }
 
+ShallowSolution do_local_search(Graph &g, ShallowSolution &shallow) {
+    SolutionRepresentation current_solution(g.n, 100);
+    current_solution.clusters = shallow.clusters;
+    current_solution.node_in_clusters = shallow.node_in_clusters;
+    //intialise co-occurence data structure
+    current_solution.make_co_occurence(g.n);
+    int current_cost = current_solution.cost_solution(g);
+    int best_cost = current_cost;
+    int new_cost;
+    ShallowSolution best_solution = shallow;
+
+    new_cost = current_cost + remove_nodes_(g, current_solution);
+
+    if (new_cost <= best_cost) {
+        cout << "new solution: cost reduction by " << best_cost - new_cost << "\n";
+        best_cost = new_cost;
+        best_solution = ShallowSolution(current_solution.clusters, current_solution.node_in_clusters);
+    }
+
+    return best_solution;
+}
+
 LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operations) {
     RevertKernel revert;
     //WeightedGraph wg = find_critical_clique_graph(g, revert);
@@ -1167,7 +1189,7 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
     }
 */ 
 
-    ShallowSolution shallow = best_solution;//from_cc_sol_to_sol(g, best_solution, revert);
+    ShallowSolution shallow = do_local_search(g, best_solution);//from_cc_sol_to_sol(g, best_solution, revert);
     for (map<int, set<int>>::iterator it = shallow.clusters.begin(); it != shallow.clusters.end(); it++) {
         log_sol.clusters[it->first] = it->second;
     }
