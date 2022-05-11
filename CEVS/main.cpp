@@ -4,5 +4,5 @@
 using namespace std;
 
 int main() {
-    run_alns_on_heur_instances();
+    alns_scaling_p3();
 }
