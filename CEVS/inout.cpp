@@ -600,7 +600,10 @@ struct cmp_second {
 void test_p3() {
     ostringstream str;
     vector<pair<int, int>> score;
-    for (int i = 0; i < 20; i++) {
+    ofstream out_file;
+    string out_file_name = "results/graphs_in_test_sorted_by_num_p3.txt";
+    out_file.open(out_file_name);
+    for (int i = 0; i < 200; i++) {
         str.clear();
         str.str(string());
         str << "../../../../../Master/train/data/FARZ_train_" << i << ".gml";
@@ -608,9 +611,9 @@ void test_p3() {
         vector<vector<int>> adj = read_gml(filename);
         Graph g(adj);
         g.find_all_p3s();
-        for (tuple<int, int, int> t : g.all_p3s) {
+        //for (tuple<int, int, int> t : g.all_p3s) {
             //cout << get<0>(t) + 1 << " " << get<1>(t) + 1 << " " << get<2>(t) + 1 << "\n";
-        }
+        //}
         cout << "graph " << i << ": num p3's = " << g.all_p3s.size() << "\n";
         score.push_back(make_pair(i, g.all_p3s.size()));
     }
@@ -618,7 +621,10 @@ void test_p3() {
     cout << "graphs sorted by p3s: \n";
     for (auto p : score) {
         cout << p.first << " " << p.second << "\n";
+        if (p.second < 60000) out_file << p.first << "\n";
     }
+    out_file.close();
+
 }
 
 void run_alns_on_gml() {
@@ -640,40 +646,54 @@ void alns_scaling_p3() {
     stringstream str;
     ostringstream oss;
     vector<pair<int, int>> score;
-    int num_operations = 50000;
+    int num_operations = 10000;
     int run_times = 5;
     ofstream out_file;
     oss.str(string());
     oss << "results/avg_minus_best_p3_scale.txt";
     string out_all = oss.str();
     out_file.open(out_all);
-    vector<int> graph_numbers = {7, 17, 5, 18, 10, 8, 6, 3, 11, 0}; //Sorted by number of p3's
+    fstream in_file;
+    string instring;
+    in_file.open("../../../../../Master/train/data_for_p3_scaling_experiments/graphs_in_test_sorted_by_num_p3.txt", ios::in);
+    vector<int> graph_numbers;
+    while (getline(in_file, instring)) {
+        graph_numbers.push_back(stoi(instring));
+    } //Sorted by number of p3's
+    //sort(graph_numbers.begin(), graph_numbers.end());
+    chrono::steady_clock::time_point begin, end;
     for (int i : graph_numbers) {
         str.clear();
         str.str(string());
-        str << "../../../../../Master/train/data/alns_vs_p3/FARZ_train_" << i << ".gml";
+        str << "../../../../../Master/train/data_for_p3_scaling_experiments/FARZ_train_" << i << ".gml";
         string filename = str.str();
         vector<vector<int>> adj = read_gml(filename);
         Graph g(adj);
         g.find_all_p3s();
+        int p3_num = g.all_p3s.size();
 
         int best_cost = (1 << 15);
         int sum_cost = 0;
+        double total_time = 0.0;
         
         for(int i = 0; i < run_times; i++) {
             LoggingSolution logsol;
+            begin = chrono::steady_clock::now();
             alns2_no_cc(g, logsol, num_operations);
+            end = chrono::steady_clock::now();
+            total_time += chrono::duration_cast<chrono::microseconds>(end - begin).count();
             SolutionRepresentation calc(g.n, 100);
             calc.clusters = logsol.clusters;
             calc.node_in_clusters = logsol.node_in_clusters;
             int cost = calc.cost_solution(g);
             sum_cost += cost;
             if (best_cost > cost) {
-                cost = best_cost;
+                best_cost = cost;
             }
         }
 
-        out_file << i << " " << g.all_p3s.size() << " " << (sum_cost / run_times) - best_cost << "\n";
+        out_file << i << " " << g.n << " " << g.num_edges << " " << p3_num << " " << (sum_cost / run_times) - best_cost << \
+            " " << total_time / (run_times*1000000) <<  "\n";
     }
     out_file.close();
 }
