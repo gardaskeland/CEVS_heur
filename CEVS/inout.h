@@ -47,6 +47,8 @@ void run_alns_on_csv();
 
 void test_p3();
 
+void alns_scaling_p3();
+
 void run_operation();
 
 

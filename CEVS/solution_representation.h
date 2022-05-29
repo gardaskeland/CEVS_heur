@@ -97,6 +97,8 @@ class SolutionRepresentation
      */
     void initial_solution_max_degree(Graph &g);
 
+    void make_co_occurence(int n);
+
     
     /**
      * @brief Modifies book according to modification of set si. That is, all sets

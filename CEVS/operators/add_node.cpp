@@ -73,16 +73,7 @@ int add_node_to_set_cost(Graph &g, SolutionRepresentation &sol, int si, int v) {
     for (int i : set_nodes) {
         //cout << sol.get_co_occurence(i, v) << "\n";
         if (sol.get_co_occurence(i, v) > 0) continue;
-        /**
-        for (int w : sol.get_node_to_clusters(v)) {
-            if (w == si) continue;
-            set<int> w_cluster = sol.get_set(w);
-            if (w_cluster.find(i) != w_cluster.end()) {
-                in_same_cluster = true;
-                break;
-            }
-        }
-        */
+
         if (g.has_edge(i, v)) {
             edges_to_delete += g.get_edge_cost(i, v);
         }
@@ -109,7 +100,7 @@ int add_node_to_set_cost(Graph &g, SolutionRepresentation &sol, int si, int v) {
  * @return int 
  */
 int add_node_to_set_cost_seen(Graph &g, SolutionRepresentation &sol, int si, int v, set<int> seen) {
-    set<int> set_nodes = sol.get_set(si);
+    set<int> &set_nodes = sol.clusters[si];
     if (set_nodes.find(v) != set_nodes.end()) return 0;
     //edges between v and i deleted before adding the node (these edges are in G)
     int edges_to_delete = 0;
@@ -119,16 +110,7 @@ int add_node_to_set_cost_seen(Graph &g, SolutionRepresentation &sol, int si, int
     for (int i : set_nodes) {
         //cout << sol.get_co_occurence(i, v) << "\n";
         if (sol.get_co_occurence(i, v) > 0 || seen.find(i) != seen.end()) continue;
-        /**
-        for (int w : sol.get_node_to_clusters(v)) {
-            if (w == si) continue;
-            set<int> w_cluster = sol.get_set(w);
-            if (w_cluster.find(i) != w_cluster.end()) {
-                in_same_cluster = true;
-                break;
-            }
-        }
-        */
+
         if (g.has_edge(i, v)) {
             edges_to_delete += g.get_edge_cost(i, v);
         }
@@ -146,7 +128,7 @@ int add_node_to_set_cost_seen(Graph &g, SolutionRepresentation &sol, int si, int
 vector<pair<int, int>> best_nodes_to_add(Graph &g, SolutionRepresentation &sol, int si) {
     vector<pair<int, int>> results;
     set<int> marked_neighbours;
-    set<int> set_nodes = sol.get_set(si);
+    set<int> &set_nodes = sol.clusters[si];
     for (int v : set_nodes) {
         for (int w : g.adj[v]) {
             if (set_nodes.find(w) != set_nodes.end() || marked_neighbours.find(w) != marked_neighbours.end()) {
@@ -279,7 +261,8 @@ optional<int> add_node_to_set_unchanged(Graph &g, SolutionRepresentation &sol) {
     int best_node = -1;
     int best_cost = pow(2, 16) - 1;
     int cost;
-    for (int v : sol.get_set(si)) {
+    set<int> &si_nodes = sol.clusters[si];
+    for (int v : si_nodes) {
         cost = add_node_to_set_cost(g, sol, si, v);
         if (cost < best_cost) {
             best_cost = cost;
@@ -421,7 +404,7 @@ int add_node(Graph &g, SolutionRepresentation &sol, Bookkeep &book) {
 }
 
 int removal_cost(Graph &g, SolutionRepresentation &sol, int si, int u) {
-    set<int> set_nodes = sol.get_set(si);
+    set<int> &set_nodes = sol.clusters[si];
     //edges we must delete when deleting the node that are in G (+ to cost)
     int edges_to_delete = 0;
     //edges we must delete that when deleting the node that are not in G (- to cost)
@@ -455,7 +438,7 @@ int removal_cost(Graph &g, SolutionRepresentation &sol, int si, int u) {
 }
 
 int removal_cost_seen(Graph &g, SolutionRepresentation &sol, int si, int u, vector<int> &seen) {
-    set<int> set_nodes = sol.get_set(si);
+    set<int> &set_nodes = sol.clusters[si];
     //edges we must delete when deleting the node that are in G (+ to cost)
     int edges_to_delete = 0;
     //edges we must delete that when deleting the node that are not in G (- to cost)
@@ -496,7 +479,7 @@ int remove_nodes_(Graph &g, SolutionRepresentation &sol) {
     int cost = 0;
     for (int u = 0; u < g.n; u++) {
         while (true) {
-            set<int> in_clusters = sol.get_node_to_clusters(u);
+            set<int> &in_clusters = sol.node_in_clusters[u];
             if (in_clusters.size() <= 1) break;
             int least_cost = pow(2, 30);
             int best_set = -1;
@@ -525,7 +508,7 @@ pair<int, vector<int>> cost_of_remove_node(Graph &g, SolutionRepresentation &sol
     }
     int total_cost = 0;
     int cost;
-    set<int> u_sets = sol.get_node_to_clusters(u);
+    set<int> &u_sets = sol.node_in_clusters[u];
     vector<int> seen(g.n, 0);
     vector<int> to_remove;
     for (int si : u_sets) {
@@ -534,7 +517,8 @@ pair<int, vector<int>> cost_of_remove_node(Graph &g, SolutionRepresentation &sol
         if (cost <= 0) {
             to_remove.push_back(si);
             total_cost += cost;
-            for (int v : sol.get_set(si)) {
+            set<int> &si_nodes = sol.clusters[si];
+            for (int v : si_nodes) {
                 if (u == v) continue;
                 seen[v] += 1;
             }

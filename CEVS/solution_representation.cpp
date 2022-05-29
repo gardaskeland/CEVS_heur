@@ -84,6 +84,24 @@ void SolutionRepresentation::initialise_co_occurence(int u, int v) {
     co_occurence[v][u] = 1;
 }
 
+void SolutionRepresentation::make_co_occurence(int n) {
+    co_occurence.clear();
+    for (auto it = clusters.begin(); it != clusters.end(); it++) {
+        vector<int> set_nodes;
+        for (int u : it->second) set_nodes.push_back(u);
+        for (int i = 0; i < set_nodes.size() - 1; i++) {
+            for (int j = i + 1; j < set_nodes.size(); j++) {
+                map<int,int> &m = co_occurence[set_nodes[i]];
+                if (m.find(set_nodes[j]) != m.end()) {
+                    increase_co_occurence(set_nodes[i], set_nodes[j]);
+                } else {
+                    initialise_co_occurence(set_nodes[i], set_nodes[j]);
+                }
+            }
+        }   
+    }
+}
+
 void SolutionRepresentation::initial_solution_max_degree(Graph &g) {
     number_nodes = g.n;
     set<int> marked;
@@ -607,14 +625,34 @@ int SolutionRepresentation::num_splits() {
     return count;
 }
 
+struct cmp_hash {
+
+    bool operator() (set<int> &left, set<int> &right) {
+        //cout << "size left: " << left.size() << ", size right: " << right.size() << "\n";
+        auto itl = left.begin(); auto itr = right.begin();
+        while(itl != left.end() && itr != right.end()) {
+            if (*itl < *itr) return true;
+            if (*itl > *itr) return false;
+            itl++; itr++;
+        }
+        return false;
+    }
+};
+
 int SolutionRepresentation::solution_hash() {
+    vector<set<int>> sets;
+    for (auto it = clusters.begin(); it != clusters.end(); it++) {
+        sets.push_back(it->second);
+    }
+    sort(sets.begin(), sets.end(), cmp_hash());
+
     int result = 0;
     int set_sum;
     int counter = 1;
-    for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
+    for (set<int> s : sets) {
         set_sum = 0;
-        for (int i : it->second) set_sum += i;
-        result += (set_sum * counter++) % 1000000;
+        for (int i : s) set_sum += i;
+        result = (result + (set_sum * counter++)) % (1 << 15);
     }
     return result;
 }

@@ -3,8 +3,9 @@
 set<int> neighbour_clusters(Graph &g, SolutionRepresentation &sol, int u) {
     set<int> to_return;
     for (int v : g.adj[u]) {
-        for (int w : sol.get_node_to_clusters(v)) {
-            set<int> set_w = sol.get_set(w);
+        set<int> &v_clusters = sol.node_in_clusters[v];
+        for (int w : v_clusters) {
+            set<int> &set_w = sol.clusters[w];
             if (set_w.find(u) != set_w.end()) continue;
             to_return.insert(w);
         } 
@@ -126,7 +127,8 @@ optional<tri> find_best_move(Graph &g, SolutionRepresentation &sol, int u) {
     int best_cost = pow(2, 16) - 1;
     tri best_move = tri(-1, -1, 0);
 
-    for (int si: sol.get_node_to_clusters(u)) {
+    set<int> &u_clusters = sol.node_in_clusters[u];
+    for (int si : u_clusters) {
         for (int sj : neighbour_sets) {
             cost = cost_of_move(g, sol, u, si, sj);
             if (cost < best_cost) {
@@ -201,7 +203,8 @@ vector<tri> find_best_moves(Graph &g, SolutionRepresentation &sol, int u) {
     int best_cost = pow(2, 16) - 1;
     tri best_move = tri(-1, -1, 0);
 
-    for (int si: sol.get_node_to_clusters(u)) {
+    set<int> &u_clusters = sol.node_in_clusters[u];
+    for (int si : u_clusters) {
         for (int sj : neighbour_sets) {
             cost = cost_of_move(g, sol, u, si, sj);
             good_moves.emplace_back(tri(cost, si, sj));
