@@ -82,6 +82,47 @@ void write_cost_dev_for_iterations(vector<LoggingSolution> &sol, string &filenam
     out_file.close();
 }
 
+void run_alns_on_validation_set() {
+    ostringstream oss;
+    int num_runs = 5;
+    int num_operations = 100000;
+    ofstream out_file;
+    out_file.open("results/alns_validation_results.txt");
+    for (int i = 0; i < 20; i++) {
+        string filename;
+        oss.clear();
+        oss.str(string());
+        oss << "../../../../validation/data/FARZ_validation_" << i << ".gml";
+        filename = oss.str();
+        vector<vector<int>> adj = read_gml(filename);
+        Graph g = Graph(adj);
+        int best_cost = numeric_limits<int>::max();
+        int sum_costs = 0;
+        for (int j = 0; j < num_runs; j++) {
+            LoggingSolution logsol;
+            alns2_no_cc(g, logsol, num_operations);
+
+            SolutionRepresentation calculate_sol = SolutionRepresentation(g.n, num_operations);
+            map<int, set<int>> clusters = logsol.clusters;
+            //cout << "a";
+            for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); it++) {
+                //cout << "b";
+                calculate_sol.add_set(it->second);
+            }
+            
+            int cost = calculate_sol.cost_solution(g);
+            if (cost < best_cost) {
+                best_cost = cost;
+            }
+            sum_costs += cost;
+        }
+        cout << "For file " << i << ": best_cost: " << best_cost << ", average cost: " << 
+        (double)sum_costs/(double)num_runs << "\n";
+        out_file << best_cost << " " << (double)sum_costs/(double)num_runs << "\n";
+    }
+    out_file.close();
+}
+
 void run_alns_on_heur_instances() {
     int num_operations = 80000;
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();

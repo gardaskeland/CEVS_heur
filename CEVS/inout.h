@@ -26,6 +26,8 @@
 
 using namespace std;
 
+void run_alns_on_validation_set();
+
 void run_alns_on_heur_instances();
 
 /**
