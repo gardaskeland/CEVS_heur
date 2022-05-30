@@ -23,6 +23,7 @@
 #include "utility/logging_solution.h"
 #include <cmath>
 #include <optional>
+#include "utility/evaluate.h"
 
 using namespace std;
 
@@ -50,6 +51,8 @@ void test_p3();
 void alns_scaling_p3();
 
 void run_operation();
+
+void test_evaluate();
 
 
 #endif

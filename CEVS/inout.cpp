@@ -411,68 +411,6 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
     out_file.close();
 }
 
-//If two elements have the same max_index: return nothing
-optional<int> max_element_index(vector<int> &vec) {
-    int max_val = vec[0];
-    int max_ind = 0;
-    bool two_equal = false;
-    for (int i = 1; i < vec.size(); i++) {
-        if (vec[i] > max_val) {
-            max_val = vec[i];
-            max_ind = i;
-            two_equal = false;
-        } else if (vec[i] == max_val) {
-            two_equal = true;
-        }
-    }
-    //cout << "two_equal: " << two_equal << "\n";
-    if (two_equal) {
-        return optional<int>();
-    } else {
-        return optional<int>(max_ind);
-    }
-}
-
-pair<double, double> find_majority_accuracy(Graph &g, SolutionRepresentation &sol, map<int, set<int>> &ground_truth) {
-    vector<bool> marked(g.n, false);
-    vector<bool> wrong_set(g.n, false);
-    vector<int> membership;
-    optional<int> max_element;
-    for (auto it = sol.clusters.begin(); it != sol.clusters.end(); it++) {
-        membership = vector<int>(ground_truth.size(), 0);
-        for (int node : it->second) {
-            for (auto it2 = ground_truth.begin(); it2 != ground_truth.end(); it2++) {
-                set<int> s = it2->second;
-                if (s.find(node) != s.end()) membership[it2->first] += 1;
-            }
-        }
-        max_element = max_element_index(membership);
-        if (!max_element.has_value()) {
-            //for (int node : it->second) {
-            //    wrong_set[node] = true;
-            //}
-            continue;
-        }
-        for (int node : it->second) {
-            set<int> majority_set = ground_truth[max_element.value()];
-            if (majority_set.find(node) != majority_set.end()) {
-                marked[node] = true;
-            } else {
-                wrong_set[node] = true;
-            }
-        }
-    }
-    vector<int> correctly_classified;
-    copy_if(marked.begin(), marked.end(), back_inserter(correctly_classified), [](bool b){ return b == true; });
-
-    vector<int> incorrectly_classified;
-    copy_if(wrong_set.begin(), wrong_set.end(), back_inserter(incorrectly_classified), [](bool b){ return b == true; });
-
-    pair<double,double> p((double)correctly_classified.size() / (double)g.n, (double)incorrectly_classified.size() / (double)g.n);
-
-    return p;
-}
-
 void run_on_karate_graph() {
     cout << "adjacency: \n";
     string filename = "../../../karate78.csv/edges.csv";
@@ -774,4 +712,14 @@ void run_operation() {
     cout << "Final cost: " << calculate_sol.cost_solution(g) << "\n";
     cout << "Solution: \n";
     calculate_sol.print_solution();
+}
+
+void test_evaluate() {
+    string filename = "../../../../../Master/test/data/FARZ_test_0.gml";
+    vector<vector<int>> adj = read_gml(filename);
+    Graph g(adj);
+    SolutionRepresentation sol(g.n, 1000);
+    sol.initial_solution(g.n);
+    evaluate_alns(g, sol, filename);
+
 }
