@@ -4,6 +4,6 @@
 using namespace std;
 
 int main() {
-    test_evaluate();
+    check_solution();
 }
 

@@ -1,0 +1,73 @@
+instance: ../../../../Master/data/test_data/FARZ_100_9.gml
+nodes: 0
+edges: 0
+runs: 5
+operations per iteration: 800
+best solution:
+[]
+cost of best solution: 0
+average cost of solutions: 0
+average last operation finding best solution: 0
+average runtime: 0.0130242
+------------------
+average time of add_all_nodes_to_neighbours: 0
+average time of random_choice_split: 0
+average time of weighted_random_merge: 0
+average time of label_propagation_round 0
+average time of remove_nodes_ 0
+average time of add_node_to_all 0
+------------------
+average improvement of add_all_nodes_to_neighbours 0
+per second: -nan
+average improvement of random_choice_split 0
+per second: -nan
+average improvement of weighted_random_merge 0
+per second: -nan
+average improvement of label_propagation_round 0
+per second: -nan
+average improvement of remove_nodes_ 0
+per second: -nan
+average improvement of add_node_to_all 0
+per second: -nan
+all solutions:
+------------------
+iteration 0: []
+edge deletions: 0
+edge additions: 0
+vertex splittings: 0
+cost of solution: 0
+time used on iteration: 0.010608
+best solution found at iteration 0
+------------------
+iteration 1: []
+edge deletions: 0
+edge additions: 0
+vertex splittings: 0
+cost of solution: 0
+time used on iteration: 0.01296
+best solution found at iteration 0
+------------------
+iteration 2: []
+edge deletions: 0
+edge additions: 0
+vertex splittings: 0
+cost of solution: 0
+time used on iteration: 0.012217
+best solution found at iteration 0
+------------------
+iteration 3: []
+edge deletions: 0
+edge additions: 0
+vertex splittings: 0
+cost of solution: 0
+time used on iteration: 0.015222
+best solution found at iteration 0
+------------------
+iteration 4: []
+edge deletions: 0
+edge additions: 0
+vertex splittings: 0
+cost of solution: 0
+time used on iteration: 0.014114
+best solution found at iteration 0
+------------------

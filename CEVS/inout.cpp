@@ -294,6 +294,7 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
     vector<tuple<int, int, int>> op_solutions;
     vector<int> cost_of_solutions;
     vector<double> time_for_iterations;
+    vector<vector<double>> evaluations;
     for (int j = 0; j < runs; j++) {
 
         chrono::steady_clock::time_point begin_ = chrono::steady_clock::now();
@@ -315,6 +316,13 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
             calculate_sol.add_set(it->second);
         }
         calculate_sol.print_solution();
+
+        vector<double> res = evaluate_alns(g, calculate_sol, filename);
+        evaluations.push_back(res);
+        //cout << "Omega: " << res[0] << "\n";
+        //cout << "ONMI: " << res[1] << "\n";
+        //cout << "Majority accuracy: " << res[2] <<  " \n";
+        //cout << "Majority inaccuracy: " << res[3] << " \n";
         
         tuple<int, int, int> cost_op = calculate_sol.cost_operations(g);
         int cost = get<0>(cost_op) + get<1>(cost_op) + get<2>(cost_op);
@@ -328,12 +336,12 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
         cout << "Solution feasible: " << calculate_sol.simple_feasibility_check() << "\n";
         cout << "Cost of solution: " << cost << "\n";
         cout << "Number of splitting operations: " << calculate_sol.num_splits() << "\n";
-        remove_nodes_(g, calculate_sol);
-        cout << "Aft cer using remove nodes: " << "\n";
-        calculate_sol.print_solution();
-        cout << "Solution feasible: " << calculate_sol.simple_feasibility_check() << "\n";
-        cout << "Cost of solution: " << calculate_sol.cost_solution(g) << "\n";
-        cout << "Number of splitting operations: " << calculate_sol.num_splits() << "\n";
+        //remove_nodes_(g, calculate_sol);
+        //cout << "Aft cer using remove nodes: " << "\n";
+        //calculate_sol.print_solution();
+        //cout << "Solution feasible: " << calculate_sol.simple_feasibility_check() << "\n";
+        //cout << "Cost of solution: " << calculate_sol.cost_solution(g) << "\n";
+        //cout << "Number of splitting operations: " << calculate_sol.num_splits() << "\n";
         cout << "\n-----------------------------------------------\n\n";
     }
 
@@ -406,6 +414,10 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
         out_file << "cost of solution: " << cost_of_solutions[p] << "\n";
         out_file << "time used on iteration: " << time_for_iterations[p] / 1000000 << "\n";
         out_file << "best solution found at iteration " << solutions[p].last_iteration_of_best_solution << "\n";
+        out_file << "omega: " << evaluations[p][0] << "\n";
+        out_file << "ONMI: " << evaluations[p][1] << "\n";
+        out_file << "Majority accuracy: " << evaluations[p][2] << "\n";
+        out_file << "Majority inaccuracy: " << evaluations[p][3] << "\n";
         out_file << "------------------\n";
     }
     out_file.close();
@@ -608,11 +620,11 @@ void test_p3() {
 
 void run_alns_on_gml() {
     ostringstream str;
-    //vector<int> v = {2, 6, 10, 14, 18, 22, 26, 30};
+    vector<int> v = {2, 6, 10, 14, 18, 22, 26, 30};
     for (int i = 0; i < 10; i++) {
         str.clear();
         str.str(string());
-        str << "../../../data/test_data/FARZ_100_" << i << ".gml";
+        str << "../../../../../Master/test/data/FARZ_test_" << i << ".gml";
         string filename = str.str();
         vector<vector<int>> adj = read_gml(filename);
 
@@ -720,6 +732,48 @@ void test_evaluate() {
     Graph g(adj);
     SolutionRepresentation sol(g.n, 1000);
     sol.initial_solution(g.n);
-    evaluate_alns(g, sol, filename);
+    vector<double> res = evaluate_alns(g, sol, filename);
+    cout << "Omega: " << res[0] << "\n";
+    cout << "ONMI: " << res[1] << "\n";
+    cout << "Majority accuracy: " << res[2] <<  " \n";
+    cout << "Majority inaccuracy: " << res[3] << " \n";
+}
 
+void check_solution() {
+    string filename_graph = "../../../../../Master/data_hyp/train/data/FARZ_train_1.gml";
+    vector<vector<int>> adj = read_gml(filename_graph);
+    Graph g(adj);
+    string filename_sol = "results/bs-FARZ_train_1.txt";
+    string line, word;
+    fstream sol_in(filename_sol, ios::in);
+    //stringstream str("a");
+
+    getline(sol_in, line);
+    int i = 1;
+    int j;
+    int set_counter = 0;
+    map<int, set<int>> clusters;
+    while(true) {
+        size_t next = line.find(":", i);
+        if (next == string::npos) break;
+        clusters[set_counter] = set<int>();
+        i = next;
+
+        while (true) {
+            if (line[i+2] == ']') break;
+            while(!isdigit(line[i])) i++;
+            j = i;
+            while(isdigit(line[j])) j++;
+            string num_s = line.substr(i, j-i);
+            clusters[set_counter].insert(stoi(num_s));
+            i = j; 
+        }
+        set_counter++;
+    }
+    
+    SolutionRepresentation sol(g.n, 1000);
+    for (auto it = clusters.begin(); it != clusters.end(); it++) {
+        sol.add_set(it->second);
+    }
+    cout << "Cost of solution: " << sol.cost_solution(g) << "\n";
 }

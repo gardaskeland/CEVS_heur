@@ -63,6 +63,29 @@ map<int, set<int>> read_ground_truth_gml(string ground_truth) {
     return map_;
 }
 
+pair<double, double> read_eval() {
+    string filename = "utility/Overlapping-NMI-master/eval.txt";
+    string line, word;
+    fstream file(filename, ios::in);
+    stringstream str("a");
+
+    getline(file, line);
+    int start = 0;
+    while(!isdigit(line[start])) start++;
+    string num = line.substr(start);
+    double omega = stod(num);
+
+    getline(file, line);
+
+    getline(file, line);
+    start = 0;
+    while(!isdigit(line[start])) start++;
+    num = line.substr(start);
+    double onmi = stod(num);
+
+    return make_pair(omega, onmi);
+}
+
 void write_ground_truth_gml(map<int, set<int>> &truth) {
     ofstream out_file;
     string out_filename = "utility/Overlapping-NMI-master/ground_truth.txt";
@@ -112,9 +135,10 @@ pair<double, double> find_majority_accuracy(Graph &g, SolutionRepresentation &so
     vector<int> membership;
     optional<int> max_element;
     for (auto it = sol.clusters.begin(); it != sol.clusters.end(); it++) {
-        membership = vector<int>(ground_truth.size(), 0);
+        membership = vector<int>(ground_truth.rbegin()->first + 1, 0);
         for (int node : it->second) {
             for (auto it2 = ground_truth.begin(); it2 != ground_truth.end(); it2++) {
+                //cout << it2->first << "\n";
                 set<int> s = it2->second;
                 if (s.find(node) != s.end()) membership[it2->first] += 1;
             }
@@ -156,10 +180,12 @@ vector<double> evaluate_alns(Graph &g, SolutionRepresentation &sol, string groun
 
     int status = system("./utility/Overlapping-NMI-master/onmi utility/Overlapping-NMI-master/solution.txt utility/Overlapping-NMI-master/ground_truth.txt -o \
         > utility/Overlapping-NMI-master/eval.txt");
+    status = system("./utility/Overlapping-NMI-master/onmi utility/Overlapping-NMI-master/solution.txt utility/Overlapping-NMI-master/ground_truth.txt -o");
 
+    pair<double, double> values = read_eval();
+    pair<double, double> accs = find_majority_accuracy(g, sol, truth);
+    vector<double> to_return = {values.first, values.second, accs.first, accs.second};
 
-    //Use https://stackoverflow.com/questions/478898/how-do-i-execute-a-command-and-get-the-output-of-the-command-within-c-using-po to read from cmd
-
-    return vector<double>();
+    return to_return;
     
 }

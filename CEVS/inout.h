@@ -24,6 +24,7 @@
 #include <cmath>
 #include <optional>
 #include "utility/evaluate.h"
+#include <ctype.h>
 
 using namespace std;
 
@@ -53,6 +54,8 @@ void alns_scaling_p3();
 void run_operation();
 
 void test_evaluate();
+
+void check_solution();
 
 
 #endif
