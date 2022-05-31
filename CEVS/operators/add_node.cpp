@@ -251,7 +251,7 @@ optional<int> add_node_to_set(Graph &g, SolutionRepresentation &sol) {
 
 
 optional<int> add_node_to_set_unchanged(Graph &g, SolutionRepresentation &sol) {
-    set<int> changed = sol.book.modified_clusters.query(max(0, sol.book.operation_number - 500), sol.book.operation_number - 1);
+    set<int> changed = sol.book.modified_clusters.query(max(0, sol.book.operation_number - 500), max(0, sol.book.operation_number - 1));
     vector<int> choices;
     for (int si : sol.get_set_indices()) {
         if (!(changed.find(si) != changed.end())) choices.push_back(si);
@@ -259,10 +259,22 @@ optional<int> add_node_to_set_unchanged(Graph &g, SolutionRepresentation &sol) {
     if (choices.empty()) return {};
     int si = choices[sol.ra.get_random_int() % choices.size()];
     int best_node = -1;
-    int best_cost = pow(2, 16) - 1;
+    int best_cost = numeric_limits<int>::max();
     int cost;
+
     set<int> &si_nodes = sol.clusters[si];
+    vector<int> viable_nodes;
     for (int v : si_nodes) {
+        for (int w : g.adj[v]) {
+            if (!(si_nodes.find(w) != si_nodes.end())) {
+                viable_nodes.push_back(w);
+            }
+        }
+    }
+
+    if (viable_nodes.empty()) return {};
+
+    for (int v : viable_nodes) {
         cost = add_node_to_set_cost(g, sol, si, v);
         if (cost < best_cost) {
             best_cost = cost;
@@ -509,9 +521,13 @@ pair<int, vector<int>> cost_of_remove_node(Graph &g, SolutionRepresentation &sol
     int total_cost = 0;
     int cost;
     set<int> &u_sets = sol.node_in_clusters[u];
+    //vector<int> u_sets_vec;
+    //for (int si : u_sets) u_sets_vec.push_back(si);
+    //shuffle(u_sets_vec.begin(), u_sets_vec.end(), sol.ra.rng);
     vector<int> seen(g.n, 0);
     vector<int> to_remove;
     for (int si : u_sets) {
+        //cout << si << " ";
         if (to_remove.size() == u_sets.size() - 1) break; 
         cost = removal_cost_seen(g, sol, si, u, seen);
         if (cost <= 0) {
@@ -524,6 +540,7 @@ pair<int, vector<int>> cost_of_remove_node(Graph &g, SolutionRepresentation &sol
             }
         }
     }
+    //cout << "\n";
     //cout << "We can remove u! Cost is " << total_cost << "\n";
     return make_pair(total_cost, to_remove);
 }

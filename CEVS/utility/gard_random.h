@@ -10,9 +10,11 @@ class GardRandom {
 
     public:
         mt19937 gen;
+        //default_random_engine rng;
 
         GardRandom() {
             random_device rd;
+            //rng = default_random_engine{rd()};
             gen = mt19937(rd());
         }
 

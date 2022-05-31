@@ -88,19 +88,24 @@ void run_alns_on_validation_set() {
     int num_operations = 100000;
     ofstream out_file;
     out_file.open("results/alns_validation_results.txt");
-    for (int i = 0; i < 20; i++) {
+    chrono::steady_clock::time_point begin, end;
+    for (int i = 0; i < 10; i++) {
         string filename;
         oss.clear();
         oss.str(string());
-        oss << "../../../../validation/data/FARZ_validation_" << i << ".gml";
+        oss << "../../../../../Master/data_hyp/validation/data/FARZ_validation_" << i << ".gml";
         filename = oss.str();
         vector<vector<int>> adj = read_gml(filename);
         Graph g = Graph(adj);
         int best_cost = numeric_limits<int>::max();
         int sum_costs = 0;
+        vector<double> running_times(num_runs);
         for (int j = 0; j < num_runs; j++) {
             LoggingSolution logsol;
+            begin = chrono::steady_clock::now();
             alns2_no_cc(g, logsol, num_operations);
+            end = chrono::steady_clock::now();
+            running_times[j] = chrono::duration_cast<chrono::microseconds>(end - begin).count() / (double)1000000.0;
 
             SolutionRepresentation calculate_sol = SolutionRepresentation(g.n, num_operations);
             map<int, set<int>> clusters = logsol.clusters;
@@ -118,7 +123,9 @@ void run_alns_on_validation_set() {
         }
         cout << "For file " << i << ": best_cost: " << best_cost << ", average cost: " << 
         (double)sum_costs/(double)num_runs << "\n";
-        out_file << best_cost << " " << (double)sum_costs/(double)num_runs << "\n";
+        out_file << best_cost << " " << (double)sum_costs/(double)num_runs << " ";
+        for (double ti : running_times) out_file << ti << " ";
+        out_file << "\n";
     }
     out_file.close();
 }
