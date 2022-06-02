@@ -89,7 +89,7 @@ void run_alns_on_validation_set() {
     ofstream out_file;
     out_file.open("results/alns_validation_results.txt");
     chrono::steady_clock::time_point begin, end;
-    for (int i = 0; i < 10; i++) {
+    for (int i = 2; i < 10; i++) {
         string filename;
         oss.clear();
         oss.str(string());

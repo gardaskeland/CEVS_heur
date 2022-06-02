@@ -749,12 +749,10 @@ LoggingSolution alns2_no_cc(Graph &g, LoggingSolution &log_sol, int &num_operati
             //cout << "Cost: " << current_cost << "\n";if (i == num_operations - 1) {
             //current_solution.print_solution();
             for (int j = 0; j < 20; j++) {
-                res = add_node_to_neighbours_accept_unchanged(g, current_solution);
+                res = add_node_to_set_unchanged(g, current_solution); //add_node_to_neighbours_accept_unchanged(g, current_solution);
                 new_cost = current_cost + res.value_or(0);
                 if (res.has_value()) {
-                    for (int s : current_solution.book.b_add_node.sets_to_change) {
-                        current_solution.add(current_solution.book.b_add_node.v, s);
-                    }
+                    execute_add_node(current_solution);
                     current_cost = new_cost;
                 }
 

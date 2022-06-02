@@ -341,12 +341,10 @@ int escape_by_add_lp(Graph &g, SolutionRepresentation &sol, int iterations) {
     int new_cost;
     optional<int> res;
     for (int i = 0; i < iterations; i++) {
-        res = add_node_to_neighbours_accept_unchanged(g, sol);
+        res = add_node_to_set_unchanged(g, sol);
         new_cost = cost + res.value_or(0);
         if (res.has_value()) {
-            for (int s : sol.book.b_add_node.sets_to_change) {
-                sol.add(sol.book.b_add_node.v, s);
-            }
+            execute_add_node(sol);
             cost = new_cost;
         }
 

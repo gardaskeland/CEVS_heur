@@ -251,7 +251,7 @@ optional<int> add_node_to_set(Graph &g, SolutionRepresentation &sol) {
 
 
 optional<int> add_node_to_set_unchanged(Graph &g, SolutionRepresentation &sol) {
-    set<int> changed = sol.book.modified_clusters.query(max(0, sol.book.operation_number - 500), max(0, sol.book.operation_number - 1));
+    set<int> changed = sol.book.modified_clusters.query(max(0, sol.book.operation_number - 5*g.n), max(0, sol.book.operation_number - 1));
     vector<int> choices;
     for (int si : sol.get_set_indices()) {
         if (!(changed.find(si) != changed.end())) choices.push_back(si);
