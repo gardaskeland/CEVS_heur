@@ -340,12 +340,22 @@ bool recursion(vector<list<int>> &adj, info_struct &info) {
     }
 
     optional<vector<int>> p3 = find_p3(adj, info);
-    if (!p3.has_value()) return true;
+    if (!p3.has_value()) {
+        //print graph
+        for (int i = 0; i < adj.size(); i++) {
+            cout << i << ": ";
+            for (int u : adj[i]) {
+                cout << u << " ";
+            }
+            cout << endl;
+        }
+        return true;
+    }
     //cout << "found p3 " << p3.value()[0] << " " << p3.value()[1] << " " << p3.value()[2] << "\n";
     if (info.k_ == info.k) return false;
 
     time_elapsed = chrono::duration_cast<chrono::microseconds>(current - info.iteration_start).count();
-    if (time_elapsed / 1000000 > 60) {
+    if (time_elapsed / 1000000 > 600) {
         info.end_iteration = true;
         return false;
     }
