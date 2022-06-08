@@ -170,6 +170,60 @@ pair<double, double> find_majority_accuracy(Graph &g, SolutionRepresentation &so
     return p;
 }
 
+//The function F from the paper "Extending the definition of modularity to directed graphs with overlapping communities"
+double f_func(double a, double b) {
+    //int p = 1;
+    //double res = (double)1.0 / ((1.0 + exp(-2*p*a + p))*(1.0 + exp(-2*p*b + p)));
+    //cout << res << "\n";
+    //return res;
+    //return std::max(a, b);
+    if (a<=0.00001 || b<=0.00001) return 0.0;
+    return (a+b)/2.0;
+}
+
+double extended_modularity(Graph &g, SolutionRepresentation &sol) {
+    int m = g.num_edges;
+    vector<double> alpha_i;
+    for (int i = 0; i < g.n; i++) {
+        alpha_i.push_back((double)1.0 / (double)sol.node_in_clusters[i].size());
+    }
+
+    vector<vector<double>> beta_out_c(g.n, vector<double>(sol.clusters.size()));
+    //vector<vector<double>> beta_in_c(g.n, vector<double>(sol.clusters.size()));
+    double result;
+    int cluster_counter;
+    for (int i = 0; i < g.n; i++) {
+        cluster_counter = 0;
+        for (auto it = sol.clusters.begin(); it != sol.clusters.end(); it++) {
+            result = 0.0;
+            for (int j = 0; j < g.n; j++) {
+                result += f_func(alpha_i[i] * ((it->second).find(i) != (it->second).end()), \
+                    alpha_i[j]*((it->second).find(j) != (it->second).end()));
+            }
+            beta_out_c[i][cluster_counter] = result / (double)g.n;
+            cluster_counter++;
+        }
+    }
+
+    double modularity_sum = 0.0;
+    cluster_counter = 0;
+    double beta;
+    for (auto it = sol.clusters.begin(); it != sol.clusters.end(); it++) {
+        for (int u = 0; u < g.n - 1; u++) {
+            for (int v = u+1; v < g.n; v++) {
+                beta = f_func(alpha_i[u] * ((it->second).find(u) != (it->second).end()), \
+                    alpha_i[v]*((it->second).find(v) != (it->second).end()));
+                modularity_sum += beta*g.has_edge(u, v) - (beta_out_c[u][cluster_counter]*g.adj[u].size()* \
+                    beta_out_c[v][cluster_counter]*g.adj[v].size()) / (2.0*(double)m);
+                //cout << modularity_sum << endl;
+            }
+        }
+        cluster_counter++;
+    }
+
+    return modularity_sum / ((double)m);
+}
+
 vector<double> evaluate_alns(Graph &g, SolutionRepresentation &sol, string ground_truth) {
 
     map<int, set<int>> truth = read_ground_truth_gml(ground_truth);
@@ -184,7 +238,8 @@ vector<double> evaluate_alns(Graph &g, SolutionRepresentation &sol, string groun
 
     pair<double, double> values = read_eval();
     pair<double, double> accs = find_majority_accuracy(g, sol, truth);
-    vector<double> to_return = {values.first, values.second, accs.first, accs.second};
+    double eq = extended_modularity(g, sol);
+    vector<double> to_return = {values.first, values.second, accs.first, accs.second, eq};
 
     return to_return;
     

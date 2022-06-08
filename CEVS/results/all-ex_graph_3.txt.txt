@@ -1,0 +1,57 @@
+instance: ../branching_CEVS/ex_graph_3.txt
+nodes: 8
+edges: 7
+runs: 3
+operations per iteration: 10000
+best solution:
+[[0: 0, ], [1: 1, 2, ], [2: 3, 4, ], [3: 5, ], [4: 6, 7, ], ]
+cost of best solution: 4
+average cost of solutions: 4
+average last operation finding best solution: 196.667
+average runtime: 0.066439
+------------------
+average time of add_all_nodes_to_neighbours: 1.99209e-06
+average time of random_choice_split: 0
+average time of weighted_random_merge: 0
+average time of label_propagation_round 1.52246e-06
+average time of remove_nodes_ 6.7337e-07
+average time of add_node_to_all 1.78947e-06
+------------------
+average improvement of add_all_nodes_to_neighbours -0.0168067
+per second: -8436.72
+average improvement of random_choice_split 0.0248541
+per second: inf
+average improvement of weighted_random_merge -0.223102
+per second: -inf
+average improvement of label_propagation_round 0.192871
+per second: 126684
+average improvement of remove_nodes_ 0.0746648
+per second: 110882
+average improvement of add_node_to_all 0.00213732
+per second: 1194.39
+all solutions:
+------------------
+iteration 0: [[0: 0, ], [1: 1, 2, ], [2: 3, 4, ], [3: 5, ], [4: 6, 7, ], ]
+edge deletions: 4
+edge additions: 0
+vertex splittings: 0
+cost of solution: 4
+time used on iteration: 0.065731
+best solution found at iteration 3
+------------------
+iteration 1: [[0: 0, 1, ], [1: 3, 4, 5, ], [2: 1, 2, ], [3: 6, 7, ], ]
+edge deletions: 2
+edge additions: 1
+vertex splittings: 1
+cost of solution: 4
+time used on iteration: 0.067106
+best solution found at iteration 57
+------------------
+iteration 2: [[0: 0, 1, ], [1: 5, ], [2: 4, ], [3: 2, 3, ], [4: 6, 7, ], ]
+edge deletions: 4
+edge additions: 0
+vertex splittings: 0
+cost of solution: 4
+time used on iteration: 0.06648
+best solution found at iteration 530
+------------------

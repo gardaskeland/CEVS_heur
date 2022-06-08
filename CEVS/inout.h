@@ -57,5 +57,7 @@ void test_evaluate();
 
 void check_solution();
 
+void run_alns_on_gz();
+
 
 #endif

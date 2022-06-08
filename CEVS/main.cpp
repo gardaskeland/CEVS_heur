@@ -4,6 +4,6 @@
 using namespace std;
 
 int main() {
-    run_alns_on_validation_set();
+    run_alns_on_gml();
 }
 

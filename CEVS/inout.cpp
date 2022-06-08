@@ -326,10 +326,11 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
 
         vector<double> res = evaluate_alns(g, calculate_sol, filename);
         evaluations.push_back(res);
-        //cout << "Omega: " << res[0] << "\n";
-        //cout << "ONMI: " << res[1] << "\n";
-        //cout << "Majority accuracy: " << res[2] <<  " \n";
-        //cout << "Majority inaccuracy: " << res[3] << " \n";
+        cout << "Omega: " << res[0] << "\n";
+        cout << "ONMI: " << res[1] << "\n";
+        cout << "Majority accuracy: " << res[2] <<  " \n";
+        cout << "Majority inaccuracy: " << res[3] << " \n";
+        cout << "EQ: " << res[4] << "\n";
         
         tuple<int, int, int> cost_op = calculate_sol.cost_operations(g);
         int cost = get<0>(cost_op) + get<1>(cost_op) + get<2>(cost_op);
@@ -425,6 +426,7 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
         out_file << "ONMI: " << evaluations[p][1] << "\n";
         out_file << "Majority accuracy: " << evaluations[p][2] << "\n";
         out_file << "Majority inaccuracy: " << evaluations[p][3] << "\n";
+        out_file << "EQ: " << evaluations[p][4] << endl;
         out_file << "------------------\n";
     }
     out_file.close();
@@ -629,6 +631,7 @@ void run_alns_on_gml() {
     ostringstream str;
     vector<int> v = {2, 6, 10, 14, 18, 22, 26, 30};
     for (int i = 0; i < 10; i++) {
+        if (i==1) continue;
         str.clear();
         str.str(string());
         str << "../../../../../Master/test/data/FARZ_test_" << i << ".gml";
@@ -636,7 +639,7 @@ void run_alns_on_gml() {
         vector<vector<int>> adj = read_gml(filename);
 
         Graph g(adj);
-        run_alns_on_single_instance(filename, g, 5, 80000);
+        run_alns_on_single_instance(filename, g, 1, 80000);
     }
 }
 
@@ -738,12 +741,13 @@ void test_evaluate() {
     vector<vector<int>> adj = read_gml(filename);
     Graph g(adj);
     SolutionRepresentation sol(g.n, 1000);
-    sol.initial_solution(g.n);
+    sol.initial_solution_max_degree(g);
     vector<double> res = evaluate_alns(g, sol, filename);
     cout << "Omega: " << res[0] << "\n";
     cout << "ONMI: " << res[1] << "\n";
     cout << "Majority accuracy: " << res[2] <<  " \n";
     cout << "Majority inaccuracy: " << res[3] << " \n";
+    cout << "EQ: " << res[4] << "\n";
 }
 
 void check_solution() {
@@ -783,4 +787,18 @@ void check_solution() {
         sol.add_set(it->second);
     }
     cout << "Cost of solution: " << sol.cost_solution(g) << "\n";
+}
+
+void run_alns_on_gz() {
+    ostringstream str;
+    for (int i = 0; i < 5; i++) {
+        str.clear();
+        str.str(string());
+        str << "../branching_CEVS/ex_graph_" << i << ".txt";
+        string filename = str.str();
+        vector<vector<int>> adj = read_gz_file(filename);
+
+        Graph g(adj);
+        run_alns_on_single_instance(filename, g, 3, 10000);
+    }
 }
