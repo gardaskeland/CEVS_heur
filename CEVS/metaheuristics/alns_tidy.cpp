@@ -68,9 +68,13 @@ void change_weights_counting_operator_executions(vector<double> &operation_score
         //cout << weights[i] << " ";
     } //cout << endl;
 
-    c_weights[0] = 0; 
-    for (int i = 1; i < operations; i++) {c_weights[i] = c_weights[i-1] + weights[i-1];}
-
+    for (int i = 0; i < operations; i++) {
+        if (i == 0) {
+            c_weights[i] = weights[i];
+            continue;
+        }
+        c_weights[i] = c_weights[i - 1] + weights[i];
+    }
     weights_over_iteration.push_back(weights);
 
 }
@@ -111,7 +115,7 @@ LoggingSolution alns_final(Graph &input_g, LoggingSolution &log_sol, int &num_op
     set<int> solution_hashes;
     int change_weights_after = 300;
     int change_weights_count = 0;
-    double rate = 0.2;
+    double rate = 0.3;
     int start_score = 20;
 
     //cost at start of iteration
