@@ -6,13 +6,13 @@ cevs: main.o read_file.o graph.o solution_representation.o add_node.o \
 		b_merge.o shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o local_search_lp.o \
 		label_propagation.o perturbation.o alns.o logging_solution.o inout.o alns2.o \
-		b_perturbation.o gard_random.o remove_add.o evaluate.o
+		b_perturbation.o gard_random.o remove_add.o evaluate.o alns_tidy.o
 	g++ -std=c++17 -g -o cevs main.o read_file.o graph.o solution_representation.o add_node.o \
 		greedy_merge.o local_search.o weighted_random.o bookkeep.o b_merge.o \
 		shallow_solution.o segment_tree.o b_add_node.o weighted_graph.o \
 		find_kernel.o split.o karger.o local_search_lp.o \
 		label_propagation.o perturbation.o alns.o logging_solution.o inout.o alns2.o \
-		b_perturbation.o gard_random.o remove_add.o evaluate.o
+		b_perturbation.o gard_random.o remove_add.o evaluate.o alns_tidy.o
 
 main.o: main.cpp
 	$(boiler) main.cpp
@@ -97,6 +97,9 @@ remove_add.o: operators/remove_add.cpp operators/remove_add.h
 
 evaluate.o: utility/evaluate.cpp utility/evaluate.h
 	$(boiler) utility/evaluate.cpp
+
+alns_tidy.o: metaheuristics/alns_tidy.cpp metaheuristics/alns_tidy.h
+	$(boiler) metaheuristics/alns_tidy.cpp
 
 clean:
 	rm *.o cevs

@@ -306,7 +306,7 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
 
         chrono::steady_clock::time_point begin_ = chrono::steady_clock::now();
         LoggingSolution sol;
-        alns2(g, sol, num_operations);
+        alns_final(g, sol, num_operations, false);
         chrono::steady_clock::time_point end_ = chrono::steady_clock::now();
 
         solutions.push_back(sol);
@@ -639,7 +639,7 @@ void run_alns_on_gml() {
         vector<vector<int>> adj = read_gml(filename);
 
         Graph g(adj);
-        run_alns_on_single_instance(filename, g, 1, 80000);
+        run_alns_on_single_instance(filename, g, 1, 100000);
     }
 }
 

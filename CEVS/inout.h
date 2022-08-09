@@ -14,6 +14,7 @@
 #include "metaheuristics/local_search_lp.h"
 #include "metaheuristics/alns.h"
 #include "metaheuristics/alns2.h"
+#include "metaheuristics/alns_tidy.h"
 #include "utility/shallow_solution.h"
 #include "bookkeep/b_merge.h"
 #include <chrono>

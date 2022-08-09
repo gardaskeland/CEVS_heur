@@ -2,42 +2,42 @@ instance: ../../../../../Master/test/data/FARZ_test_5.gml
 nodes: 35
 edges: 90
 runs: 1
-operations per iteration: 80000
+operations per iteration: 100000
 best solution:
-[[0: 3, 6, 10, 11, 23, ], [1: 2, 6, 8, 9, 10, 11, 15, 16, 19, ], [2: 1, 15, 20, 23, 28, ], [3: 19, 24, 32, ], [4: 0, 12, 18, ], [5: 5, 16, 27, ], [6: 18, 26, 31, ], [7: 7, 17, 22, ], [8: 13, ], [9: 4, 29, ], [10: 33, ], [11: 30, ], [12: 21, 25, ], [13: 14, ], [14: 34, ], ]
+[[14: 14, ], [34: 34, ], [1293: 3, 6, 10, 11, 23, ], [1438: 2, 6, 8, 9, 10, 11, 15, 16, 19, ], [1491: 1, 15, 20, 23, 28, ], [1503: 5, 16, 27, ], [1507: 0, 12, 18, ], [1510: 7, 17, 22, ], [1524: 19, 24, 32, ], [1545: 4, 29, ], [1547: 18, 26, 31, ], [1550: 21, 25, ], [1553: 33, ], [1554: 13, ], [1555: 30, ], ]
 cost of best solution: 36
 average cost of solutions: 36
-average last operation finding best solution: 1445
-average runtime: 2.01469
+average last operation finding best solution: 35103
+average runtime: 5.34369
 ------------------
-average time of add_all_nodes_to_neighbours: 2.88266e-05
+average time of add_all_nodes_to_neighbours: 0
 average time of random_choice_split: 0
 average time of weighted_random_merge: 0
-average time of label_propagation_round 1.35007e-05
-average time of remove_nodes_ 7.78384e-06
-average time of add_node_to_all 1.71641e-05
+average time of label_propagation_round 0
+average time of remove_nodes_ 0
+average time of add_node_to_all 0
 ------------------
-average improvement of add_all_nodes_to_neighbours -0.0705255
-per second: -2446.54
-average improvement of random_choice_split 0.0671369
-per second: inf
-average improvement of weighted_random_merge -0.255092
+average improvement of add_all_nodes_to_neighbours -0.138889
 per second: -inf
-average improvement of label_propagation_round 0.0780492
-per second: 5781.11
-average improvement of remove_nodes_ 0.146001
-per second: 18756.9
-average improvement of add_node_to_all 0.0525201
-per second: 3059.88
+average improvement of random_choice_split 0.0491899
+per second: inf
+average improvement of weighted_random_merge -0.480241
+per second: -inf
+average improvement of label_propagation_round 0.108841
+per second: inf
+average improvement of remove_nodes_ 0.156367
+per second: inf
+average improvement of add_node_to_all 0.00656194
+per second: inf
 all solutions:
 ------------------
-iteration 0: [[0: 3, 6, 10, 11, 23, ], [1: 2, 6, 8, 9, 10, 11, 15, 16, 19, ], [2: 1, 15, 20, 23, 28, ], [3: 19, 24, 32, ], [4: 0, 12, 18, ], [5: 5, 16, 27, ], [6: 18, 26, 31, ], [7: 7, 17, 22, ], [8: 13, ], [9: 4, 29, ], [10: 33, ], [11: 30, ], [12: 21, 25, ], [13: 14, ], [14: 34, ], ]
+iteration 0: [[14: 14, ], [34: 34, ], [1293: 3, 6, 10, 11, 23, ], [1438: 2, 6, 8, 9, 10, 11, 15, 16, 19, ], [1491: 1, 15, 20, 23, 28, ], [1503: 5, 16, 27, ], [1507: 0, 12, 18, ], [1510: 7, 17, 22, ], [1524: 19, 24, 32, ], [1545: 4, 29, ], [1547: 18, 26, 31, ], [1550: 21, 25, ], [1553: 33, ], [1554: 13, ], [1555: 30, ], ]
 edge deletions: 24
 edge additions: 4
 vertex splittings: 8
 cost of solution: 36
-time used on iteration: 2.01469
-best solution found at iteration 1445
+time used on iteration: 5.34369
+best solution found at iteration 35103
 omega: 0.600019
 ONMI: 0.538688
 Majority accuracy: 0.942857

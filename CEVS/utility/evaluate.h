@@ -9,6 +9,7 @@
 #include "../solution_representation.h"
 #include "../graph.h"
 #include <ctype.h>
+#include <optional>
 
 /**
  * Takes graph g, a solution of CEVS on graph g and the ground truth of graph g.
