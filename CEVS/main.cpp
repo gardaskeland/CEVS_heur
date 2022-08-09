@@ -4,6 +4,6 @@
 using namespace std;
 
 int main() {
-    run_alns_on_gml();
+    run_alns_on_heur_instances();
 }
 

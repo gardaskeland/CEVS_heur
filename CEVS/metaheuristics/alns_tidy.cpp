@@ -115,7 +115,7 @@ LoggingSolution alns_final(Graph &input_g, LoggingSolution &log_sol, int &num_op
     set<int> solution_hashes;
     int change_weights_after = 300;
     int change_weights_count = 0;
-    double rate = 0.3;
+    double rate = 0.5;
     int start_score = 20;
 
     //cost at start of iteration
