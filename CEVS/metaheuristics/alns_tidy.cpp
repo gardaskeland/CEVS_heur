@@ -147,17 +147,6 @@ LoggingSolution alns_final(Graph &input_g, LoggingSolution &log_sol, int &num_op
 
     optional<int> res;
 
-    /**
-    //test ra
-    vector<int> vec(100, 0);
-    for (int x = 0; x < 1000000; x++)
-        int a = current_solution.ra.get_random_int() % 100;
-        //cout << a << "\n";
-        vec[current_solution.ra.get_random_int() % 100] += 1;
-    }
-    for (int x : vec) cout << x << " "; 
-    cout << "\n";*/
-
     for (int i = 0; i < num_operations; i++) {
         //escape_counter += 1;
         current_solution.book.operation_number = i;
@@ -415,7 +404,7 @@ LoggingSolution alns_final(Graph &input_g, LoggingSolution &log_sol, int &num_op
         }
 
         if (current_cost < best_cost) {
-            escape_counter = 0;
+            //escape_counter = 0;
             best_cost = current_cost;
             last_iteration_of_best_solution = i;
             best_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());

@@ -294,7 +294,7 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
     string filename_without_path = get_filename_after_path(filename);
 
     int summed_costs = 0;
-    int num_operators = 5;
+    int num_operators = 8;
     int best_cost = pow(2, 30);
     ShallowSolution best_solution;
     vector<LoggingSolution> solutions;
@@ -634,7 +634,7 @@ void run_alns_on_gml() {
         //if (i==1) continue;
         str.clear();
         str.str(string());
-        str << "../../../../data/test/FARZ_test_" << i << ".gml";
+        str << "../../../data/test/data/FARZ_test_" << i << ".gml";
         string filename = str.str();
         vector<vector<int>> adj = read_gml(filename);
 
@@ -796,7 +796,7 @@ void run_alns_on_gz() {
     for (int i = 0; i < 9; i++) {
         str.clear();
         str.str(string());
-        str << "../../../../data/Testsets/" << names[i] << "/" << names[i] << ".gr";
+        str << "../../../data/Testsets/" << names[i] << "/" << names[i] << ".gr";
         string filename = str.str();
         vector<vector<int>> adj = read_gz_file(filename);
 
