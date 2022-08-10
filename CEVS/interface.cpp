@@ -15,10 +15,10 @@ int find_next_solution_hash(SolutionRepresentation &sol, int heuristic) {
     else if (4 <= heuristic && heuristic <= 6) {
         result = calculate_hash_label_propagation(sol);
     }
+    //else if (heuristic == 7) {
+    //    result = sol.solution_hash();
+    //}
     else if (heuristic == 7) {
-        result = sol.solution_hash();
-    }
-    else if (heuristic == 8) {
         result = sol.book.b_remove_add.solution_hash;
     }
     return result;
@@ -50,9 +50,9 @@ pair<int, int> find_heuristic(Graph &g, SolutionRepresentation &sol, int heurist
         res = label_propagation_accept_weighted_random(g, sol);
     else if (heuristic == 6)
         res = label_propagation_accept_unchanged(g, sol);
+    //else if (heuristic == 7)
+    //    res = escape_by_add_lp(g, sol, 20);
     else if (heuristic == 7)
-        res = escape_by_add_lp(g, sol, 20);
-    else if (heuristic == 8)
         res = sample_remove_add_3(g, sol);
 
     //cout << "found operator\n";
@@ -97,7 +97,7 @@ void execute_heuristic(SolutionRepresentation &sol) {
        // cout << "lp\n";
         execute_label_propagation(sol);  
     }
-    else if (heu == 8) {
+    else if (heu == 7) {
         execute_remove_add_3(sol);
     }
 

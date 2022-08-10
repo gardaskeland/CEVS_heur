@@ -631,15 +631,15 @@ void run_alns_on_gml() {
     ostringstream str;
     vector<int> v = {2, 6, 10, 14, 18, 22, 26, 30};
     for (int i = 0; i < 10; i++) {
-        if (i==1) continue;
+        //if (i==1) continue;
         str.clear();
         str.str(string());
-        str << "../../../../../Master/test/data/FARZ_test_" << i << ".gml";
+        str << "../../../../data/test/FARZ_test_" << i << ".gml";
         string filename = str.str();
         vector<vector<int>> adj = read_gml(filename);
 
         Graph g(adj);
-        run_alns_on_single_instance(filename, g, 1, 100000);
+        run_alns_on_single_instance(filename, g, 5, 100000);
     }
 }
 
@@ -791,14 +791,16 @@ void check_solution() {
 
 void run_alns_on_gz() {
     ostringstream str;
-    for (int i = 0; i < 5; i++) {
+    vector<string> names = {"cs_department", "eu_airlines", "facebook_friends", "football.csv", "game_thrones",
+                            "jazz_collab", "karate78.csv", "law_firm", "revolution"};
+    for (int i = 0; i < 9; i++) {
         str.clear();
         str.str(string());
-        str << "../branching_CEVS/ex_graph_" << i << ".txt";
+        str << "../../../../data/Testsets/" << names[i] << "/" << names[i] << ".gr";
         string filename = str.str();
         vector<vector<int>> adj = read_gz_file(filename);
 
         Graph g(adj);
-        run_alns_on_single_instance(filename, g, 3, 10000);
+        run_alns_on_single_instance(filename, g, 5, 100000);
     }
 }
