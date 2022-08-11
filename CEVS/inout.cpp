@@ -288,7 +288,7 @@ string get_filename_after_path(string &filename) {
     return next;
 }
 
-void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_operations) {
+void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_operations, bool has_ground_truth) {
     ostringstream oss;
     cout << "Working on file " << filename << "\n";
     string filename_without_path = get_filename_after_path(filename);
@@ -301,7 +301,8 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
     vector<tuple<int, int, int>> op_solutions;
     vector<int> cost_of_solutions;
     vector<double> time_for_iterations;
-    vector<vector<double>> evaluations;
+    vector<vector<double>> evaluations; //Stores evaluations for graphs with ground truth
+    vector<double> eqs; //Stores eq for graphs without ground truth
     for (int j = 0; j < runs; j++) {
 
         chrono::steady_clock::time_point begin_ = chrono::steady_clock::now();
@@ -323,14 +324,20 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
             calculate_sol.add_set(it->second);
         }
         calculate_sol.print_solution();
-
-        vector<double> res = evaluate_alns(g, calculate_sol, filename);
-        evaluations.push_back(res);
-        cout << "Omega: " << res[0] << "\n";
-        cout << "ONMI: " << res[1] << "\n";
-        cout << "Majority accuracy: " << res[2] <<  " \n";
-        cout << "Majority inaccuracy: " << res[3] << " \n";
-        cout << "EQ: " << res[4] << "\n";
+        if (has_ground_truth) {
+            vector<double> res = evaluate_alns(g, calculate_sol, filename);
+            evaluations.push_back(res);
+            cout << "Omega: " << res[0] << "\n";
+            cout << "ONMI: " << res[1] << "\n";
+            cout << "Majority accuracy: " << res[2] <<  " \n";
+            cout << "Majority inaccuracy: " << res[3] << " \n";
+            cout << "EQ: " << res[4] << "\n";
+        }
+        else {
+            double eq_res = get_eq(g, calculate_sol);
+            eqs.push_back(eq_res);
+            cout << "EQ: " << eq_res << "\n";
+        }
         
         tuple<int, int, int> cost_op = calculate_sol.cost_operations(g);
         int cost = get<0>(cost_op) + get<1>(cost_op) + get<2>(cost_op);
@@ -422,12 +429,17 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
         out_file << "cost of solution: " << cost_of_solutions[p] << "\n";
         out_file << "time used on iteration: " << time_for_iterations[p] / 1000000 << "\n";
         out_file << "best solution found at iteration " << solutions[p].last_iteration_of_best_solution << "\n";
-        out_file << "omega: " << evaluations[p][0] << "\n";
-        out_file << "ONMI: " << evaluations[p][1] << "\n";
-        out_file << "Majority accuracy: " << evaluations[p][2] << "\n";
-        out_file << "Majority inaccuracy: " << evaluations[p][3] << "\n";
-        out_file << "EQ: " << evaluations[p][4] << endl;
-        out_file << "------------------\n";
+        if (has_ground_truth) {
+            out_file << "omega: " << evaluations[p][0] << "\n";
+            out_file << "ONMI: " << evaluations[p][1] << "\n";
+            out_file << "Majority accuracy: " << evaluations[p][2] << "\n";
+            out_file << "Majority inaccuracy: " << evaluations[p][3] << "\n";
+            out_file << "EQ: " << evaluations[p][4] << endl;
+            out_file << "------------------\n";
+        }
+        else {
+            out_file << "EQ: " << eqs[p] << endl;
+        }
     }
     out_file.close();
 }
@@ -639,7 +651,7 @@ void run_alns_on_gml() {
         vector<vector<int>> adj = read_gml(filename);
 
         Graph g(adj);
-        run_alns_on_single_instance(filename, g, 5, 100000);
+        run_alns_on_single_instance(filename, g, 5, 100000, true);
     }
 }
 
@@ -712,7 +724,7 @@ void run_alns_on_csv() {
         vector<vector<int>> adj = read_csv_graph(filename, num_nodes[i]);
 
         Graph g(adj);
-        run_alns_on_single_instance(filename, g, 5, 80000);
+        run_alns_on_single_instance(filename, g, 5, 80000, false);
     }
 }
 
@@ -796,11 +808,11 @@ void run_alns_on_gz() {
     for (int i = 0; i < 9; i++) {
         str.clear();
         str.str(string());
-        str << "../../../data/Testsets/" << names[i] << "/" << names[i] << ".gr";
+        str << "../../../../../Master/Testsets/" << names[i] << "/" << names[i] << ".gr";
         string filename = str.str();
         vector<vector<int>> adj = read_gz_file(filename);
 
         Graph g(adj);
-        run_alns_on_single_instance(filename, g, 5, 100000);
+        run_alns_on_single_instance(filename, g, 5, 100000, false);
     }
 }

@@ -19,4 +19,13 @@ vector<double> evaluate_alns(Graph &g, SolutionRepresentation &sol, string groun
 
 pair<double, double> find_majority_accuracy(Graph &g, SolutionRepresentation &calculate_sol, map<int, set<int>> &ground_truth);
 
+/**
+ * @brief Returns EQ only in the case there is no ground truth.
+ * 
+ * @param g 
+ * @param sol 
+ * @return double 
+ */
+double get_eq(Graph &g, SolutionRepresentation &sol);
+
 #endif

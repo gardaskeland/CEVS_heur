@@ -241,6 +241,9 @@ vector<double> evaluate_alns(Graph &g, SolutionRepresentation &sol, string groun
     double eq = extended_modularity(g, sol);
     vector<double> to_return = {values.first, values.second, accs.first, accs.second, eq};
 
-    return to_return;
-    
+    return to_return;   
+}
+
+double get_eq(Graph &g, SolutionRepresentation &sol) {
+    return extended_modularity(g, sol);
 }
