@@ -139,27 +139,16 @@ LoggingSolution alns_final(Graph &input_g, LoggingSolution &log_sol, int &num_op
     int sum_delta = 0;
     int end_warmup = 1000;
 
-    int escape_counter = 0;
-    const int escape_threshold = 1000;
+    //int escape_counter = 0;
+    //const int escape_threshold = 1000;
 
     bool local_search = false;
     const int activate_local_search = num_operations - (num_operations / 20);
 
     optional<int> res;
 
-    /**
-    //test ra
-    vector<int> vec(100, 0);
-    for (int x = 0; x < 1000000; x++)
-        int a = current_solution.ra.get_random_int() % 100;
-        //cout << a << "\n";
-        vec[current_solution.ra.get_random_int() % 100] += 1;
-    }
-    for (int x : vec) cout << x << " "; 
-    cout << "\n";*/
-
     for (int i = 0; i < num_operations; i++) {
-        escape_counter += 1;
+        //escape_counter += 1;
         current_solution.book.operation_number = i;
         //cout << i << "\n";
         solution_cost_iteration.push_back(current_cost);
@@ -173,7 +162,7 @@ LoggingSolution alns_final(Graph &input_g, LoggingSolution &log_sol, int &num_op
             alpha = pow(0.02/t, 1.0/(num_operations-end_warmup));
             cout << "t set to " << t << "\n";
         }
-        
+        /**
         if (escape_counter >= escape_threshold) {
             //cout << "Escape!\n";
             //cout << "Before escape: \n";
@@ -226,6 +215,7 @@ LoggingSolution alns_final(Graph &input_g, LoggingSolution &log_sol, int &num_op
             }
             continue;
         }
+        */
 
         if (change_weights_count >= change_weights_after) {
 
@@ -414,7 +404,7 @@ LoggingSolution alns_final(Graph &input_g, LoggingSolution &log_sol, int &num_op
         }
 
         if (current_cost < best_cost) {
-            escape_counter = 0;
+            //escape_counter = 0;
             best_cost = current_cost;
             last_iteration_of_best_solution = i;
             best_solution = ShallowSolution(current_solution.get_clusters(), current_solution.get_node_in_clusters());

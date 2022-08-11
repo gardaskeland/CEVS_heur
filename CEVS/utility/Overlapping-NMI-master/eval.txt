@@ -1,6 +1,0 @@
-Datum:	Omega:0.0306586
-Datum:	L2norm:67.9338
-NMI<Max>:	0.0200905
-Other measures:
-  lfkNMI:	0.0471879
-  NMI<Sum>:	0.027252
