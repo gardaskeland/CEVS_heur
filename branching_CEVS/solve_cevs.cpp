@@ -355,7 +355,7 @@ bool recursion(vector<list<int>> &adj, info_struct &info) {
     if (info.k_ == info.k) return false;
 
     time_elapsed = chrono::duration_cast<chrono::microseconds>(current - info.iteration_start).count();
-    if (time_elapsed / 1000000 > 600) {
+    if (time_elapsed / 1000000 > 6000) {
         info.end_iteration = true;
         return false;
     }
