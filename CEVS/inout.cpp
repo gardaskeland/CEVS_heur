@@ -805,14 +805,15 @@ void run_alns_on_gz() {
     ostringstream str;
     vector<string> names = {"cs_department", "eu_airlines", "facebook_friends", "football.csv", "game_thrones",
                             "jazz_collab", "karate78.csv", "law_firm", "revolution"};
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 5; i++) {
         str.clear();
         str.str(string());
-        str << "../../../../../Master/Testsets/" << names[i] << "/" << names[i] << ".gr";
+        //str << "../../../../../Master/Testsets/" << names[i] << "/" << names[i] << ".gr";
+        str << "../branching_CEVS/gr_" << i << ".txt";
         string filename = str.str();
         vector<vector<int>> adj = read_gz_file(filename);
 
         Graph g(adj);
-        run_alns_on_single_instance(filename, g, 5, 100000, false);
+        run_alns_on_single_instance(filename, g, 5, 10000, false);
     }
 }

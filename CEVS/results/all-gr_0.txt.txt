@@ -1,0 +1,73 @@
+instance: ../branching_CEVS/gr_0.txt
+nodes: 10
+edges: 13
+runs: 5
+operations per iteration: 10000
+best solution:
+[[3: 0, 1, 2, 3, ], [4: 4, 5, 7, ], [5: 5, 6, 8, ], [9: 7, 9, ], ]
+cost of best solution: 4
+average cost of solutions: 4
+average last operation finding best solution: 62.2
+average runtime: 0.093071
+------------------
+average time of add_all_nodes_to_neighbours: 0
+average time of random_choice_split: 0
+average time of weighted_random_merge: 0
+average time of label_propagation_round 0
+average time of remove_nodes_ 0
+average time of add_node_to_all 0
+------------------
+average improvement of add_all_nodes_to_neighbours -0.052376
+per second: -inf
+average improvement of random_choice_split 0.126207
+per second: inf
+average improvement of weighted_random_merge -0.185768
+per second: -inf
+average improvement of label_propagation_round 0.219956
+per second: inf
+average improvement of remove_nodes_ 0.199961
+per second: inf
+average improvement of add_node_to_all -0.000426985
+per second: -inf
+all solutions:
+------------------
+iteration 0: [[3: 0, 1, 2, 3, ], [4: 4, 5, 7, ], [5: 5, 6, 8, ], [9: 7, 9, ], ]
+edge deletions: 1
+edge additions: 1
+vertex splittings: 2
+cost of solution: 4
+time used on iteration: 0.095773
+best solution found at iteration 40
+EQ: 0.759859
+iteration 1: [[0: 0, 1, 2, 3, ], [7: 9, ], [10: 5, 6, 8, ], [11: 4, 5, 7, ], ]
+edge deletions: 2
+edge additions: 1
+vertex splittings: 1
+cost of solution: 4
+time used on iteration: 0.105074
+best solution found at iteration 35
+EQ: 0.738842
+iteration 2: [[1: 0, 1, 2, 3, ], [4: 4, 5, 7, ], [11: 5, 6, 8, ], [12: 7, 9, ], ]
+edge deletions: 1
+edge additions: 1
+vertex splittings: 2
+cost of solution: 4
+time used on iteration: 0.088454
+best solution found at iteration 65
+EQ: 0.759859
+iteration 3: [[3: 0, 1, 2, 3, ], [5: 5, 6, 8, ], [9: 9, ], [10: 4, 5, 7, ], ]
+edge deletions: 2
+edge additions: 1
+vertex splittings: 1
+cost of solution: 4
+time used on iteration: 0.088049
+best solution found at iteration 33
+EQ: 0.738842
+iteration 4: [[8: 5, 6, 8, ], [9: 0, 1, 2, 3, ], [10: 4, 5, 7, ], [13: 7, 9, ], ]
+edge deletions: 1
+edge additions: 1
+vertex splittings: 2
+cost of solution: 4
+time used on iteration: 0.088005
+best solution found at iteration 138
+EQ: 0.759859

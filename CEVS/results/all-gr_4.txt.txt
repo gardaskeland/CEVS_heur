@@ -1,0 +1,73 @@
+instance: ../branching_CEVS/gr_4.txt
+nodes: 8
+edges: 13
+runs: 5
+operations per iteration: 10000
+best solution:
+[[18: 5, 6, 7, ], [19: 2, 3, 4, ], [20: 0, 1, 2, ], ]
+cost of best solution: 5
+average cost of solutions: 5
+average last operation finding best solution: 217.4
+average runtime: 0.161962
+------------------
+average time of add_all_nodes_to_neighbours: 0
+average time of random_choice_split: 0
+average time of weighted_random_merge: 0
+average time of label_propagation_round 0
+average time of remove_nodes_ 0
+average time of add_node_to_all 0
+------------------
+average improvement of add_all_nodes_to_neighbours -0.0518767
+per second: -inf
+average improvement of random_choice_split 0.127984
+per second: inf
+average improvement of weighted_random_merge -0.146976
+per second: -inf
+average improvement of label_propagation_round 0.163914
+per second: inf
+average improvement of remove_nodes_ 0.186451
+per second: inf
+average improvement of add_node_to_all -0.000223664
+per second: -inf
+all solutions:
+------------------
+iteration 0: [[18: 5, 6, 7, ], [19: 2, 3, 4, ], [20: 0, 1, 2, ], ]
+edge deletions: 4
+edge additions: 0
+vertex splittings: 1
+cost of solution: 5
+time used on iteration: 0.201077
+best solution found at iteration 362
+EQ: 0.584005
+iteration 1: [[8: 0, 1, 2, 3, ], [12: 5, 6, 7, ], [13: 3, 4, 5, ], ]
+edge deletions: 2
+edge additions: 1
+vertex splittings: 2
+cost of solution: 5
+time used on iteration: 0.095569
+best solution found at iteration 233
+EQ: 0.638478
+iteration 2: [[1: 0, 1, 2, ], [5: 3, 5, 6, 7, ], [6: 2, 3, 4, ], ]
+edge deletions: 2
+edge additions: 1
+vertex splittings: 2
+cost of solution: 5
+time used on iteration: 0.111965
+best solution found at iteration 30
+EQ: 0.638478
+iteration 3: [[27: 2, 3, 4, 5, ], [29: 5, 6, 7, ], [30: 0, 1, 2, ], ]
+edge deletions: 2
+edge additions: 1
+vertex splittings: 2
+cost of solution: 5
+time used on iteration: 0.160583
+best solution found at iteration 427
+EQ: 0.638938
+iteration 4: [[0: 0, 1, 2, ], [3: 2, 3, 4, ], [6: 5, 6, 7, ], ]
+edge deletions: 4
+edge additions: 0
+vertex splittings: 1
+cost of solution: 5
+time used on iteration: 0.240615
+best solution found at iteration 35
+EQ: 0.584005

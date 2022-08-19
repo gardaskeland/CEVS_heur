@@ -1,0 +1,73 @@
+instance: ../branching_CEVS/gr_2.txt
+nodes: 8
+edges: 19
+runs: 5
+operations per iteration: 10000
+best solution:
+[[1: 0, 1, 2, 3, 4, ], [4: 3, 4, 5, 6, 7, ], ]
+cost of best solution: 2
+average cost of solutions: 2
+average last operation finding best solution: 143
+average runtime: 0.071281
+------------------
+average time of add_all_nodes_to_neighbours: 0
+average time of random_choice_split: 0
+average time of weighted_random_merge: 0
+average time of label_propagation_round 0
+average time of remove_nodes_ 0
+average time of add_node_to_all 0
+------------------
+average improvement of add_all_nodes_to_neighbours -0.0644575
+per second: -inf
+average improvement of random_choice_split 0.119465
+per second: inf
+average improvement of weighted_random_merge -0.126692
+per second: -inf
+average improvement of label_propagation_round 0.139649
+per second: inf
+average improvement of remove_nodes_ 0.164096
+per second: inf
+average improvement of add_node_to_all -0.000522921
+per second: -inf
+all solutions:
+------------------
+iteration 0: [[1: 0, 1, 2, 3, 4, ], [4: 3, 4, 5, 6, 7, ], ]
+edge deletions: 0
+edge additions: 0
+vertex splittings: 2
+cost of solution: 2
+time used on iteration: 0.104807
+best solution found at iteration 28
+EQ: 0.671288
+iteration 1: [[0: 0, 1, 2, 3, 4, ], [4: 3, 4, 5, 6, 7, ], ]
+edge deletions: 0
+edge additions: 0
+vertex splittings: 2
+cost of solution: 2
+time used on iteration: 0.08793
+best solution found at iteration 100
+EQ: 0.671288
+iteration 2: [[16: 3, 4, 5, 6, 7, ], [17: 0, 1, 2, 3, 4, ], ]
+edge deletions: 0
+edge additions: 0
+vertex splittings: 2
+cost of solution: 2
+time used on iteration: 0.048019
+best solution found at iteration 374
+EQ: 0.671288
+iteration 3: [[6: 0, 1, 2, 3, 4, ], [7: 3, 4, 5, 6, 7, ], ]
+edge deletions: 0
+edge additions: 0
+vertex splittings: 2
+cost of solution: 2
+time used on iteration: 0.062467
+best solution found at iteration 164
+EQ: 0.671288
+iteration 4: [[1: 0, 1, 2, 3, 4, ], [6: 3, 4, 5, 6, 7, ], ]
+edge deletions: 0
+edge additions: 0
+vertex splittings: 2
+cost of solution: 2
+time used on iteration: 0.053182
+best solution found at iteration 49
+EQ: 0.671288
