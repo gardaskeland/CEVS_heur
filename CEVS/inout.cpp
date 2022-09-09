@@ -145,6 +145,7 @@ void run_alns_on_heur_instances() {
         vector<vector<int>> adj = read_gz_file(filename);
         Graph g = Graph(adj);
 
+        int best_number_clusters;
         int summed_costs = 0;
         int iterations = 5;
         int num_operators = 8;
@@ -184,13 +185,14 @@ void run_alns_on_heur_instances() {
             if (cost < best_cost) {
                 best_cost = cost;
                 best_solution = sol;
+                best_number_clusters = sol.clusters.size();
             }
             cout << "Solution feasible: " << calculate_sol.simple_feasibility_check() << "\n";
             cout << "Cost of solution: " << cost << "\n";
             cout << "Number of splitting operations: " << calculate_sol.num_splits() << "\n";
-            remove_nodes_(g, calculate_sol);
-            cout << "Aft cer using remove nodes: " << "\n";
-            calculate_sol.print_solution();
+            //remove_nodes_(g, calculate_sol);
+            //cout << "Aft cer using remove nodes: " << "\n";
+            //calculate_sol.print_solution();
             cout << "Solution feasible: " << calculate_sol.simple_feasibility_check() << "\n";
             cout << "Cost of solution: " << calculate_sol.cost_solution(g) << "\n";
             cout << "Number of splitting operations: " << calculate_sol.num_splits() << "\n";
@@ -228,6 +230,7 @@ void run_alns_on_heur_instances() {
         out_file << "best solution:\n";
         out_file << best_solution.solution_as_string() << "\n";
         out_file << "cost of best solution: " << best_cost << "\n";
+        out_file << "clusters in best solution: " << best_number_clusters << "\n";
         out_file << "average cost of solutions: " << summed_costs / (double)iterations << "\n";
         out_file << "average last operation finding best solution: " << (double)sum_last_iteration / iterations << "\n";
         out_file << "average runtime: " << average_runtime / 1000000 << "\n";
@@ -263,6 +266,7 @@ void run_alns_on_heur_instances() {
             out_file << "edge deletions: " << get<0>(op_solutions[p]) << "\n";
             out_file << "edge additions: " << get<1>(op_solutions[p]) << "\n";
             out_file << "vertex splittings: " << get<2>(op_solutions[p]) << "\n";
+            out_file << "number of clusters: " << solutions[p].clusters.size() << "\n";
             out_file << "cost of solution: " << cost_of_solutions[p] << "\n";
             out_file << "time used on iteration: " << time_for_iterations[p] / 1000000 << "\n";
             out_file << "best solution found at iteration " << solutions[p].last_iteration_of_best_solution << "\n";
@@ -805,15 +809,15 @@ void run_alns_on_gz() {
     ostringstream str;
     vector<string> names = {"cs_department", "eu_airlines", "facebook_friends", "football.csv", "game_thrones",
                             "jazz_collab", "karate78.csv", "law_firm", "revolution"};
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 1; i++) {
         str.clear();
         str.str(string());
-        //str << "../../../../../Master/Testsets/" << names[i] << "/" << names[i] << ".gr";
-        str << "../branching_CEVS/gr_" << i << ".txt";
+        str << "../../../../../Master/social_circles_facebook/facebook_combined.gr";
+        //str << "../branching_CEVS/gr_" << i << ".txt";
         string filename = str.str();
         vector<vector<int>> adj = read_gz_file(filename);
 
         Graph g(adj);
-        run_alns_on_single_instance(filename, g, 5, 10000, false);
+        run_alns_on_single_instance(filename, g, 5, 100000, false);
     }
 }
