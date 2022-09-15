@@ -327,7 +327,7 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
             //cout << "b";
             calculate_sol.add_set(it->second);
         }
-        calculate_sol.print_solution();
+        //calculate_sol.print_solution();
         if (has_ground_truth) {
             vector<double> res = evaluate_alns(g, calculate_sol, filename);
             evaluations.push_back(res);
@@ -367,7 +367,7 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
     oss.str(string());
     oss << "results/weights-" << filename_without_path << ".txt";
     string p_file = oss.str();
-    write_weights_for_iterations(solutions, p_file);
+    //write_weights_for_iterations(solutions, p_file);
     oss.clear();
     oss.str(string());
     oss << "results/cost-" << filename_without_path << ".txt";
