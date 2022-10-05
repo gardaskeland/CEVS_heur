@@ -46,7 +46,7 @@ void run_on_karate_graph();
 
 void run_on_football_graph();
 
-void run_alns_on_gml();
+void run_alns_on_gml(int num_iterations, int num_runs, string filename);
 
 void run_alns_on_csv();
 
@@ -60,7 +60,7 @@ void test_evaluate();
 
 void check_solution();
 
-void run_alns_on_gz();
+void run_alns_on_gz(int num_iterations, int num_runs, string filename);
 
 
 #endif

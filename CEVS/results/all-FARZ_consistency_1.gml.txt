@@ -1,0 +1,98 @@
+instance: ../../../../../Master/sparse_consistency/data/FARZ_consistency_1.gml
+nodes: 20
+edges: 39
+runs: 5
+operations per iteration: 100000
+best solution:
+[[16: 16, ], [22: 13, 14, 15, ], [80: 1, 2, 5, 6, ], [115: 0, 3, 5, 9, ], [117: 8, 11, 12, ], [119: 1, 3, 7, 11, ], [120: 4, 8, 10, ], [130: 1, 8, 19, ], [136: 8, 9, 18, ], [137: 17, ], ]
+cost of best solution: 17
+average cost of solutions: 17
+average last operation finding best solution: 1336
+average runtime: 2.85725
+------------------
+average time of add_all_nodes_to_neighbours: 0
+average time of random_choice_split: 0
+average time of weighted_random_merge: 0
+average time of label_propagation_round 0
+average time of remove_nodes_ 0
+average time of add_node_to_all 0
+------------------
+average improvement of add_all_nodes_to_neighbours -0.0577697
+per second: -inf
+average improvement of random_choice_split 0.124947
+per second: inf
+average improvement of weighted_random_merge -0.113312
+per second: -inf
+average improvement of label_propagation_round 0.121524
+per second: inf
+average improvement of remove_nodes_ 0.186564
+per second: inf
+average improvement of add_node_to_all 0.000979923
+per second: inf
+all solutions:
+------------------
+iteration 0: [[16: 16, ], [22: 13, 14, 15, ], [80: 1, 2, 5, 6, ], [115: 0, 3, 5, 9, ], [117: 8, 11, 12, ], [119: 1, 3, 7, 11, ], [120: 4, 8, 10, ], [130: 1, 8, 19, ], [136: 8, 9, 18, ], [137: 17, ], ]
+edge deletions: 7
+edge additions: 1
+vertex splittings: 9
+cost of solution: 17
+time used on iteration: 2.7915
+best solution found at iteration 2135
+omega: 0.0153263
+ONMI: 0.0347642
+Majority accuracy: 0.85
+Majority inaccuracy: 0
+EQ: 0.530097
+------------------
+iteration 1: [[2: 4, 8, 10, ], [14: 13, 14, 15, ], [16: 16, ], [21: 1, 2, 5, 6, ], [23: 1, 8, 11, 19, ], [25: 0, 1, 3, 5, 7, 9, ], [35: 12, 17, ], [36: 8, 9, 18, ], ]
+edge deletions: 7
+edge additions: 4
+vertex splittings: 6
+cost of solution: 17
+time used on iteration: 2.58664
+best solution found at iteration 619
+omega: 0.0172414
+ONMI: 0.0444201
+Majority accuracy: 0.8
+Majority inaccuracy: 0
+EQ: 0.592752
+------------------
+iteration 2: [[14: 13, 14, 15, ], [16: 16, ], [28: 1, 2, 5, 6, ], [86: 1, 3, 5, 7, 9, 11, ], [107: 8, 11, 12, ], [110: 0, 9, 10, ], [114: 8, 9, 18, ], [115: 17, ], [116: 4, 8, 10, ], [118: 1, 8, 19, ], ]
+edge deletions: 4
+edge additions: 3
+vertex splittings: 10
+cost of solution: 17
+time used on iteration: 2.77835
+best solution found at iteration 2072
+omega: 0.020934
+ONMI: 0.03494
+Majority accuracy: 0.85
+Majority inaccuracy: 0
+EQ: 0.58056
+------------------
+iteration 3: [[16: 16, ], [20: 13, 14, 15, ], [37: 1, 2, 5, 6, ], [56: 4, 8, 10, ], [66: 0, 9, 10, ], [68: 1, 8, 11, 19, ], [70: 1, 3, 5, 7, 9, ], [73: 8, 9, 18, ], [74: 12, 17, ], ]
+edge deletions: 7
+edge additions: 2
+vertex splittings: 8
+cost of solution: 17
+time used on iteration: 3.41798
+best solution found at iteration 1229
+omega: 0.0136119
+ONMI: 0.0406764
+Majority accuracy: 0.8
+Majority inaccuracy: 0
+EQ: 0.5554
+------------------
+iteration 4: [[1: 1, 2, 5, 6, ], [14: 13, 14, 15, ], [16: 16, ], [29: 12, 17, ], [30: 1, 3, 7, 9, 11, ], [36: 0, 3, 5, 9, ], [40: 1, 8, 19, ], [41: 4, 8, 10, ], [45: 8, 9, 18, ], [46: 8, 11, 12, ], ]
+edge deletions: 4
+edge additions: 2
+vertex splittings: 11
+cost of solution: 17
+time used on iteration: 2.7118
+best solution found at iteration 625
+omega: 0.012987
+ONMI: 0.037173
+Majority accuracy: 0.85
+Majority inaccuracy: 0
+EQ: 0.561003
+------------------

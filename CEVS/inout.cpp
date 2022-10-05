@@ -643,22 +643,6 @@ void test_p3() {
 
 }
 
-void run_alns_on_gml() {
-    ostringstream str;
-    vector<int> v = {2, 6, 10, 14, 18, 22, 26, 30};
-    for (int i = 0; i < 10; i++) {
-        //if (i==1) continue;
-        str.clear();
-        str.str(string());
-        str << "../../../data/test/data/FARZ_test_" << i << ".gml";
-        string filename = str.str();
-        vector<vector<int>> adj = read_gml(filename);
-
-        Graph g(adj);
-        run_alns_on_single_instance(filename, g, 5, 100000, true);
-    }
-}
-
 void alns_scaling_p3() {
     stringstream str;
     ostringstream oss;
@@ -672,17 +656,17 @@ void alns_scaling_p3() {
     out_file.open(out_all);
     fstream in_file;
     string instring;
-    in_file.open("../../../../../Master/train/data_for_p3_scaling_experiments/graphs_in_test_sorted_by_num_p3.txt", ios::in);
+    //in_file.open("../../../../../Master/train/data_for_p3_scaling_experiments/graphs_in_test_sorted_by_num_p3.txt", ios::in);
     vector<int> graph_numbers;
-    while (getline(in_file, instring)) {
-        graph_numbers.push_back(stoi(instring));
-    } //Sorted by number of p3's
+    //while (getline(in_file, instring)) {
+     //   graph_numbers.push_back(stoi(instring));
+    //} //Sorted by number of p3's
     //sort(graph_numbers.begin(), graph_numbers.end());
     chrono::steady_clock::time_point begin, end;
-    for (int i : graph_numbers) {
+    for (int i = 0; i < 10; i++) {
         str.clear();
         str.str(string());
-        str << "../../../../../Master/train/data_for_p3_scaling_experiments/FARZ_train_" << i << ".gml";
+        str << "../../../../../Master/scaling/data/FARZ_scale_" << i << ".gml";
         string filename = str.str();
         vector<vector<int>> adj = read_gml(filename);
         Graph g(adj);
@@ -696,7 +680,7 @@ void alns_scaling_p3() {
         for(int i = 0; i < run_times; i++) {
             LoggingSolution logsol;
             begin = chrono::steady_clock::now();
-            alns2_no_cc(g, logsol, num_operations);
+            alns_final(g, logsol, num_operations, false);
             end = chrono::steady_clock::now();
             total_time += chrono::duration_cast<chrono::microseconds>(end - begin).count();
             SolutionRepresentation calc(g.n, 100);
@@ -805,19 +789,16 @@ void check_solution() {
     cout << "Cost of solution: " << sol.cost_solution(g) << "\n";
 }
 
-void run_alns_on_gz() {
-    ostringstream str;
-    vector<string> names = {"cs_department", "eu_airlines", "facebook_friends", "football.csv", "game_thrones",
-                            "jazz_collab", "karate78.csv", "law_firm", "revolution"};
-    for (int i = 0; i < 1; i++) {
-        str.clear();
-        str.str(string());
-        str << "../../../../../Master/social_circles_facebook/facebook_combined.gr";
-        //str << "../branching_CEVS/gr_" << i << ".txt";
-        string filename = str.str();
-        vector<vector<int>> adj = read_gz_file(filename);
 
-        Graph g(adj);
-        run_alns_on_single_instance(filename, g, 5, 100000, false);
-    }
+void run_alns_on_gz(int num_iterations, int num_runs, string filename) {
+    vector<vector<int>> adj = read_gz_file(filename);
+    Graph g(adj);
+    run_alns_on_single_instance(filename, g, num_runs, num_iterations, false);
+}
+
+
+void run_alns_on_gml(int num_iterations, int num_runs, string filename) {
+    vector<vector<int>> adj = read_gml(filename);
+    Graph g(adj);
+    run_alns_on_single_instance(filename, g, num_runs, num_iterations, true);
 }

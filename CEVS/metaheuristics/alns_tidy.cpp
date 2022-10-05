@@ -83,9 +83,10 @@ LoggingSolution alns_final(Graph &input_g, LoggingSolution &log_sol, int &num_op
     RevertKernel revert;
     int temp_n;
     Graph *g;
+    WeightedGraph *wg;
     if (with_cc) {
-        WeightedGraph wg = find_critical_clique_graph(input_g, revert);;
-        g = &wg;
+        *wg = find_critical_clique_graph(input_g, revert);;
+        g = wg;
     }
     else {
         g = &input_g;
