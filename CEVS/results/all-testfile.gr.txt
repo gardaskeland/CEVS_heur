@@ -1,0 +1,22 @@
+instance: example_files/testfile.gr
+nodes: 6
+edges: 9
+runs: 1
+operations per iteration: 10000
+best solution: [[0: 0, 3, 4, 5, ], [1: 1, 2, ], ]
+cost of best solution: 4
+number of communities in best solution: 2
+average cost of solutions: 4
+average last operation finding best solution: 29
+average runtime: 0.106733
+------------------
+all solutions:
+------------------
+iteration 0: [[0: 0, 3, 4, 5, ], [1: 1, 2, ], ]
+edge deletions: 3
+edge additions: 1
+vertex splittings: 0
+cost of solution: 4
+number of communities: 2
+time used on iteration: 0.106733
+best solution found at iteration 29
