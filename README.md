@@ -1,4 +1,4 @@
-# CEVS_DRLH
+# CEVS_heur
 An ALNS-based heuristic algorithm for solving the problem Cluster Editing with Vertex Splitting with inclusive vertex split formulated
 by Abu-Khzam et al (doi: 10.1007/978-3-319-96151-4_1).
 
