@@ -580,8 +580,9 @@ bool SolutionRepresentation::verify_co_occurence() {
 
 void SolutionRepresentation::print_solution() {
     cout << "[";
+    int counter = 0;
     for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); ++it) {
-        cout << "[" << it->first << ": ";
+        cout << "[" << counter++ << ": ";
         for (int i : it->second) {
             cout << i << ", ";
         }

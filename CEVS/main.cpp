@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     
     if (strcmp(argv[1], "-help") == 0) {
         cout << "Must give arguments -iterations, -runs and -file. No other arguments accepted. \n" <<
-                "Example: ./cevs -iterations 10000 -runs 1 -file testfile.gr \n" <<
+                "Example: ./cevs -iterations 10000 -runs 1 -file example_files/testfile.gr \n" <<
                 "Graphs in files with the gr-file format and gml-format are accepted. Examples are included in example_files.\n";
                 "Results will be written to to the results-folder.";
         exit(0);

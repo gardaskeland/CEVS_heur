@@ -19,8 +19,9 @@ void ShallowSolution::print_solution() {
 string ShallowSolution::solution_as_string() {
     ostringstream oss;
     oss << "[";
+    int counter = 0;
     for (map<int, set<int>>::iterator it = clusters.begin(); it != clusters.end(); ++it) {
-        oss << "[" << it->first << ": ";
+        oss << "[" << counter++ << ": ";
         for (int i : it->second) {
             oss << i << ", ";
         }

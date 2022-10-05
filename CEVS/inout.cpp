@@ -315,7 +315,7 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
         chrono::steady_clock::time_point end_ = chrono::steady_clock::now();
 
         solutions.push_back(sol);
-        cout << "Best solution:\n";
+        cout << "Best solution: "; sol.print_solution(); cout << "\n";
         double time_elapsed_ = chrono::duration_cast<chrono::microseconds>(end_ - begin_).count();
         time_for_iterations.push_back(time_elapsed_);
         cout << "time used in seconds for graph " << filename << ": " << time_elapsed_ / 1000000 << "\n";
@@ -327,6 +327,7 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
             //cout << "b";
             calculate_sol.add_set(it->second);
         }
+        /**
         //calculate_sol.print_solution();
         if (has_ground_truth) {
             vector<double> res = evaluate_alns(g, calculate_sol, filename);
@@ -341,7 +342,7 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
             double eq_res = get_eq(g, calculate_sol);
             eqs.push_back(eq_res);
             cout << "EQ: " << eq_res << "\n";
-        }
+        }*/
         
         tuple<int, int, int> cost_op = calculate_sol.cost_operations(g);
         int cost = get<0>(cost_op) + get<1>(cost_op) + get<2>(cost_op);
@@ -355,6 +356,7 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
         cout << "Solution feasible: " << calculate_sol.simple_feasibility_check() << "\n";
         cout << "Cost of solution: " << cost << "\n";
         cout << "Number of splitting operations: " << calculate_sol.num_splits() << "\n";
+        //cout << "Number of communities: " << calculate_sol.clusters.size() << "\n";
         //remove_nodes_(g, calculate_sol);
         //cout << "Aft cer using remove nodes: " << "\n";
         //calculate_sol.print_solution();
@@ -394,14 +396,16 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
     out_file << "edges: " << g.num_edges << "\n";
     out_file << "runs: " << runs << "\n";
     out_file << "operations per iteration: " << num_operations << "\n";
-    out_file << "best solution:\n";
+    out_file << "best solution: ";
     out_file << best_solution.solution_as_string() << "\n";
     out_file << "cost of best solution: " << best_cost << "\n";
+    out_file << "number of communities in best solution: " << best_solution.clusters.size() << "\n";
     out_file << "average cost of solutions: " << summed_costs / (double)runs << "\n";
     out_file << "average last operation finding best solution: " << (double)sum_last_iteration / runs << "\n";
     out_file << "average runtime: " << average_runtime / 1000000 << "\n";
     out_file << "------------------\n";
     
+    /**
     out_file << "average time of add_all_nodes_to_neighbours: " << average_time_operators[0] / 1000000 << "\n";
     out_file << "average time of random_choice_split: " << average_time_operators[1] / 1000000 << "\n";
     out_file << "average time of weighted_random_merge: " << average_time_operators[2] / 1000000 << "\n";
@@ -422,7 +426,7 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
     out_file << "per second: " << average_improvement_operations[4] / (average_time_operators[4] / 1000000) << "\n";
     out_file << "average improvement of add_node_to_all " << average_improvement_operations[5] << "\n";
     out_file << "per second: " << average_improvement_operations[5] / (average_time_operators[5] / 1000000) << "\n";
-
+    */
     out_file << "all solutions:\n";
     out_file << "------------------\n";
     for (int p = 0; p < runs; p++) {
@@ -431,8 +435,10 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
         out_file << "edge additions: " << get<1>(op_solutions[p]) << "\n";
         out_file << "vertex splittings: " << get<2>(op_solutions[p]) << "\n";
         out_file << "cost of solution: " << cost_of_solutions[p] << "\n";
+        out_file << "number of communities: " << solutions[p].clusters.size() << "\n";
         out_file << "time used on iteration: " << time_for_iterations[p] / 1000000 << "\n";
         out_file << "best solution found at iteration " << solutions[p].last_iteration_of_best_solution << "\n";
+        /**
         if (has_ground_truth) {
             out_file << "omega: " << evaluations[p][0] << "\n";
             out_file << "ONMI: " << evaluations[p][1] << "\n";
@@ -443,7 +449,7 @@ void run_alns_on_single_instance(string &filename, Graph &g, int runs, int num_o
         }
         else {
             out_file << "EQ: " << eqs[p] << endl;
-        }
+        }*/
     }
     out_file.close();
 }
